@@ -16,6 +16,7 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
 using Quasar.Internals;
+using Quasar.Settings;
 
 using Space.Core;
 using Space.Core.DependencyInjection;
@@ -66,7 +67,24 @@ namespace Quasar
         public IQuasarApplication Build()
         {
             serviceProvider.InitializeStaticServices();
+
+            serviceProvider.GetRequiredService<ISettingsService>().Load();
+
             return serviceProvider.GetRequiredService<QuasarApplication>();
+        }
+
+        /// <summary>
+        /// Configures the settings service options and scan the specified assemblies for settings types.
+        /// </summary>
+        /// <param name="configureAction">The configure action.</param>
+        public QuasarApplicationBuilder ConfigureSettings(Action<SettingsOptions> configureAction)
+        {
+            ArgumentNullException.ThrowIfNull(configureAction, nameof(configureAction));
+
+            var settingsOptions = new SettingsOptions();
+            configureAction.Invoke(settingsOptions);
+            ServiceLoader.AddSingleton(settingsOptions);
+            return this;
         }
 
 

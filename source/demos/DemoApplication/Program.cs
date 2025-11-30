@@ -24,6 +24,10 @@ namespace DemoApplication
         private static void Main()
         {
             var builder = new QuasarApplicationBuilder();
+            builder.ConfigureSettings(options =>
+            {
+                options.SettingsFilePath = "demo.cfg";
+            });
 
             using (var application = builder.Build())
             {

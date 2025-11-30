@@ -13,7 +13,7 @@
     <OutputType>WinExe</OutputType>
     <StartupObject>DemoApplication.Program</StartupObject>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <OutDir>..\..\builds\DemoApplication</OutDir>
+    <OutDir>..\..\..\builds\DemoApplication</OutDir>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,10 +23,6 @@
 
   <ItemGroup>
     <AdditionalFiles Include="..\..\stylecop.json" Link="Properties\stylecop.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Demos.ico" />
   </ItemGroup>
 
   <ItemGroup>
