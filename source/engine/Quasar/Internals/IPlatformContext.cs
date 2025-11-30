@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="Program.cs" company="Space Development">
+// <copyright file="IPlatformContext.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,26 +9,23 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using Quasar;
+using Quasar.UI.Internals;
 
-namespace DemoApplication
+namespace Quasar.Internals
 {
     /// <summary>
-    /// Application startup class.
+    /// Represents an operating system platform sepcific context object.
     /// </summary>
-    internal static class Program
+    internal interface IPlatformContext
     {
         /// <summary>
-        /// Defines the entry point of the application.
+        /// Gets the native message handler.
         /// </summary>
-        private static void Main()
-        {
-            var builder = new QuasarApplicationBuilder();
+        INativeMessageHandler NativeMessageHandler { get; }
 
-            using (var application = builder.Build())
-            {
-                application.Run();
-            }
-        }
+        /// <summary>
+        /// Gets the native window factory.
+        /// </summary>
+        INativeWindowFactory NativeWindowFactory { get; }
     }
 }

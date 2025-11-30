@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="Program.cs" company="Space Development">
+// <copyright file="IQuasarApplication.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,26 +9,19 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using Quasar;
+using System;
 
-namespace DemoApplication
+namespace Quasar
 {
     /// <summary>
-    /// Application startup class.
+    /// Represents a Quasar application.
     /// </summary>
-    internal static class Program
+    /// <seealso cref="IDisposable" />
+    public interface IQuasarApplication : IDisposable
     {
         /// <summary>
-        /// Defines the entry point of the application.
+        /// Runs the execution loop.
         /// </summary>
-        private static void Main()
-        {
-            var builder = new QuasarApplicationBuilder();
-
-            using (var application = builder.Build())
-            {
-                application.Run();
-            }
-        }
+        void Run();
     }
 }

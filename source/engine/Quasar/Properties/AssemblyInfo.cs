@@ -10,6 +10,11 @@
 //-----------------------------------------------------------------------
 
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 [assembly: AssemblyTitle("Quasar")]
 [assembly: AssemblyDescription("Quasar 3D engine")]
+
+[assembly: InternalsVisibleTo("Quasar.Windows")]
+[assembly: InternalsVisibleTo("Quasar.OpenGL")]
+[assembly: InternalsVisibleTo("Quasar.OpenAL")]

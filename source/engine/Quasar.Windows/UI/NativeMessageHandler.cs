@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="Program.cs" company="Space Development">
+// <copyright file="NativeMessageHandler.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,26 +9,22 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using Quasar;
+using System.Windows.Forms;
 
-namespace DemoApplication
+using Quasar.UI.Internals;
+
+namespace Quasar.Windows.UI
 {
     /// <summary>
-    /// Application startup class.
+    /// Represents a native message processing component for UIs.
     /// </summary>
-    internal static class Program
+    /// <seealso cref="INativeMessageHandler" />
+    internal sealed class NativeMessageHandler : INativeMessageHandler
     {
-        /// <summary>
-        /// Defines the entry point of the application.
-        /// </summary>
-        private static void Main()
+        /// <inheritdoc/>
+        public void ProcessMessages()
         {
-            var builder = new QuasarApplicationBuilder();
-
-            using (var application = builder.Build())
-            {
-                application.Run();
-            }
+            Application.DoEvents();
         }
     }
 }

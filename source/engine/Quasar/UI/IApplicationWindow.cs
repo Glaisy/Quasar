@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="AssemblyInfo.cs" company="Space Development">
+// <copyright file="IApplicationWindow.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,9 +9,13 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System.Reflection;
-using System.Runtime.Versioning;
-
-[assembly: AssemblyTitle("Quasar - Windows")]
-[assembly: AssemblyDescription("Quasar 3D engine - Windows platform library")]
-[assembly: SupportedOSPlatform("windows")]
+namespace Quasar.UI
+{
+    /// <summary>
+    /// Represents the application's main window.
+    /// </summary>
+    /// <seealso cref="INativeWindow" />
+    public interface IApplicationWindow : INativeWindow
+    {
+    }
+}
