@@ -24,10 +24,18 @@ namespace DemoApplication
         private static void Main()
         {
             var builder = new QuasarApplicationBuilder();
-            builder.ConfigureSettings(options =>
+
+            builder.ConfigureLoggerService(configuration =>
             {
-                options.SettingsFilePath = "demo.cfg";
+                configuration.LogDirectory = "./";
+                configuration.FileNamePattern = "demo_{0}.log";
             });
+
+            builder.ConfigureSettingsService(configuration =>
+            {
+                configuration.SettingsFilePath = "demo.cfg";
+            });
+
 
             using (var application = builder.Build())
             {

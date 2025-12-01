@@ -35,7 +35,7 @@ namespace Quasar.Settings.Internals
     [Singleton]
     internal sealed class SettingsService : ISettingsService
     {
-        private const string DefaultSettingsFilePath = "settings.cfg";
+        private const string DefaultSettingsFilePath = "./settings.cfg";
 
 
         private readonly IFileSystemHelper fileSystemHelper;
@@ -67,14 +67,13 @@ namespace Quasar.Settings.Internals
         {
             this.fileSystemHelper = fileSystemHelper;
 
-            var settingsOptions = serviceProvider.GetService<SettingsOptions>();
             logger = loggerFactory.Create<SettingsService>();
 
-            settingsFilePath = settingsOptions?.SettingsFilePath ?? DefaultSettingsFilePath;
-            settingsFilePath = Path.Combine(environmentInformation.RootDirectory, settingsFilePath);
+            var settingsServiceConfiguration = serviceProvider.GetService<SettingsServiceConfiguration>();
+            settingsFilePath = GetSettingsFilePath(fileSystemHelper, environmentInformation, settingsServiceConfiguration);
 
             ScanAssemblyForSettingsInternal(GetType().Assembly);
-            var assembliesToScan = settingsOptions?.Assemblies ?? Array.Empty<Assembly>();
+            var assembliesToScan = settingsServiceConfiguration?.Assemblies ?? Array.Empty<Assembly>();
             foreach (var assembly in assembliesToScan)
             {
                 ScanAssemblyForSettingsInternal(assembly);
@@ -349,6 +348,28 @@ namespace Quasar.Settings.Internals
             }
 
             return settingsEntry;
+        }
+
+        private static string GetSettingsFilePath(
+            IFileSystemHelper fileSystemHelper,
+            IEnvironmentInformation environmentInformation,
+            SettingsServiceConfiguration settingsServiceConfiguration)
+        {
+            var settingsFilePath = settingsServiceConfiguration?.SettingsFilePath;
+            if (String.IsNullOrEmpty(settingsFilePath))
+            {
+                settingsFilePath = DefaultSettingsFilePath;
+            }
+
+            if (!Path.IsPathRooted(settingsFilePath))
+            {
+                settingsFilePath = Path.Combine(environmentInformation.BaseDirectory, settingsFilePath);
+            }
+
+            var settingsDirectory = Path.GetDirectoryName(settingsFilePath);
+            fileSystemHelper.EnsureDirectoryExists(settingsDirectory);
+
+            return settingsFilePath;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

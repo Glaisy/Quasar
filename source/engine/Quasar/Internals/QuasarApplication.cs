@@ -9,10 +9,16 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System;
+
+using Microsoft.Extensions.DependencyInjection;
+
+using Quasar.Settings;
 using Quasar.UI.Internals;
 
 using Space.Core;
 using Space.Core.DependencyInjection;
+using Space.Core.Diagnostics;
 
 namespace Quasar.Internals
 {
@@ -27,14 +33,23 @@ namespace Quasar.Internals
     {
         private readonly INativeMessageHandler nativeMessageHandler;
         private readonly INativeWindowFactory nativeWindowFactory;
+        private readonly ILoggerService loggerService;
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QuasarApplication" /> class.
         /// </summary>
-        /// <param name="platformContext">The platform context.</param>
-        public QuasarApplication(IPlatformContext platformContext)
+        /// <param name="serviceProvider">The service provider.</param>
+        public QuasarApplication(IServiceProvider serviceProvider)
         {
+            serviceProvider.InitializeStaticServices();
+
+            loggerService = serviceProvider.GetRequiredService<ILoggerService>();
+            loggerService.Start();
+
+            serviceProvider.GetRequiredService<ISettingsService>().Load();
+
+            var platformContext = serviceProvider.GetRequiredService<IPlatformContext>();
             nativeMessageHandler = platformContext.NativeMessageHandler;
             nativeWindowFactory = platformContext.NativeWindowFactory;
         }
@@ -42,7 +57,12 @@ namespace Quasar.Internals
         /// <inheritdoc/>
         protected override void Dispose(bool disposing)
         {
+            loggerService?.Stop();
         }
+
+
+        /// <inheritdoc/>
+        public IServiceProvider ServiceProvider { get; }
 
 
         /// <inheritdoc/>

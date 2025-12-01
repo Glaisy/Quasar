@@ -20,6 +20,7 @@ using Quasar.Settings;
 
 using Space.Core;
 using Space.Core.DependencyInjection;
+using Space.Core.Diagnostics;
 
 namespace Quasar
 {
@@ -66,23 +67,34 @@ namespace Quasar
         /// <returns>The application instance.</returns>
         public IQuasarApplication Build()
         {
-            serviceProvider.InitializeStaticServices();
-
-            serviceProvider.GetRequiredService<ISettingsService>().Load();
-
             return serviceProvider.GetRequiredService<QuasarApplication>();
         }
 
         /// <summary>
-        /// Configures the settings service options and scan the specified assemblies for settings types.
+        /// Configures the logger service.
         /// </summary>
         /// <param name="configureAction">The configure action.</param>
-        public QuasarApplicationBuilder ConfigureSettings(Action<SettingsOptions> configureAction)
+        public QuasarApplicationBuilder ConfigureLoggerService(Action<LoggerServiceConfiguration> configureAction)
         {
             ArgumentNullException.ThrowIfNull(configureAction, nameof(configureAction));
 
-            var settingsOptions = new SettingsOptions();
-            configureAction.Invoke(settingsOptions);
+            var loggerServiceConfiguration = new LoggerServiceConfiguration();
+            configureAction(loggerServiceConfiguration);
+            ServiceLoader.AddSingleton(loggerServiceConfiguration);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Configures the settings service.
+        /// </summary>
+        /// <param name="configureAction">The configure action.</param>
+        public QuasarApplicationBuilder ConfigureSettingsService(Action<SettingsServiceConfiguration> configureAction)
+        {
+            ArgumentNullException.ThrowIfNull(configureAction, nameof(configureAction));
+
+            var settingsOptions = new SettingsServiceConfiguration();
+            configureAction(settingsOptions);
             ServiceLoader.AddSingleton(settingsOptions);
             return this;
         }

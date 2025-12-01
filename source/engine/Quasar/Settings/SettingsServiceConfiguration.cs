@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="SettingsOptions.cs" company="Space Development">
+// <copyright file="SettingsServiceConfiguration.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -14,12 +14,12 @@ using System.Reflection;
 namespace Quasar.Settings
 {
     /// <summary>
-    /// Settings service related application builder options.
+    /// Settings service configuration object to provide customization in application build time.
     /// </summary>
-    public sealed class SettingsOptions
+    public sealed class SettingsServiceConfiguration
     {
         /// <summary>
-        /// Gets or sets the relative path for the settings file.
+        /// Gets or sets the absolute/relative path for the settings file.
         /// Defaults are used if not set.
         /// </summary>
         public string SettingsFilePath { get; set; }

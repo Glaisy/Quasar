@@ -20,6 +20,12 @@ namespace Quasar
     public interface IQuasarApplication : IDisposable
     {
         /// <summary>
+        /// Gets the service provider.
+        /// </summary>
+        IServiceProvider ServiceProvider { get; }
+
+
+        /// <summary>
         /// Runs the execution loop.
         /// </summary>
         void Run();
