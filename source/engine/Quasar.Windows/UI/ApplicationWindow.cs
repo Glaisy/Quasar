@@ -14,6 +14,8 @@ using System.Windows.Forms;
 
 using Quasar.Graphics;
 using Quasar.UI;
+using Quasar.Windows.Interop.Gdi32;
+using Quasar.Windows.Interop.User32;
 
 using Space.Core;
 using Space.Core.Utilities;
@@ -30,6 +32,8 @@ namespace Quasar.Windows.UI
         private System.Drawing.Point savedLocation;
         private System.Drawing.Size savedClientSize;
         private FormBorderStyle savedFormBorderStyle;
+        private IDisplayMode currentDisplayMode;
+        private IntPtr deviceContext;
 
 
         /// <summary>
@@ -69,13 +73,23 @@ namespace Quasar.Windows.UI
             ClientSize = size;
         }
 
+
         /// <inheritdoc/>
-        public OperatingSystemPlatform Platform => OperatingSystemPlatform.Windows;
+        protected override void Dispose(bool disposing)
+        {
+            if (deviceContext != IntPtr.Zero)
+            {
+                User32.ReleaseDC(Handle, deviceContext);
+                deviceContext = IntPtr.Zero;
+            }
+
+            base.Dispose(disposing);
+        }
 
 
         private bool fullscreen;
         /// <inheritdoc/>
-        public bool Fullscreen
+        public bool FullscreenMode
         {
             get => fullscreen;
             set
@@ -105,10 +119,11 @@ namespace Quasar.Windows.UI
             }
         }
 
-
-
         /// <inheritdoc/>
         INativeWindow INativeWindow.Parent => null;
+
+        /// <inheritdoc/>
+        public OperatingSystemPlatform Platform => OperatingSystemPlatform.Windows;
 
         /// <summary>
         /// Gets the size.
@@ -130,10 +145,73 @@ namespace Quasar.Windows.UI
 
 
         /// <inheritdoc/>
+        public IntPtr GetDeviceContext(IDisplayMode displayMode)
+        {
+            ArgumentNullException.ThrowIfNull(displayMode, nameof(displayMode));
+
+            if (deviceContext == IntPtr.Zero ||
+                currentDisplayMode.BitsPerPixel != displayMode.BitsPerPixel)
+            {
+                if (deviceContext != IntPtr.Zero)
+                {
+                    User32.ReleaseDC(Handle, deviceContext);
+                }
+
+                currentDisplayMode = displayMode;
+                deviceContext = CreateDeviceContext(displayMode);
+            }
+
+            return deviceContext;
+        }
+
+        /// <inheritdoc/>
+        public void SwapBuffers()
+        {
+            Gdi32.SwapBuffers(deviceContext);
+        }
+
+
+        /// <inheritdoc/>
         protected override void OnSizeChanged(EventArgs e)
         {
             Size = ClientSize;
             sizeChanged.Push(Size);
+        }
+
+
+        private IntPtr CreateDeviceContext(IDisplayMode displayMode)
+        {
+            // get window's device context
+            var deviceContext = User32.GetDC(Handle);
+
+            // setup a pixel format
+            var pixelFormatDescriptor = new PixelFormatDescriptor
+            {
+                Version = 1,
+                Flags = PixelFormatFlags.DrawToWindow | PixelFormatFlags.SupportsOpenGL | PixelFormatFlags.DoubleBuffer,
+                PixelType = PixelType.RGBA,
+                ColorBits = (byte)displayMode.BitsPerPixel,
+                DepthBits = 16,
+                StencilBits = 8,
+                LayerType = LayerType.Main
+            };
+
+            pixelFormatDescriptor.Init();
+
+            // match an appropriate pixel format
+            var pixelFormat = Gdi32.ChoosePixelFormat(deviceContext, ref pixelFormatDescriptor);
+            if (pixelFormat == 0)
+            {
+                throw new ApplicationException("Unable to create device context. Pixel format is not available.");
+            }
+
+            // set the pixel format
+            if (Gdi32.SetPixelFormat(deviceContext, pixelFormat, ref pixelFormatDescriptor) == 0)
+            {
+                throw new ApplicationException("Unable to create device context. Pixel format cannot be set.");
+            }
+
+            return deviceContext;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="IQuasarSettings.cs" company="Space Development">
+// <copyright file="IGraphicsSettings.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,19 +9,24 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using Space.Core.Diagnostics;
+using Quasar.Settings;
 
-namespace Quasar.Settings
+namespace Quasar.Graphics
 {
     /// <summary>
-    /// Represents the main settings file for the Quasar engine.
+    /// Represents the Quasar graphics settings.
     /// </summary>
     /// <seealso cref="ISettings" />
-    public interface IQuasarSettings : ISettings
+    public interface IGraphicsSettings : ISettings
     {
         /// <summary>
-        /// Gets the log level.
+        /// Gets a value indicating whether full screen mode is active.
         /// </summary>
-        LogLevel LogLevel { get; }
+        bool FullScreenMode { get; }
+
+        /// <summary>
+        /// Gets the graphics platform.
+        /// </summary>
+        GraphicsPlatform Platform { get; }
     }
 }

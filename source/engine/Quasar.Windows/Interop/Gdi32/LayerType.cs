@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="GraphicsPlatform.cs" company="Space Development">
+// <copyright file="LayerType.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,29 +9,26 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System.Text.Json.Serialization;
-
-namespace Quasar.Graphics
+namespace Quasar.Windows.Interop.Gdi32
 {
     /// <summary>
-    /// Graphics platform type enumeration.
+    /// Rendering layer type enumeration.
     /// </summary>
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum GraphicsPlatform
+    internal enum LayerType : byte
     {
         /// <summary>
-        /// The unknown graphics platform.
+        /// The main plane.
         /// </summary>
-        Unknown = 0,
+        Main = 0,
 
         /// <summary>
-        /// The OpenGL graphics platform.
+        /// The overlay plane.
         /// </summary>
-        OpenGL = 1,
+        Overlay = 1,
 
         /// <summary>
-        /// The Vulkan graphics platform.
+        /// The underlay plane.
         /// </summary>
-        Vulkan = 2
+        Underlay = 0xFF
     }
 }

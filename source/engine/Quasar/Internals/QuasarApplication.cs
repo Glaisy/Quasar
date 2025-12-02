@@ -10,9 +10,12 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Threading;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Quasar.Graphics;
+using Quasar.Graphics.Internals;
 using Quasar.Settings;
 using Quasar.UI;
 using Quasar.UI.Internals;
@@ -35,32 +38,20 @@ namespace Quasar.Internals
         private static readonly Range<float> ScreenRatioRange = new Range<float>(0.1f, 1.0f);
 
 
-        private readonly ISettingsService settingsService;
-        private readonly ILoggerService loggerService;
-        private readonly INativeMessageHandler nativeMessageHandler;
+        private ILoggerService loggerService;
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QuasarApplication" /> class.
         /// </summary>
         /// <param name="environmentInformation">The environment information.</param>
-        /// <param name="settingsService">The settings service.</param>
-        /// <param name="loggerService">The logger service.</param>
         /// <param name="nativeWindowFactory">The native window factory.</param>
-        /// <param name="nativeMessageHandler">The native message handler.</param>
         /// <param name="serviceProvider">The service provider.</param>
         public QuasarApplication(
             IEnvironmentInformation environmentInformation,
-            ISettingsService settingsService,
-            ILoggerService loggerService,
             INativeWindowFactory nativeWindowFactory,
-            INativeMessageHandler nativeMessageHandler,
             IServiceProvider serviceProvider)
         {
-            this.settingsService = settingsService;
-            this.loggerService = loggerService;
-            this.nativeMessageHandler = nativeMessageHandler;
-
             ServiceProvider = serviceProvider;
 
             ApplicationWindow = CreateApplicationWindow(nativeWindowFactory, environmentInformation);
@@ -83,16 +74,25 @@ namespace Quasar.Internals
         /// <inheritdoc/>
         public void Run()
         {
+            // initialize internal services
+            loggerService = ServiceProvider.GetRequiredService<ILoggerService>();
             loggerService.Start();
+
+            var settingsService = ServiceProvider.GetRequiredService<ISettingsService>();
             settingsService.Load();
 
-            var quasarSettings = settingsService.Get<IQuasarSettings>();
-            loggerService.LogLevel = quasarSettings.LogLevel;
+            // initialize graphics context
+            var graphicsSettings = settingsService.Get<IGraphicsSettings>();
+            InitializeGraphicsDeviceContext(graphicsSettings.Platform);
 
+            ApplicationWindow.FullscreenMode = graphicsSettings.FullScreenMode;
             ApplicationWindow.Show();
+
+            var nativeMessageHandler = ServiceProvider.GetRequiredService<INativeMessageHandler>();
             while (ApplicationWindow.Visible)
             {
                 nativeMessageHandler.ProcessMessages();
+                Thread.Sleep(20);
             }
         }
 
@@ -123,6 +123,17 @@ namespace Quasar.Internals
             }
 
             return nativeWindowFactory.CreateApplicationWindow(applicationWindowType, title, screenRatio);
+        }
+
+        private void InitializeGraphicsDeviceContext(GraphicsPlatform graphicsPlatform)
+        {
+            var graphicsDeviceContextFactory = ServiceProvider.GetRequiredService<IGraphicsDeviceContextFactory>();
+            var graphicsDeviceContext = graphicsDeviceContextFactory.Create(graphicsPlatform);
+
+            var serviceLoader = ServiceProvider.GetRequiredService<IServiceLoader>();
+            serviceLoader.AddSingleton(graphicsDeviceContext);
+
+            graphicsDeviceContext.Initialize(ApplicationWindow);
         }
     }
 }

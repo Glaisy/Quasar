@@ -22,9 +22,9 @@ namespace Quasar.UI
     public interface IApplicationWindow : INativeWindow
     {
         /// <summary>
-        /// Gets or sets a value indicating whether this window is in fullscreen mode.
+        /// Gets or sets a value indicating whether the fullscreen mode is active.
         /// </summary>
-        bool Fullscreen { get; set; }
+        bool FullscreenMode { get; set; }
 
         /// <summary>
         /// Gets or sets the title.

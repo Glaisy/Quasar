@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="GraphicsPlatform.cs" company="Space Development">
+// <copyright file="PixelType.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,29 +9,21 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System.Text.Json.Serialization;
-
-namespace Quasar.Graphics
+namespace Quasar.Windows.Interop.Gdi32
 {
     /// <summary>
-    /// Graphics platform type enumeration.
+    /// Pixel type enumeration.
     /// </summary>
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum GraphicsPlatform
+    internal enum PixelType : byte
     {
         /// <summary>
-        /// The unknown graphics platform.
+        /// The RBGA type.
         /// </summary>
-        Unknown = 0,
+        RGBA = 0,
 
         /// <summary>
-        /// The OpenGL graphics platform.
+        /// The color index type.
         /// </summary>
-        OpenGL = 1,
-
-        /// <summary>
-        /// The Vulkan graphics platform.
-        /// </summary>
-        Vulkan = 2
+        ColorIndex = 1
     }
 }

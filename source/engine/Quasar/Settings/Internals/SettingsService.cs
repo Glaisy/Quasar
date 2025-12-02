@@ -149,7 +149,7 @@ namespace Quasar.Settings.Internals
             }
             catch
             {
-                logger.Info($"Settings file is corrupt/not found '{settingsFilePath}'. Saving defaults.");
+                logger.Info($"Settings file is corrupted/not found '{settingsFilePath}'. Saving defaults.");
                 SetDefaultsInternal();
 
                 try

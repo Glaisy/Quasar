@@ -47,5 +47,18 @@ namespace Quasar.UI
         /// Gets a value indicating whether this window is visible.
         /// </summary>
         bool Visible { get; }
+
+
+        /// <summary>
+        /// Gets the device context for the specified display mode.
+        /// </summary>
+        /// <param name="displayMode">The display mode.</param>
+        /// <returns>The native handle for the device context.</returns>
+        internal IntPtr GetDeviceContext(IDisplayMode displayMode);
+
+        /// <summary>
+        /// Swaps the rendering buffers.
+        /// </summary>
+        internal void SwapBuffers();
     }
 }
