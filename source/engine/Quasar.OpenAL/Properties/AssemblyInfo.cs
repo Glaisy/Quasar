@@ -11,10 +11,8 @@
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.Versioning;
 
-[assembly: AssemblyTitle("Quasar - Windows")]
-[assembly: AssemblyDescription("Quasar 3D engine - Windows platform library")]
-[assembly: SupportedOSPlatform("windows")]
+[assembly: AssemblyTitle("Quasar - OpenAL")]
+[assembly: AssemblyDescription("Quasar 3D engine - OpenAL library")]
 
-[assembly: InternalsVisibleTo("Quasar.Windows.Tests")]
+[assembly: InternalsVisibleTo("Quasar.OpenAL.Tests")]

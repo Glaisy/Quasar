@@ -4,16 +4,12 @@
     <TargetFramework>net8.0-windows</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
-
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <ApplicationIcon>Demos.ico</ApplicationIcon>
-    <OutputType>WinExe</OutputType>
-    <StartupObject>DemoApplication.Program</StartupObject>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <OutDir>..\..\..\builds\DemoApplication</OutDir>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <UseWindowsForms>True</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,22 +29,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Contents\" />
-    <Folder Include="Properties\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\engine\Quasar.OpenAL\Quasar.OpenAL.csproj" />
-    <ProjectReference Include="..\..\engine\Quasar.OpenGL\Quasar.OpenGL.csproj" />
-    <ProjectReference Include="..\..\engine\Quasar.Windows\Quasar.Windows.csproj" />
-    <ProjectReference Include="..\..\engine\Quasar\Quasar.csproj" />
+    <ProjectReference Include="..\Quasar\Quasar.csproj" />
   </ItemGroup>
-
-    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-        <Exec Command="if not exist $(ProjectDir)$(OutDir)Contents mklink /d $(ProjectDir)$(OutDir)Contents $(ProjectDir)Contents" />
-    </Target>    
 </Project>

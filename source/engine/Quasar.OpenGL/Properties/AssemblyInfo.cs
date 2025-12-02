@@ -11,10 +11,8 @@
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.Versioning;
 
-[assembly: AssemblyTitle("Quasar - Windows")]
-[assembly: AssemblyDescription("Quasar 3D engine - Windows platform library")]
-[assembly: SupportedOSPlatform("windows")]
+[assembly: AssemblyTitle("Quasar - OpenGL")]
+[assembly: AssemblyDescription("Quasar 3D engine - OpenGL library")]
 
-[assembly: InternalsVisibleTo("Quasar.Windows.Tests")]
+[assembly: InternalsVisibleTo("Quasar.OpenGL.Tests")]
