@@ -13,12 +13,16 @@ using System.Windows.Forms;
 
 using Quasar.UI.Internals;
 
+using Space.Core.DependencyInjection;
+
 namespace Quasar.Windows.UI
 {
     /// <summary>
     /// Represents a native message processing component for UIs.
     /// </summary>
     /// <seealso cref="INativeMessageHandler" />
+    [Export(typeof(INativeMessageHandler))]
+    [Singleton]
     internal sealed class NativeMessageHandler : INativeMessageHandler
     {
         /// <inheritdoc/>

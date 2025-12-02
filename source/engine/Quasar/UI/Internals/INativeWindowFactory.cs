@@ -19,8 +19,16 @@ namespace Quasar.UI.Internals
         /// <summary>
         /// Creates the application's main window.
         /// </summary>
-        /// <returns>The created window instance.</returns>
-        IApplicationWindow CreateApplicationWindow();
+        /// <param name="applicationWindowType">Type of the application window.</param>
+        /// <param name="title">The title.</param>
+        /// <param name="screenRatio">The screen ratio.</param>
+        /// <returns>
+        /// The created window instance.
+        /// </returns>
+        IApplicationWindow CreateApplicationWindow(
+            ApplicationWindowType applicationWindowType,
+            string title,
+            float screenRatio);
 
         /// <summary>
         /// Creates a new child window.

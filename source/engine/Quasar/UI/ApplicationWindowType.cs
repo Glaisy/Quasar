@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="IPlatformContext.cs" company="Space Development">
+// <copyright file="ApplicationWindowType.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,23 +9,26 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using Quasar.UI.Internals;
-
-namespace Quasar.Internals
+namespace Quasar.UI
 {
     /// <summary>
-    /// Represents an operating system platform sepcific context object.
+    /// Application window type enumeration.
     /// </summary>
-    internal interface IPlatformContext
+    public enum ApplicationWindowType
     {
         /// <summary>
-        /// Gets the native message handler.
+        /// The default window type (has border, non-resizable).
         /// </summary>
-        INativeMessageHandler NativeMessageHandler { get; }
+        Default,
 
         /// <summary>
-        /// Gets the native window factory.
+        /// The resizable window type (has border, resizable).
         /// </summary>
-        INativeWindowFactory NativeWindowFactory { get; }
+        Resizable,
+
+        /// <summary>
+        /// The borderless window type (no border, non-resizable).
+        /// </summary>
+        Borderless
     }
 }

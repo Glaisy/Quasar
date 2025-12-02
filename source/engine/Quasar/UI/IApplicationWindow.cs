@@ -9,6 +9,10 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System;
+
+using Quasar.Graphics;
+
 namespace Quasar.UI
 {
     /// <summary>
@@ -17,5 +21,32 @@ namespace Quasar.UI
     /// <seealso cref="INativeWindow" />
     public interface IApplicationWindow : INativeWindow
     {
+        /// <summary>
+        /// Gets or sets a value indicating whether this window is in fullscreen mode.
+        /// </summary>
+        bool Fullscreen { get; set; }
+
+        /// <summary>
+        /// Gets or sets the title.
+        /// </summary>
+        string Title { get; set; }
+
+
+        /// <summary>
+        /// Gets the size changed observable event.
+        /// </summary>
+        IObservable<Size> SizeChanged { get; }
+
+
+        /// <summary>
+        /// Close the window.
+        /// </summary>
+        void Close();
+
+
+        /// <summary>
+        /// Shows the window.
+        /// </summary>
+        internal void Show();
     }
 }

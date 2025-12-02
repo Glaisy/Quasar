@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------
 
 using Quasar;
+using Quasar.UI;
 
 namespace DemoApplication
 {
@@ -36,6 +37,10 @@ namespace DemoApplication
                 configuration.SettingsFilePath = "demo.cfg";
             });
 
+            builder.ConfigureApplicationWindow(configuration =>
+            {
+                configuration.Type = ApplicationWindowType.Resizable;
+            });
 
             using (var application = builder.Build())
             {

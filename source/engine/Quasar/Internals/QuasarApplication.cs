@@ -14,6 +14,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 
 using Quasar.Settings;
+using Quasar.UI;
 using Quasar.UI.Internals;
 
 using Space.Core;
@@ -31,27 +32,38 @@ namespace Quasar.Internals
     [Singleton]
     internal sealed class QuasarApplication : DisposableBase, IQuasarApplication
     {
-        private readonly INativeMessageHandler nativeMessageHandler;
-        private readonly INativeWindowFactory nativeWindowFactory;
+        private static readonly Range<float> ScreenRatioRange = new Range<float>(0.1f, 1.0f);
+
+
+        private readonly ISettingsService settingsService;
         private readonly ILoggerService loggerService;
+        private readonly INativeMessageHandler nativeMessageHandler;
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QuasarApplication" /> class.
         /// </summary>
+        /// <param name="environmentInformation">The environment information.</param>
+        /// <param name="settingsService">The settings service.</param>
+        /// <param name="loggerService">The logger service.</param>
+        /// <param name="nativeWindowFactory">The native window factory.</param>
+        /// <param name="nativeMessageHandler">The native message handler.</param>
         /// <param name="serviceProvider">The service provider.</param>
-        public QuasarApplication(IServiceProvider serviceProvider)
+        public QuasarApplication(
+            IEnvironmentInformation environmentInformation,
+            ISettingsService settingsService,
+            ILoggerService loggerService,
+            INativeWindowFactory nativeWindowFactory,
+            INativeMessageHandler nativeMessageHandler,
+            IServiceProvider serviceProvider)
         {
-            serviceProvider.InitializeStaticServices();
+            this.settingsService = settingsService;
+            this.loggerService = loggerService;
+            this.nativeMessageHandler = nativeMessageHandler;
 
-            loggerService = serviceProvider.GetRequiredService<ILoggerService>();
-            loggerService.Start();
+            ServiceProvider = serviceProvider;
 
-            serviceProvider.GetRequiredService<ISettingsService>().Load();
-
-            var platformContext = serviceProvider.GetRequiredService<IPlatformContext>();
-            nativeMessageHandler = platformContext.NativeMessageHandler;
-            nativeWindowFactory = platformContext.NativeWindowFactory;
+            ApplicationWindow = CreateApplicationWindow(nativeWindowFactory, environmentInformation);
         }
 
         /// <inheritdoc/>
@@ -62,17 +74,55 @@ namespace Quasar.Internals
 
 
         /// <inheritdoc/>
+        public IApplicationWindow ApplicationWindow { get; }
+
+        /// <inheritdoc/>
         public IServiceProvider ServiceProvider { get; }
 
 
         /// <inheritdoc/>
         public void Run()
         {
-            var applicationWindow = nativeWindowFactory.CreateApplicationWindow();
-            while (applicationWindow.Visible)
+            loggerService.Start();
+            settingsService.Load();
+
+            var quasarSettings = settingsService.Get<IQuasarSettings>();
+            loggerService.LogLevel = quasarSettings.LogLevel;
+
+            ApplicationWindow.Show();
+            while (ApplicationWindow.Visible)
             {
                 nativeMessageHandler.ProcessMessages();
             }
+        }
+
+
+        private IApplicationWindow CreateApplicationWindow(
+            INativeWindowFactory nativeWindowFactory,
+            IEnvironmentInformation environmentInformation)
+        {
+            string title = null;
+            ApplicationWindowType applicationWindowType;
+            float screenRatio;
+            var applicationWindowConfiguration = ServiceProvider.GetService<ApplicationWindowConfiguration>();
+            if (applicationWindowConfiguration == null)
+            {
+                applicationWindowType = ApplicationWindowConfiguration.DefaultType;
+                screenRatio = ApplicationWindowConfiguration.DefaultScreenRatio;
+            }
+            else
+            {
+                applicationWindowType = applicationWindowConfiguration.Type;
+                screenRatio = ScreenRatioRange.Clamp(applicationWindowConfiguration.ScreenRatio);
+                title = applicationWindowConfiguration.Title;
+            }
+
+            if (String.IsNullOrEmpty(title))
+            {
+                title = environmentInformation.Title;
+            }
+
+            return nativeWindowFactory.CreateApplicationWindow(applicationWindowType, title, screenRatio);
         }
     }
 }

@@ -11,6 +11,8 @@
 
 using System;
 
+using Quasar.UI;
+
 namespace Quasar
 {
     /// <summary>
@@ -19,6 +21,11 @@ namespace Quasar
     /// <seealso cref="IDisposable" />
     public interface IQuasarApplication : IDisposable
     {
+        /// <summary>
+        /// Gets the application window.
+        /// </summary>
+        IApplicationWindow ApplicationWindow { get; }
+
         /// <summary>
         /// Gets the service provider.
         /// </summary>

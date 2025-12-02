@@ -10,9 +10,13 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Windows.Forms;
 
+using Quasar.Graphics;
 using Quasar.UI;
 using Quasar.UI.Internals;
+
+using Space.Core.DependencyInjection;
 
 namespace Quasar.Windows.UI
 {
@@ -20,13 +24,20 @@ namespace Quasar.Windows.UI
     /// Represents a native window factory component for UIs.
     /// </summary>
     /// <seealso cref="INativeWindowFactory" />
+    [Export(typeof(INativeWindowFactory))]
+    [Singleton]
     internal sealed class NativeWindowFactory : INativeWindowFactory
     {
         /// <inheritdoc/>
-        public IApplicationWindow CreateApplicationWindow()
+        public IApplicationWindow CreateApplicationWindow(
+            ApplicationWindowType applicationWindowType,
+            string title,
+            float screenRatio)
         {
-            var applicationWindow = new ApplicationWindow();
-            applicationWindow.Show();
+            var screenSize = Screen.PrimaryScreen.Bounds.Size;
+
+            var size = new Size((int)(screenSize.Width * screenRatio), (int)(screenSize.Height * screenRatio));
+            var applicationWindow = new ApplicationWindow(applicationWindowType, title, size);
             return applicationWindow;
         }
 

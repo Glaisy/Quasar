@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Quasar.Internals;
 using Quasar.Settings;
+using Quasar.UI;
 
 using Space.Core;
 using Space.Core.DependencyInjection;
@@ -67,7 +68,22 @@ namespace Quasar
         /// <returns>The application instance.</returns>
         public IQuasarApplication Build()
         {
+            serviceProvider.InitializeStaticServices();
+
             return serviceProvider.GetRequiredService<QuasarApplication>();
+        }
+
+        /// <summary>
+        /// Configures the application window.
+        /// </summary>
+        /// <param name="configureAction">The configure action.</param>
+        public QuasarApplicationBuilder ConfigureApplicationWindow(Action<ApplicationWindowConfiguration> configureAction)
+        {
+            var applicationWindowConfiguration = new ApplicationWindowConfiguration();
+            configureAction(applicationWindowConfiguration);
+            ServiceLoader.AddSingleton(applicationWindowConfiguration);
+
+            return this;
         }
 
         /// <summary>
