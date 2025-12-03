@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="GraphicsPlatform.cs" company="Space Development">
+// <copyright file="IAudioDeviceContext.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,29 +9,33 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System.Text.Json.Serialization;
+using System;
 
-namespace Quasar.Graphics
+namespace Quasar.Audio
 {
     /// <summary>
-    /// Graphics platform type enumeration.
+    /// Generic audio device context interface definition.
     /// </summary>
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum GraphicsPlatform
+    public interface IAudioDeviceContext
     {
         /// <summary>
-        /// The unknown graphics platform.
+        /// Gets the audio output device.
         /// </summary>
-        Unknown,
+        IAudioDevice OutputDevice { get; }
 
         /// <summary>
-        /// The OpenGL graphics platform.
+        /// Gets the audio platform.
         /// </summary>
-        OpenGL,
+        AudioPlatform Platform { get; }
 
         /// <summary>
-        /// The Vulkan graphics platform.
+        /// Gets the name of the audio platform.
         /// </summary>
-        Vulkan
+        string PlatformName { get; }
+
+        /// <summary>
+        /// Gets the audio platform version.
+        /// </summary>
+        Version Version { get; }
     }
 }

@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="IGraphicsDeviceContextFactory.cs" company="Space Development">
+// <copyright file="AudioPlatform.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,17 +9,24 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-namespace Quasar.Graphics.Internals
+using System.Text.Json.Serialization;
+
+namespace Quasar.Audio
 {
     /// <summary>
-    /// Represents the graphics device context factory component.
+    /// Audio platform type enumeration.
     /// </summary>
-    public interface IGraphicsDeviceContextFactory
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum AudioPlatform
     {
         /// <summary>
-        /// Creates the graphics context by the specified platform.
+        /// The unknown audio platform.
         /// </summary>
-        /// <param name="graphicsPlatform">The graphics platform.</param>
-        IGraphicsDeviceContext Create(GraphicsPlatform graphicsPlatform);
+        Unknown,
+
+        /// <summary>
+        /// The OpenAL audio platform.
+        /// </summary>
+        OpenAL
     }
 }

@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="IGraphicsDeviceContextFactory.cs" company="Space Development">
+// <copyright file="IAudioDeviceProvider.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,17 +9,23 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-namespace Quasar.Graphics.Internals
+using System.Collections.Generic;
+
+namespace Quasar.Audio
 {
     /// <summary>
-    /// Represents the graphics device context factory component.
+    /// Audio device provider.
     /// </summary>
-    public interface IGraphicsDeviceContextFactory
+    public interface IAudioDeviceProvider
     {
         /// <summary>
-        /// Creates the graphics context by the specified platform.
+        /// Gets all available output devices in the system.
         /// </summary>
-        /// <param name="graphicsPlatform">The graphics platform.</param>
-        IGraphicsDeviceContext Create(GraphicsPlatform graphicsPlatform);
+        IReadOnlyList<IAudioDevice> GetOutputDevices();
+
+        /// <summary>
+        /// Gets the default output device.
+        /// </summary>
+        IAudioDevice GetDefaultOutputDevice();
     }
 }
