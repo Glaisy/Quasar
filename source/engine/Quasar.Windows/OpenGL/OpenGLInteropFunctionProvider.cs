@@ -41,13 +41,7 @@ namespace Quasar.Windows.OpenGL
         }
 
 
-        /// <summary>
-        /// Gets the function delegate by the specified name.
-        /// </summary>
-        /// <typeparam name="T">The delegate type.</typeparam>
-        /// <returns>
-        /// The delegate instance.
-        /// </returns>
+        /// <inheritdoc/>
         public T GetFunction<T>()
             where T : Delegate
         {
@@ -82,7 +76,7 @@ namespace Quasar.Windows.OpenGL
 
 
         /// <summary>
-        /// Gets a proc address.
+        /// Gets a Wgl proc address.
         /// </summary>
         /// <param name="name">The name of the function.</param>
         /// <returns>The address of the function.</returns>
