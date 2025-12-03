@@ -14,7 +14,7 @@ namespace Quasar.Rendering.Pipeline
     /// <summary>
     /// Represents an abstract base class for rendering pipeline's processing stages.
     /// </summary>
-    public abstract class PhysicsPipelineStageBase
+    public abstract class RenderingPipelineStageBase
     {
         /// <summary>
         /// Execute event handler.

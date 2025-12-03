@@ -16,8 +16,8 @@ namespace Quasar.Rendering.Pipeline
     /// <summary>
     /// Rendering pipeline stage which swaps the forward and back buffers.
     /// </summary>
-    /// <seealso cref="PhysicsPipelineStageBase" />
-    internal sealed class FrameBufferSwapperStage : PhysicsPipelineStageBase
+    /// <seealso cref="RenderingPipelineStageBase" />
+    internal sealed class FrameBufferSwapperStage : RenderingPipelineStageBase
     {
         private readonly IApplicationWindow applicationWindow;
 
