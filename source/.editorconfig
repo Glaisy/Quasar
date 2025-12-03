@@ -1,4 +1,4 @@
-﻿[*.cs]
+[*.cs]
 
 # IDE0053: Use expression body for lambda expression
 csharp_style_expression_bodied_lambdas = false
