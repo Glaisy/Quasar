@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 // <copyright file="AudioPlatform.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
