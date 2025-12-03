@@ -18,3 +18,5 @@ using System.Runtime.Versioning;
 [assembly: SupportedOSPlatform("windows")]
 
 [assembly: InternalsVisibleTo("Quasar.Windows.Tests")]
+[assembly: InternalsVisibleTo("Quasar.OpenGL.Tests")]
+[assembly: InternalsVisibleTo("Quasar.OpenAL.Tests")]

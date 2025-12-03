@@ -24,5 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Quasar.OpenAL\Quasar.OpenAL.csproj" />
+    <ProjectReference Include="..\Quasar.Windows\Quasar.Windows.csproj" />
   </ItemGroup>
 </Project>

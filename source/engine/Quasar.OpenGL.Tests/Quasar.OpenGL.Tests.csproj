@@ -24,5 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Quasar.OpenGL\Quasar.OpenGL.csproj" />
+    <ProjectReference Include="..\Quasar.Windows\Quasar.Windows.csproj" />
   </ItemGroup>
 </Project>

@@ -18,3 +18,4 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Quasar.Windows")]
 [assembly: InternalsVisibleTo("Quasar.OpenGL")]
 [assembly: InternalsVisibleTo("Quasar.OpenAL")]
+[assembly: InternalsVisibleTo("Quasar.OpenGL.Tests")]
