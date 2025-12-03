@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="FrameBufferSwapperStage.cs" company="Space Development">
+// <copyright file="ClearFrameRenderingPipelineStage.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,33 +9,38 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using Quasar.Pipelines;
 using Quasar.UI;
+
+using Space.Core.DependencyInjection;
 
 namespace Quasar.Rendering.Pipeline
 {
     /// <summary>
-    /// Rendering pipeline stage which swaps the forward and back buffers.
+    /// Render pipeline's clear stage implementation.
     /// </summary>
     /// <seealso cref="RenderingPipelineStageBase" />
-    internal sealed class FrameBufferSwapperStage : RenderingPipelineStageBase
+    [Export(typeof(RenderingPipelineStageBase), nameof(ClearFrameRenderingPipelineStage))]
+    [ExecuteAfter(typeof(InitializeRenderingPipelineStage))]
+    public sealed class ClearFrameRenderingPipelineStage : RenderingPipelineStageBase
     {
         private readonly IApplicationWindow applicationWindow;
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FrameBufferSwapperStage"/> class.
+        /// Initializes a new instance of the <see cref="ClearFrameRenderingPipelineStage" /> class.
         /// </summary>
         /// <param name="applicationWindow">The application window.</param>
-        public FrameBufferSwapperStage(IApplicationWindow applicationWindow)
+        internal ClearFrameRenderingPipelineStage(IApplicationWindow applicationWindow)
         {
             this.applicationWindow = applicationWindow;
         }
 
 
         /// <inheritdoc/>
-        protected override void OnExecute()
+        protected override void OnExecute(IRenderingContext renderingContext)
         {
-            applicationWindow.SwapBuffers();
+            // TODO: implement rendering framebuffer size by the application window size
         }
     }
 }

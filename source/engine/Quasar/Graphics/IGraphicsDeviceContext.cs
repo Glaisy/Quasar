@@ -21,6 +21,11 @@ namespace Quasar.Graphics
     public interface IGraphicsDeviceContext
     {
         /// <summary>
+        /// Gets the command processor.
+        /// </summary>
+        IGraphicsCommandProcessor CommandProcessor { get; }
+
+        /// <summary>
         /// Gets the graphics device.
         /// </summary>
         IGraphicsDevice Device { get; }
@@ -34,7 +39,6 @@ namespace Quasar.Graphics
         /// Gets the graphics platform version.
         /// </summary>
         Version Version { get; }
-
 
         /// <summary>
         /// Initializes the context by the specified native window.

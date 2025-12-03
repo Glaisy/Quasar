@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="ICommandProcessor.cs" company="Space Development">
+// <copyright file="VSyncMode.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,12 +9,24 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System.Text.Json.Serialization;
+
 namespace Quasar.Graphics
 {
     /// <summary>
-    /// Represents a graphics command processor.
+    /// V-Sync mode enumeration.
     /// </summary>
-    public interface ICommandProcessor
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum VSyncMode
     {
+        /// <summary>
+        /// The V-Sync is turned off.
+        /// </summary>
+        Off,
+
+        /// <summary>
+        /// The V-Sync is turned on.
+        /// </summary>
+        On
     }
 }

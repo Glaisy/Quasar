@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="OpenGLGraphicsDeviceContext.cs" company="Space Development">
+// <copyright file="GLGraphicsDeviceContext.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -29,24 +29,33 @@ namespace Quasar.OpenGL.Graphics
     /// <seealso cref="IGraphicsDeviceContext" />
     [Export(typeof(IGraphicsDeviceContext), GraphicsPlatform.OpenGL)]
     [Singleton]
-    internal sealed class OpenGLGraphicsDeviceContext : IGraphicsDeviceContext
+    internal sealed class GLGraphicsDeviceContext : IGraphicsDeviceContext
     {
         private readonly IGraphicsOutputProvider graphicsOutputProvider;
         private readonly IInteropFunctionProvider interopFunctionProvider;
+        private readonly GLCommandProcessor graphicsCommandProcessor;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OpenGLGraphicsDeviceContext" /> class.
+        /// Initializes a new instance of the <see cref="GLGraphicsDeviceContext" /> class.
         /// </summary>
         /// <param name="graphicsOutputProvider">The graphics output provider.</param>
         /// <param name="interopFunctionProvider">The interop function provider.</param>
-        public OpenGLGraphicsDeviceContext(
+        /// <param name="graphicsCommandProcessor">The graphics command processor.</param>
+        public GLGraphicsDeviceContext(
             IGraphicsOutputProvider graphicsOutputProvider,
-            [FromKeyedServices(GraphicsPlatform.OpenGL)] IInteropFunctionProvider interopFunctionProvider)
+            [FromKeyedServices(GraphicsPlatform.OpenGL)] IInteropFunctionProvider interopFunctionProvider,
+            GLCommandProcessor graphicsCommandProcessor)
         {
             this.graphicsOutputProvider = graphicsOutputProvider;
             this.interopFunctionProvider = interopFunctionProvider;
+            this.graphicsCommandProcessor = graphicsCommandProcessor;
         }
 
+
+        /// <summary>
+        /// Gets the command processor.
+        /// </summary>
+        public IGraphicsCommandProcessor CommandProcessor { get; private set; }
 
         /// <inheritdoc/>
         public IGraphicsDevice Device { get; private set; }
@@ -72,6 +81,10 @@ namespace Quasar.OpenGL.Graphics
             var versionString = vendor.Substring(0, vendor.IndexOf(' '));
             Version = new Version(versionString);
             Device = new GraphicsDevice(deviceName, vendor);
+
+            // initialize internal components
+            graphicsCommandProcessor.Initialize();
+            CommandProcessor = graphicsCommandProcessor;
         }
     }
 }

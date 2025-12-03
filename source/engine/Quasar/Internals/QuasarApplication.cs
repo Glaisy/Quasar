@@ -16,6 +16,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
+using Quasar.Rendering;
+using Quasar.Rendering.Pipeline.Internals;
 using Quasar.Settings;
 using Quasar.UI;
 using Quasar.UI.Internals;
@@ -39,6 +41,7 @@ namespace Quasar.Internals
 
 
         private ILoggerService loggerService;
+        private RenderingPipeline renderingPipeline;
 
 
         /// <summary>
@@ -47,19 +50,23 @@ namespace Quasar.Internals
         /// <param name="environmentInformation">The environment information.</param>
         /// <param name="nativeWindowFactory">The native window factory.</param>
         /// <param name="serviceProvider">The service provider.</param>
+        /// <param name="serviceLoader">The service loader.</param>
         public QuasarApplication(
             IEnvironmentInformation environmentInformation,
             INativeWindowFactory nativeWindowFactory,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            IServiceLoader serviceLoader)
         {
             ServiceProvider = serviceProvider;
 
             ApplicationWindow = CreateApplicationWindow(nativeWindowFactory, environmentInformation);
+            serviceLoader.AddSingleton(ApplicationWindow);
         }
 
         /// <inheritdoc/>
         protected override void Dispose(bool disposing)
         {
+            renderingPipeline?.Shutdown();
             loggerService?.Stop();
         }
 
@@ -81,17 +88,19 @@ namespace Quasar.Internals
             var settingsService = ServiceProvider.GetRequiredService<ISettingsService>();
             settingsService.Load();
 
-            // initialize graphics context
-            var graphicsSettings = settingsService.Get<IGraphicsSettings>();
-            InitializeGraphicsDeviceContext(graphicsSettings.Platform);
+            // initialize graphics context and pipelines
+            var renderingSettings = settingsService.Get<IRenderingSettings>();
+            InitializeGraphicsDeviceContext(renderingSettings.Platform);
+            renderingPipeline = ServiceProvider.GetRequiredService<RenderingPipeline>();
+            renderingPipeline.Start();
 
-            ApplicationWindow.FullscreenMode = graphicsSettings.FullScreenMode;
+            // show application window and execute application loop
             ApplicationWindow.Show();
-
             var nativeMessageHandler = ServiceProvider.GetRequiredService<INativeMessageHandler>();
             while (ApplicationWindow.Visible)
             {
                 nativeMessageHandler.ProcessMessages();
+                renderingPipeline.Execute();
                 Thread.Sleep(20);
             }
         }

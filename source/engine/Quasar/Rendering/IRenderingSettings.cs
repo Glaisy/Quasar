@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="IGraphicsSettings.cs" company="Space Development">
+// <copyright file="IRenderingSettings.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,16 +9,22 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using Quasar.Graphics;
 using Quasar.Settings;
 
-namespace Quasar.Graphics
+namespace Quasar.Rendering
 {
     /// <summary>
-    /// Represents the Quasar graphics settings.
+    /// Represents the Quasar rendering settings.
     /// </summary>
     /// <seealso cref="ISettings" />
-    public interface IGraphicsSettings : ISettings
+    public interface IRenderingSettings : ISettings
     {
+        /// <summary>
+        /// Gets the display mode identifier.
+        /// </summary>
+        string DisplayMode { get; }
+
         /// <summary>
         /// Gets a value indicating whether full screen mode is active.
         /// </summary>
@@ -28,5 +34,10 @@ namespace Quasar.Graphics
         /// Gets the graphics platform.
         /// </summary>
         GraphicsPlatform Platform { get; }
+
+        /// <summary>
+        /// Gets the V-Sync mode.
+        /// </summary>
+        VSyncMode VSyncMode { get; }
     }
 }

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="GraphicsSettings.cs" company="Space Development">
+// <copyright file="RenderingSettings.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,27 +9,33 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using Quasar.Graphics;
 using Quasar.Settings;
 
-namespace Quasar.Graphics
+namespace Quasar.Rendering
 {
     /// <summary>
-    /// Quasar graphics settings implementation.
+    /// Quasar's rendering settings object implementation.
     /// </summary>
-    /// <seealso cref="SettingsBase{IGraphicsSettings}" />
-    /// <seealso cref="IGraphicsSettings" />
-    [Settings(typeof(IGraphicsSettings))]
-    public sealed class GraphicsSettings : SettingsBase<IGraphicsSettings>, IGraphicsSettings
+    /// <seealso cref="SettingsBase{IRenderingSettings}" />
+    /// <seealso cref="IRenderingSettings" />
+    [Settings(typeof(IRenderingSettings))]
+    public sealed class RenderingSettings : SettingsBase<IRenderingSettings>, IRenderingSettings
     {
         /// <summary>
         /// The defaults.
         /// </summary>
-        public static readonly IGraphicsSettings Defaults = new GraphicsSettings
+        public static readonly IRenderingSettings Defaults = new RenderingSettings
         {
             FullScreenMode = false,
             Platform = GraphicsPlatform.OpenGL
         };
 
+
+        /// <summary>
+        /// Gets or sets the display mode identifier.
+        /// </summary>
+        public string DisplayMode { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether full screen mode is active.
@@ -41,6 +47,11 @@ namespace Quasar.Graphics
         /// </summary>
         public GraphicsPlatform Platform { get; set; }
 
+        /// <summary>
+        /// Gets or sets the V-Sync mode.
+        /// </summary>
+        public VSyncMode VSyncMode { get; set; }
+
 
         /// <inheritdoc/>
         public override void SetDefaults()
@@ -48,11 +59,14 @@ namespace Quasar.Graphics
             Copy(Defaults);
         }
 
+
         /// <inheritdoc/>
-        protected override void CopyProperties(IGraphicsSettings source)
+        protected override void CopyProperties(IRenderingSettings source)
         {
+            DisplayMode = source.DisplayMode;
             FullScreenMode = source.FullScreenMode;
             Platform = source.Platform;
+            VSyncMode = source.VSyncMode;
         }
     }
 }

@@ -12,6 +12,8 @@
 using Quasar;
 using Quasar.UI;
 
+using Space.Core.Diagnostics;
+
 namespace DemoApplication
 {
     /// <summary>
@@ -30,6 +32,7 @@ namespace DemoApplication
             {
                 configuration.LogDirectory = "./logs";
                 configuration.FileNamePattern = "demo_{0}.log";
+                configuration.LogLevel = LogLevel.Info;
             });
 
             builder.ConfigureSettingsService(configuration =>
