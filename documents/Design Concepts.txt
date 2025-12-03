@@ -1,0 +1,33 @@
+I. 3D coordinate system (xyz)
+----------------------------------------------
+- Left handed orientation
+- Right: +X;
+- Up: +Y;
+- Forward: +Z
+
+II. Texture coordinate system (uv)
+----------------------------------------------
+- Vertical up orientation (bottom-left origo)
+- Right: +U
+- Up: +V
+
+III. Texture loading to memory
+----------------------------------------------
+- OpenGL: vertical flipping on load
+
+IV. UI coordinate system
+----------------------------------------------
+- Vertical up orientation (bottom-left origo)
+- Right: +X
+- Up: +Y
+
+V. Resource path/url format
+----------------------------------------------
+- Case sensistive
+- Extension separator: '.'
+- Path separator: '/'
+- Relative path prefix: './'
+- Parent directory prefix: '../'
+- Root path prefix: '/'
+
+
