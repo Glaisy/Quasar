@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="SizeJsonConverter.cs" company="Space Development">
+// <copyright file="PointJsonConverter.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -13,43 +13,43 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-using Quasar.IO.Serialization.Json;
+using Quasar.Graphics;
 
-namespace Quasar.Graphics.Json
+namespace Quasar.IO.Serialization.Json
 {
     /// <summary>
     /// JSON converter class for Size structure.
     /// </summary>
-    /// <seealso cref="VectorJsonConverterBase{Size}" />
-    public sealed class SizeJsonConverter : VectorJsonConverterBase<Size>
+    /// <seealso cref="VectorJsonConverterBase{Point}" />
+    public sealed class PointJsonConverter : VectorJsonConverterBase<Point>
     {
         /// <inheritdoc/>
-        protected override Size Deserialize(IReadOnlyList<string> components)
+        protected override Point Deserialize(IReadOnlyList<string> components)
         {
             try
             {
                 switch (components.Count)
                 {
                     case 1:
-                        return new Size(Int32.Parse(components[0].Trim(), CultureInfo.InvariantCulture));
+                        return new Point(Int32.Parse(components[0].Trim(), CultureInfo.InvariantCulture));
                     case 2:
-                        return new Size(
+                        return new Point(
                             Int32.Parse(components[0].Trim(), CultureInfo.InvariantCulture),
                             Int32.Parse(components[1].Trim(), CultureInfo.InvariantCulture));
                     default:
-                        return Size.Empty;
+                        return Point.Empty;
                 }
             }
             catch
             {
-                return Size.Empty;
+                return Point.Empty;
             }
         }
 
         /// <inheritdoc/>
-        protected override string Serialize(in Size value)
+        protected override string Serialize(in Point value)
         {
-            return $"{value.Width.ToString(CultureInfo.InvariantCulture)}, {value.Height.ToString(CultureInfo.InvariantCulture)}";
+            return $"{value.X.ToString(CultureInfo.InvariantCulture)}, {value.Y.ToString(CultureInfo.InvariantCulture)}";
         }
     }
 }

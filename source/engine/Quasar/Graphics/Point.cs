@@ -13,7 +13,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
 
-using Quasar.Graphics.Json;
+using Quasar.IO.Serialization.Json;
 
 namespace Quasar.Graphics
 {
