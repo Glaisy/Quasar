@@ -72,7 +72,7 @@ namespace Quasar.IO.Serialization.Json
         private static IStringOperationContext stringOperationContext;
         /// <summary>
         /// Gets the string operation context.
-        /// </summary>/
+        /// </summary>
         protected IStringOperationContext StringOperationContext
         {
             get

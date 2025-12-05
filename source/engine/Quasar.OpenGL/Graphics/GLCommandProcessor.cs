@@ -23,45 +23,26 @@ namespace Quasar.OpenGL.Graphics
     [Export]
     internal sealed class GLCommandProcessor : IGraphicsCommandProcessor
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GLCommandProcessor"/> class.
-        /// </summary>
-        public GLCommandProcessor()
-        {
-        }
-
-
-        /// <summary>
-        /// Checks if there is any graphics errors.
-        /// </summary>
+        /// <inheritdoc/>
         public void CheckErrors()
         {
             GL.CheckErrors();
         }
 
-        /// <summary>
-        /// Resets the state of the processsor.
-        /// </summary>
+        /// <inheritdoc/>
         public void ResetState()
         {
             GL.ClearColor(1, 0, 0, 1);
             GL.Clear(BufferClearMask.ColorBuffer | BufferClearMask.DepthBuffer);
         }
 
-        /// <summary>
-        /// Sets the viewport.
-        /// </summary>
-        /// <param name="position">The position of the lower left corner.</param>
-        /// <param name="size">The size.</param>
+        /// <inheritdoc/>
         public void SetViewport(in Point position, in Size size)
         {
             GL.Viewport(position.X, position.Y, size.Width, size.Height);
         }
 
-        /// <summary>
-        /// Sets the V-Sync mode.
-        /// </summary>
-        /// <param name="mode">The V-Sync mode.</param>
+        /// <inheritdoc/>
         public void SetVSyncMode(VSyncMode mode)
         {
             switch (mode)

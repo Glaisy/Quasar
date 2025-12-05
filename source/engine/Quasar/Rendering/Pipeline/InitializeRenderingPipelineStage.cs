@@ -9,6 +9,9 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System;
+
+using Quasar.Graphics;
 using Quasar.UI;
 
 using Space.Core.DependencyInjection;
@@ -23,22 +26,20 @@ namespace Quasar.Rendering.Pipeline
     public sealed class InitializeRenderingPipelineStage : RenderingPipelineStageBase
     {
         private readonly IApplicationWindow applicationWindow;
+        private readonly IServiceProvider serviceProvider;
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InitializeRenderingPipelineStage" /> class.
         /// </summary>
         /// <param name="applicationWindow">The application window.</param>
-        internal InitializeRenderingPipelineStage(IApplicationWindow applicationWindow)
+        /// <param name="serviceProvider">The service provider.</param>
+        internal InitializeRenderingPipelineStage(
+            IApplicationWindow applicationWindow,
+            IServiceProvider serviceProvider)
         {
             this.applicationWindow = applicationWindow;
-        }
-
-
-        /// <inheritdoc/>
-        protected override void OnExecute(IRenderingContext renderingContext)
-        {
-            renderingContext.CommandProcessor.ResetState();
+            this.serviceProvider = serviceProvider;
         }
 
 
@@ -46,6 +47,19 @@ namespace Quasar.Rendering.Pipeline
         protected override void OnApplySettings(IRenderingSettings settings)
         {
             applicationWindow.FullscreenMode = settings.FullScreenMode;
+        }
+
+        /// <inheritdoc/>
+        protected override void OnExecute(IRenderingContext renderingContext)
+        {
+            renderingContext.CommandProcessor.ResetState();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnStart()
+        {
+            // initialize static services for graphics/rendering classes
+            GraphicsResourceBase.InitializeServices(serviceProvider);
         }
     }
 }

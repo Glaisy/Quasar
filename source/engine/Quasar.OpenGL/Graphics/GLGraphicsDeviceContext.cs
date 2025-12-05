@@ -52,9 +52,7 @@ namespace Quasar.OpenGL.Graphics
         }
 
 
-        /// <summary>
-        /// Gets the command processor.
-        /// </summary>
+        /// <inheritdoc/>
         public IGraphicsCommandProcessor CommandProcessor { get; private set; }
 
         /// <inheritdoc/>
