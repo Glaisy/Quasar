@@ -49,15 +49,13 @@ namespace Quasar.OpenGL.Internals.Graphics
         /// <inheritdoc/>
         protected override void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
-
-            if (handle == 0)
+            if (handle != 0)
             {
-                return;
+                GL.DeleteBuffer(handle);
+                handle = 0;
             }
 
-            GL.DeleteBuffer(handle);
-            handle = 0;
+            base.Dispose(disposing);
         }
 
 
