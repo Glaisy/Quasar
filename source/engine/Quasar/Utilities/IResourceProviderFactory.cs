@@ -29,6 +29,6 @@ namespace Quasar.Core.IO
         /// Creates a file resource provider by the specified base path.
         /// </summary>
         /// <param name="basePath">The base path.</param>
-        IResourceProvider CreateFileResourceProvider(string basePath);
+        IResourceProvider Create(string basePath);
     }
 }
