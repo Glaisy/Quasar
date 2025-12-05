@@ -24,6 +24,11 @@ namespace Quasar.Graphics
     public interface IMesh : IGraphicsResource, IIdentifierProvider<string>, IDisposable
     {
         /// <summary>
+        /// Gets or sets the bounding box.
+        /// </summary>
+        BoundingBox BoundingBox { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether the index buffer is used or not.
         /// </summary>
         bool IsIndexed { get; }

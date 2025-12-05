@@ -49,10 +49,14 @@ namespace Quasar.Graphics.Internals
             PrimitiveType = PrimitiveType.Triangle;
             VertexLayout = null;
             IsIndexed = false;
+            BoundingBox = default;
 
             Id = null;
         }
 
+
+        /// <inheritdoc/>
+        public BoundingBox BoundingBox { get; set; }
 
         /// <inheritdoc/>
         public string Id { get; private set; }
