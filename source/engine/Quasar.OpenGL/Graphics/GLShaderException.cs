@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="OpenGLShaderException.cs" company="Space Development">
+// <copyright file="GLShaderException.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -14,25 +14,25 @@ namespace Quasar.OpenGL.Graphics
     /// <summary>
     /// OpenGL shader exception.
     /// </summary>
-    /// <seealso cref="OpenGLException" />
-    internal sealed class OpenGLShaderException : OpenGLException
+    /// <seealso cref="GLException" />
+    internal sealed class GLShaderException : GLException
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="OpenGLShaderException" /> class.
+        /// Initializes a new instance of the <see cref="GLShaderException" /> class.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="shaderType">Type of the shader.</param>
         /// <param name="errorMessage">The error message.</param>
-        public OpenGLShaderException(string id, Api.ShaderType shaderType, string errorMessage)
+        public GLShaderException(string id, Api.ShaderType shaderType, string errorMessage)
             : base($"Unable to compile '{id}' {shaderType}: '{errorMessage}'. Skipped.")
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OpenGLShaderException" /> class.
+        /// Initializes a new instance of the <see cref="GLShaderException" /> class.
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
-        public OpenGLShaderException(string message)
+        public GLShaderException(string message)
             : base(message)
         {
         }

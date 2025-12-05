@@ -16,7 +16,7 @@ using Quasar.Graphics.Internals;
 using Quasar.OpenGL.Api;
 using Quasar.OpenGL.Extensions;
 
-namespace Quasar.OpenGL.Internals.Graphics
+namespace Quasar.OpenGL.Graphics
 {
     /// <summary>
     /// Abstract base class for OpenGL graphics buffer implementations.

@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 // <copyright file="GLIndexBuffer.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
@@ -11,7 +11,7 @@
 
 using Quasar.Graphics;
 
-namespace Quasar.OpenGL.Internals.Graphics
+namespace Quasar.OpenGL.Graphics
 {
     /// <summary>
     /// OpenGL index buffer implementation.

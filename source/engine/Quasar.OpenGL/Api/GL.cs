@@ -111,7 +111,7 @@ namespace Quasar.OpenGL.Api
             var errorCode = GetError();
             if (errorCode != 0)
             {
-                throw new OpenGLException($"OpenGL error occured: {errorCode}");
+                throw new GLException($"OpenGL error occured: {errorCode}");
             }
         }
 
@@ -133,13 +133,13 @@ namespace Quasar.OpenGL.Api
             var renderContext = createContext(deviceContext);
             if (renderContext == IntPtr.Zero)
             {
-                throw new OpenGLException("Unable to initialize render context");
+                throw new GLException("Unable to initialize render context");
             }
 
             var success = makeCurrent(deviceContext, renderContext);
             if (!success)
             {
-                throw new OpenGLException("Unable to set current render context");
+                throw new GLException("Unable to set current render context");
             }
 
             // initialize rest of the OpenGL functions

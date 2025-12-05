@@ -240,7 +240,7 @@ namespace Quasar.OpenGL.Graphics.Factories
                 if (GL.GetShaderParameter(handle, ShaderParameter.CompileStatus) == 0)
                 {
                     var errorMessage = GL.GetShaderInformationLog(handle);
-                    throw new OpenGLShaderException(id, shaderType, errorMessage);
+                    throw new GLShaderException(id, shaderType, errorMessage);
                 }
             }
             catch
@@ -356,7 +356,7 @@ namespace Quasar.OpenGL.Graphics.Factories
                     // resolve include
                     if (!includes.TryGetValue(includeName, out var resolvedInclude))
                     {
-                        throw new OpenGLShaderException($"Unable to resolve include '{includeName}' for '{shaderName}' shader.");
+                        throw new GLShaderException($"Unable to resolve include '{includeName}' for '{shaderName}' shader.");
                     }
 
                     sb.Append(resolvedInclude);

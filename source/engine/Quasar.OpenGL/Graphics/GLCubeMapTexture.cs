@@ -17,7 +17,7 @@ using Quasar.OpenGL.Extensions;
 using Space.Core;
 using Space.Core.Mathematics;
 
-namespace Quasar.OpenGL.Internals.Graphics
+namespace Quasar.OpenGL.Graphics
 {
     /// <summary>
     /// OpenGL cube map texture implementation.

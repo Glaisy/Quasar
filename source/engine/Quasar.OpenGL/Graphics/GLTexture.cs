@@ -13,7 +13,7 @@ using Quasar.Graphics;
 using Quasar.Graphics.Internals;
 using Quasar.OpenGL.Api;
 
-namespace Quasar.OpenGL.Internals.Graphics
+namespace Quasar.OpenGL.Graphics
 {
     /// <summary>
     /// OpenGL 2D texture implementation.

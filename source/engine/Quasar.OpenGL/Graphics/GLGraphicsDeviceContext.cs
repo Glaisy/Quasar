@@ -96,6 +96,7 @@ namespace Quasar.OpenGL.Graphics
             AddOpenGLServiceImplementation<IShaderFactory>();
             AddOpenGLServiceImplementation<ITextureFactory>();
             AddOpenGLServiceImplementation<ICubeMapTextureFactory>();
+            AddOpenGLServiceImplementation<IMeshFactory>();
         }
 
         private void AddOpenGLServiceImplementation<T>()

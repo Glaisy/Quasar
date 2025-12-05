@@ -18,6 +18,7 @@ using Quasar.Graphics.Internals;
 using Quasar.Graphics.Internals.Factories;
 using Quasar.OpenGL.Api;
 using Quasar.OpenGL.Extensions;
+using Quasar.OpenGL.Graphics;
 
 using Space.Core.DependencyInjection;
 

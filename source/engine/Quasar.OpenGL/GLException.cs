@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="OpenGLException.cs" company="Space Development">
+// <copyright file="GLException.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -17,14 +17,14 @@ namespace Quasar.OpenGL
     /// OpenGL exception type.
     /// </summary>
     /// <seealso cref="Exception" />
-    public class OpenGLException : Exception
+    public class GLException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="OpenGLException"/> class.
+        /// Initializes a new instance of the <see cref="GLException"/> class.
         /// </summary>
         /// <param name="message">The error message that explains the reason for the exception.</param>
         /// <param name="innerException">The exception that is the cause of the current exception, or a null reference (<see langword="Nothing" /> in Visual Basic) if no inner exception is specified.</param>
-        public OpenGLException(string message, Exception innerException = null)
+        public GLException(string message, Exception innerException = null)
             : base(message, innerException)
         {
         }
