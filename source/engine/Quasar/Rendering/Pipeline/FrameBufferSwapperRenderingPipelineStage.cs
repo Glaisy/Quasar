@@ -36,7 +36,7 @@ namespace Quasar.Rendering.Pipeline
 
 
         /// <inheritdoc/>
-        protected override void OnExecute(IRenderingContext renderingContext)
+        protected override void OnExecute()
         {
             applicationWindow.SwapBuffers();
         }

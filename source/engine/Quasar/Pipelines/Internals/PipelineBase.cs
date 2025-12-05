@@ -28,16 +28,20 @@ namespace Quasar.Pipelines.Internals
     /// Represents an abstract base class for engine pipelines.
     /// </summary>
     /// <typeparam name="TStage">The pipeline stage type.</typeparam>
-    internal abstract class PipelineBase<TStage>
-        where TStage : PipelineStageBase
+    /// <typeparam name="TContext">The pipeline context type.</typeparam>
+    internal abstract class PipelineBase<TStage, TContext>
+        where TStage : PipelineStageBase<TContext>
     {
+        private readonly IServiceProvider serviceProvider;
+
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="PipelineBase{TStage}" /> class.
+        /// Initializes a new instance of the <see cref="PipelineBase{TStage,TContext}" /> class.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
         protected PipelineBase(IServiceProvider serviceProvider)
         {
-            ServiceProvider = serviceProvider;
+            this.serviceProvider = serviceProvider;
 
             Name = GetType().Name;
 
@@ -107,14 +111,14 @@ namespace Quasar.Pipelines.Internals
 
 
         /// <summary>
+        /// Gets the pipeline's context.
+        /// </summary>
+        protected abstract TContext Context { get; }
+
+        /// <summary>
         /// Gets the logger.
         /// </summary>
         protected ILogger Logger { get; }
-
-        /// <summary>
-        /// Gets the service provider.
-        /// </summary>
-        protected IServiceProvider ServiceProvider { get; }
 
         /// <summary>
         /// Gets the settings service.
@@ -130,19 +134,24 @@ namespace Quasar.Pipelines.Internals
         /// <summary>
         /// Execute event handler.
         /// </summary>
-        protected abstract void OnExecute();
+        protected virtual void OnExecute()
+        {
+            foreach (var stage in Stages)
+            {
+                stage.Execute();
+            }
+        }
 
         /// <summary>
         /// Start event handler.
         /// </summary>
         protected virtual void OnStart()
         {
-            var unorderedStages = ServiceProvider.GetServices<TStage>();
-            Stages = BuildOrderedStageList(unorderedStages);
+            InitializeStages();
 
             foreach (var stage in Stages)
             {
-                stage.Start(ServiceProvider);
+                stage.Start(serviceProvider, Context);
             }
         }
 
@@ -213,6 +222,12 @@ namespace Quasar.Pipelines.Internals
             }
 
             return dependencyNode;
+        }
+
+        private void InitializeStages()
+        {
+            var unorderedStages = serviceProvider.GetServices<TStage>();
+            Stages = BuildOrderedStageList(unorderedStages);
         }
     }
 }

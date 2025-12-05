@@ -9,6 +9,7 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using Quasar.Graphics;
 using Quasar.UI;
 
 using Space.Core.DependencyInjection;
@@ -42,9 +43,27 @@ namespace Quasar.Rendering.Pipeline
         }
 
         /// <inheritdoc/>
-        protected override void OnExecute(IRenderingContext renderingContext)
+        protected override void OnExecute()
         {
-            renderingContext.CommandProcessor.ResetState();
+            Context.CommandProcessor.ResetState();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnStart()
+        {
+            // initialize internal graphics components
+            GraphicsResourceBase.InitializeServices(ServiceProvider);
+            ////Font.InitializeDependecies(resolver);
+
+            ////// load built-in resources
+            ////fontFamilyRepository.LoadBuiltInFontFamilies();
+            ////shaderRepository.LoadBuiltInShaders();
+            ////textureRepository.LoadBuiltInTextures();
+            ////cubeMapTextureRepository.LoadBuiltInCubeMapTextures();
+
+            ////// initialize internal rendering components
+            ////RenderObject.InitializeDependencies(resolver);
+            ////Material.InitializeDependencies(resolver);
         }
     }
 }

@@ -9,14 +9,12 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System.Linq;
-
-using Microsoft.Extensions.DependencyInjection;
+using System;
 
 using Quasar.Graphics;
-using Quasar.Graphics.Internals;
-using Quasar.Graphics.Internals.Factories;
 using Quasar.Pipelines;
+using Quasar.UI;
+using Quasar.Utilities;
 
 using Space.Core.DependencyInjection;
 
@@ -30,37 +28,51 @@ namespace Quasar.Rendering.Pipeline
     [ExecuteAfter(typeof(InitializeRenderingPipelineStage))]
     public sealed class ClearFrameRenderingPipelineStage : RenderingPipelineStageBase
     {
-        /// <inheritdoc/>
-        protected override void OnExecute(IRenderingContext renderingContext)
-        {
-            // TODO: implement rendering framebuffer size by the application window size
-            shader.Activate();
-            renderingContext.CommandProcessor.DrawMesh(mesh);
-            shader.Deactivate();
-        }
+        private readonly IApplicationWindow applicationWindow;
+        private readonly IRenderingContext renderingContext;
+        private readonly ActionBasedObserver<Size> applicationWindowSizeChangedObserver;
+        private IDisposable applicationWindowSizeChangedSubscription;
+
 
         /// <summary>
-        /// Start event handler.
+        /// Initializes a new instance of the <see cref="ClearFrameRenderingPipelineStage" /> class.
         /// </summary>
-        protected override void OnStart()
+        /// <param name="applicationWindow">The application window.</param>
+        /// <param name="renderingContext">The rendering context.</param>
+        public ClearFrameRenderingPipelineStage(
+            IApplicationWindow applicationWindow,
+            IRenderingContext renderingContext)
         {
-            base.OnStart();
+            this.applicationWindow = applicationWindow;
+            this.renderingContext = renderingContext;
 
-            shader = ServiceProvider.GetRequiredService<IShaderFactory>().LoadBuiltInShaders().FirstOrDefault();
-
-            var meshFactory = ServiceProvider.GetRequiredService<IMeshFactory>();
-            var vertices = new[]
-            {
-                new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f, 1), Color = Color.Red },
-                new VertexPositionColor { Position = new Vector3(0.0f, 0.5f, 1), Color = Color.Green },
-                new VertexPositionColor { Position = new Vector3(0.5f, -0.5f, 1), Color = Color.Blue }
-            };
-
-            mesh = meshFactory.Create(PrimitiveType.Triangle, VertexPositionColor.Layout, false, "test");
-            mesh.VertexBuffer.SetData(vertices);
+            applicationWindowSizeChangedObserver = new ActionBasedObserver<Size>(OnApplicationWindowSizeChanged);
         }
 
-        private IMesh mesh;
-        private ShaderBase shader;
+
+        /// <inheritdoc/>
+        protected override void OnExecute()
+        {
+        }
+
+        /// <inheritdoc/>
+        protected override void OnStart()
+        {
+            applicationWindowSizeChangedSubscription =
+                applicationWindow.SizeChanged.Subscribe(applicationWindowSizeChangedObserver);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnShutdown()
+        {
+            applicationWindowSizeChangedSubscription?.Dispose();
+            applicationWindowSizeChangedSubscription = null;
+        }
+
+
+        private void OnApplicationWindowSizeChanged(Size size)
+        {
+            renderingContext.CommandProcessor.SetViewport(Point.Empty, size);
+        }
     }
 }

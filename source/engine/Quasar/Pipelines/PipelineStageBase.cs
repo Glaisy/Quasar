@@ -17,16 +17,29 @@ namespace Quasar.Pipelines
     /// <summary>
     /// Represents an abstract base class for Quasar pipeline's processing stages.
     /// </summary>
-    public abstract class PipelineStageBase
+    /// <typeparam name="TContext">The pipeline context type.</typeparam>
+    public abstract class PipelineStageBase<TContext>
     {
+        /// <summary>
+        /// Executes the pipeline stage.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void Execute()
+        {
+            OnExecute();
+        }
+
         /// <summary>
         /// Starts the pipeline stage.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
+        /// <param name="context">The pipeline context.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void Start(IServiceProvider serviceProvider)
+        internal void Start(IServiceProvider serviceProvider, TContext context)
         {
             ServiceProvider = serviceProvider;
+            Context = context;
+
             OnStart();
         }
 
@@ -39,10 +52,22 @@ namespace Quasar.Pipelines
             OnShutdown();
         }
 
+
+        /// <summary>
+        /// Gets the pipeline context.
+        /// </summary>
+        protected TContext Context { get; private set; }
+
         /// <summary>
         /// Gets the service provider.
         /// </summary>
         protected IServiceProvider ServiceProvider { get; private set; }
+
+
+        /// <summary>
+        /// Execute event handler.
+        /// </summary>
+        protected abstract void OnExecute();
 
         /// <summary>
         /// Start event handler.

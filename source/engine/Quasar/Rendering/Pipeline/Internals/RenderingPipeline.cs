@@ -23,14 +23,13 @@ namespace Quasar.Rendering.Pipeline.Internals
     /// <summary>
     /// This render pipeline main class provides entry point for all rendering operations.
     /// </summary>
-    /// <seealso cref="PipelineBase{RenderPipelineStageBase}" />
+    /// <seealso cref="PipelineBase{RenderPipelineStageBase, IRenderingContext}" />
     [Export]
     [Singleton]
-    internal sealed class RenderingPipeline : PipelineBase<RenderingPipelineStageBase>
+    internal sealed class RenderingPipeline : PipelineBase<RenderingPipelineStageBase, IRenderingContext>
     {
         private readonly IApplicationWindow applicationWindow;
         private readonly IGraphicsDeviceContextFactory graphicsDeviceContextFactory;
-        private readonly IRenderingContext renderingContext;
         private readonly IServiceLoader serviceLoader;
         private readonly ActionBasedObserver<IRenderingSettings> settingsObserver;
         private IDisposable settingsSubscription;
@@ -54,21 +53,17 @@ namespace Quasar.Rendering.Pipeline.Internals
         {
             this.applicationWindow = applicationWindow;
             this.graphicsDeviceContextFactory = graphicsDeviceContextFactory;
-            this.renderingContext = renderingContext;
             this.serviceLoader = serviceLoader;
+
+            Context = renderingContext;
 
             settingsObserver = new ActionBasedObserver<IRenderingSettings>(OnSettingsChanged);
         }
 
 
         /// <inheritdoc/>
-        protected override void OnExecute()
-        {
-            foreach (var stage in Stages)
-            {
-                stage.Execute(renderingContext);
-            }
-        }
+        protected override IRenderingContext Context { get; }
+
 
         /// <inheritdoc/>
         protected override void OnStart()
@@ -100,7 +95,7 @@ namespace Quasar.Rendering.Pipeline.Internals
             serviceLoader.AddSingleton(graphicsDeviceContext);
 
             graphicsDeviceContext.Initialize(applicationWindow);
-            renderingContext.Initialize(graphicsDeviceContext);
+            Context.Initialize(graphicsDeviceContext);
         }
 
         private void OnSettingsChanged(IRenderingSettings renderingSettings)
