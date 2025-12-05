@@ -9,6 +9,12 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System.Linq;
+
+using Microsoft.Extensions.DependencyInjection;
+
+using Quasar.Graphics;
+using Quasar.Graphics.Internals;
 using Quasar.Graphics.Internals.Factories;
 using Quasar.Pipelines;
 
@@ -24,22 +30,13 @@ namespace Quasar.Rendering.Pipeline
     [ExecuteAfter(typeof(InitializeRenderingPipelineStage))]
     public sealed class ClearFrameRenderingPipelineStage : RenderingPipelineStageBase
     {
-        private readonly IShaderFactory shaderFactory;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ClearFrameRenderingPipelineStage"/> class.
-        /// </summary>
-        /// <param name="shaderFactory">The shader factory.</param>
-        internal ClearFrameRenderingPipelineStage(IShaderFactory shaderFactory)
-        {
-            this.shaderFactory = shaderFactory;
-        }
-
-
         /// <inheritdoc/>
         protected override void OnExecute(IRenderingContext renderingContext)
         {
             // TODO: implement rendering framebuffer size by the application window size
+            shader.Activate();
+            renderingContext.CommandProcessor.DrawMesh(mesh);
+            shader.Deactivate();
         }
 
         /// <summary>
@@ -49,7 +46,21 @@ namespace Quasar.Rendering.Pipeline
         {
             base.OnStart();
 
-            var shaders = shaderFactory.LoadBuiltInShaders();
+            shader = ServiceProvider.GetRequiredService<IShaderFactory>().LoadBuiltInShaders().FirstOrDefault();
+
+            var meshFactory = ServiceProvider.GetRequiredService<IMeshFactory>();
+            var vertices = new[]
+            {
+                new VertexPosition { Position = new Vector3(-0.5f, -0.5f, 0) },
+                new VertexPosition { Position = new Vector3(0.5f, -0.5f, 0) },
+                new VertexPosition { Position = new Vector3(0.0f, 0.5f, 0) },
+            };
+
+            mesh = meshFactory.Create(PrimitiveType.Triangle, VertexPosition.Layout, false, "test");
+            mesh.VertexBuffer.SetData(vertices);
         }
+
+        private IMesh mesh;
+        private ShaderBase shader;
     }
 }

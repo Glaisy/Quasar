@@ -15,12 +15,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Quasar.Graphics;
 
+using Space.Core.DependencyInjection;
+
 namespace Quasar.OpenGL.Graphics.Factories
 {
     /// <summary>
     /// OpenGL mesh factory component implementation.
     /// </summary>
     /// <seealso cref="IMeshFactory" />
+    [Export(typeof(IMeshFactory), GraphicsPlatform.OpenGL)]
+    [Singleton]
     internal sealed class GLMeshFactory : IMeshFactory
     {
         private readonly IGraphicsDevice graphicsDevice;

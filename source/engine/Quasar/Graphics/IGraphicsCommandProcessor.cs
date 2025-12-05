@@ -22,6 +22,12 @@ namespace Quasar.Graphics
         void CheckErrors();
 
         /// <summary>
+        /// Executes a draw call for b the specified mesh.
+        /// </summary>
+        /// <param name="mesh">The mesh.</param>
+        void DrawMesh(IMesh mesh);
+
+        /// <summary>
         /// Resets the state of the processsor.
         /// </summary>
         void ResetState();
