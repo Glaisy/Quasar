@@ -11,7 +11,6 @@
 
 using Quasar.Graphics;
 using Quasar.OpenGL.Api;
-using Quasar.OpenGL.Extensions;
 
 using Space.Core.DependencyInjection;
 
@@ -24,6 +23,8 @@ namespace Quasar.OpenGL.Graphics
     [Export]
     internal sealed class GLCommandProcessor : IGraphicsCommandProcessor
     {
+        private int lastMeshHandle;
+
         /// <inheritdoc/>
         public void CheckErrors()
         {
@@ -33,9 +34,20 @@ namespace Quasar.OpenGL.Graphics
         /// <inheritdoc/>
         public void DrawMesh(IMesh mesh)
         {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, mesh.Handle);
-            GL.DrawArrays((int)mesh.PrimitiveType.ToPrimitiveType(), 0, mesh.VertexBuffer.ElementCount);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            if (mesh.Handle != lastMeshHandle)
+            {
+                mesh.Activate();
+                lastMeshHandle = mesh.Handle;
+            }
+
+            if (mesh.IsIndexed)
+            {
+                GL.DrawElements(mesh.InternalPrimitiveType, mesh.IndexBuffer.ElementCount, DrawElementsType.UnsignedInt, 0);
+            }
+            else
+            {
+                GL.DrawArrays(mesh.InternalPrimitiveType, 0, mesh.VertexBuffer.ElementCount);
+            }
         }
 
         /// <inheritdoc/>

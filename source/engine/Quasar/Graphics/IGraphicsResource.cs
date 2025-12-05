@@ -9,12 +9,15 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System;
+
 namespace Quasar.Graphics
 {
     /// <summary>
     /// Represents the general properties of graphics resources.
     /// </summary>
-    public interface IGraphicsResource
+    /// <seealso cref="IEquatable{IGraphicsResource}" />
+    public interface IGraphicsResource : IEquatable<IGraphicsResource>
     {
         /// <summary>
         /// Gets the graphics device.

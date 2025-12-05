@@ -22,7 +22,7 @@ namespace Quasar.Graphics
         /// <param name="primitiveType">Ty graphics primitive type.</param>
         /// <param name="vertexLayout">The vertex layout.</param>
         /// <param name="isIndexed">The indexed mesh flag.</param>
-        /// <param name="name">The name.</param>
+        /// <param name="id">The identifier.</param>
         /// <param name="usage">The usage.</param>
         /// <returns>
         /// The created mesh instance.
@@ -31,7 +31,7 @@ namespace Quasar.Graphics
             PrimitiveType primitiveType,
             VertexLayout vertexLayout,
             bool isIndexed,
-            string name = null,
-            GraphicsResourceUsage usage = GraphicsResourceUsage.Immutable);
+            string id = null,
+            GraphicsResourceUsage usage = GraphicsResourceUsage.Default);
     }
 }

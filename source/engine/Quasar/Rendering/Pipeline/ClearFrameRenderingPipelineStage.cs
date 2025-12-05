@@ -51,12 +51,12 @@ namespace Quasar.Rendering.Pipeline
             var meshFactory = ServiceProvider.GetRequiredService<IMeshFactory>();
             var vertices = new[]
             {
-                new VertexPosition { Position = new Vector3(-0.5f, -0.5f, 0) },
-                new VertexPosition { Position = new Vector3(0.5f, -0.5f, 0) },
-                new VertexPosition { Position = new Vector3(0.0f, 0.5f, 0) },
+                new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f, 1), Color = Color.Red },
+                new VertexPositionColor { Position = new Vector3(0.0f, 0.5f, 1), Color = Color.Green },
+                new VertexPositionColor { Position = new Vector3(0.5f, -0.5f, 1), Color = Color.Blue }
             };
 
-            mesh = meshFactory.Create(PrimitiveType.Triangle, VertexPosition.Layout, false, "test");
+            mesh = meshFactory.Create(PrimitiveType.Triangle, VertexPositionColor.Layout, false, "test");
             mesh.VertexBuffer.SetData(vertices);
         }
 

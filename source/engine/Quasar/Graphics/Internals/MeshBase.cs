@@ -25,23 +25,22 @@ namespace Quasar.Graphics.Internals
         /// </summary>
         /// <param name="primitiveType">Type of the primitive.</param>
         /// <param name="vertexLayout">The vertex layout.</param>
-        /// <param name="name">The name.</param>
         /// <param name="isIndexed">The indexed mesh flag.</param>
+        /// <param name="id">The identifier.</param>
         /// <param name="descriptor">The descriptor.</param>
         protected MeshBase(
             PrimitiveType primitiveType,
             VertexLayout vertexLayout,
             bool isIndexed,
-            string name,
+            string id,
             in GraphicsResourceDescriptor descriptor)
             : base(descriptor)
         {
             PrimitiveType = primitiveType;
             VertexLayout = vertexLayout;
-
-            Name = name;
-
             IsIndexed = isIndexed;
+
+            Id = id;
         }
 
         /// <inheritdoc/>
@@ -49,19 +48,20 @@ namespace Quasar.Graphics.Internals
         {
             PrimitiveType = PrimitiveType.Triangle;
             VertexLayout = null;
-            Name = null;
             IsIndexed = false;
+
+            Id = null;
         }
 
+
+        /// <inheritdoc/>
+        public string Id { get; private set; }
 
         /// <inheritdoc/>
         public bool IsIndexed { get; private set; }
 
         /// <inheritdoc/>
         public abstract IGraphicsBuffer IndexBuffer { get; }
-
-        /// <inheritdoc/>
-        public string Name { get; private set; }
 
         /// <inheritdoc/>
         public PrimitiveType PrimitiveType { get; private set; }
@@ -71,5 +71,21 @@ namespace Quasar.Graphics.Internals
 
         /// <inheritdoc/>
         public VertexLayout VertexLayout { get; private set; }
+
+
+        /// <inheritdoc/>
+        public abstract int InternalPrimitiveType { get; }
+
+        /// <inheritdoc/>
+        void IMesh.Activate()
+        {
+            Activate();
+        }
+
+        /// <inheritdoc/>
+        void IMesh.Deactivate()
+        {
+            Deactivate();
+        }
     }
 }

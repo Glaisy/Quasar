@@ -9,10 +9,10 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System;
-
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
+using Quasar.OpenGL.Api;
+using Quasar.OpenGL.Extensions;
 
 namespace Quasar.OpenGL.Graphics
 {
@@ -22,7 +22,8 @@ namespace Quasar.OpenGL.Graphics
     /// <seealso cref="MeshBase" />
     internal sealed class GLMesh : MeshBase
     {
-        private int vaoId;
+        private int handle;
+        private int internalPrimitiveType;
 
 
         /// <summary>
@@ -31,22 +32,52 @@ namespace Quasar.OpenGL.Graphics
         /// <param name="primitiveType">Type of the primitive.</param>
         /// <param name="vertexLayout">The vertex layout.</param>
         /// <param name="isIndexed">The indexed mesh flag.</param>
-        /// <param name="name">The name.</param>
+        /// <param name="id">The identifier.</param>
         /// <param name="descriptor">The descriptor.</param>
         public GLMesh(
-            PrimitiveType primitiveType,
+            Quasar.Graphics.PrimitiveType primitiveType,
             VertexLayout vertexLayout,
             bool isIndexed,
-            string name,
+            string id,
             in GraphicsResourceDescriptor descriptor)
-            : base(primitiveType, vertexLayout, isIndexed, name, descriptor)
+            : base(primitiveType, vertexLayout, isIndexed, id, descriptor)
         {
-            vaoId = Api.GL.GenBuffer();
-            vertexBuffer = new GLVertexBuffer(vaoId, descriptor);
+            // create VAO
+            handle = GL.GenVertexArray();
+            GL.BindVertexArray(handle);
+
+            // create vertex buffer
+            vertexBuffer = new GLVertexBuffer(handle, descriptor);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer.Handle);
+
+            var index = 0;
+            foreach (var element in vertexLayout.Elements)
+            {
+                GL.EnableVertexAttribArray(index);
+                GL.VertexAttribPointer(
+                    index,
+                    element.Size >> 2,
+                    VertexAttributePointerType.Float,
+                    false,
+                    vertexLayout.Stride,
+                    element.Offset);
+                index++;
+            }
+
+            // create index buffer
             if (isIndexed)
             {
-                indexBuffer = new GLIndexBuffer(vaoId, descriptor);
+                internalPrimitiveType = (int)primitiveType.ToBeginMode();
+                indexBuffer = new GLIndexBuffer(handle, descriptor);
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer.Handle);
             }
+            else
+            {
+                internalPrimitiveType = (int)primitiveType.ToPrimitiveType();
+            }
+
+            // unbind vao
+            GL.BindVertexArray(0);
         }
 
         /// <inheritdoc/>
@@ -64,38 +95,44 @@ namespace Quasar.OpenGL.Graphics
                 vertexBuffer = null;
             }
 
-            if (vaoId > 0)
+            if (handle > 0)
             {
-                Api.GL.DeleteBuffer(vaoId);
-                vaoId = 0;
+                GL.DeleteVertexArray(handle);
+                handle = 0;
             }
+
+            internalPrimitiveType = 0;
 
             base.Dispose(disposing);
         }
 
 
         /// <inheritdoc/>
-        public override int Handle => vaoId;
+        public override int Handle => handle;
 
         private GLIndexBuffer indexBuffer;
         /// <inheritdoc/>
         public override IGraphicsBuffer IndexBuffer => indexBuffer;
+
+        /// <inheritdoc/>
+        public override int InternalPrimitiveType => internalPrimitiveType;
 
         private GLVertexBuffer vertexBuffer;
         /// <inheritdoc/>
         public override IGraphicsBuffer VertexBuffer => vertexBuffer;
 
 
+
         /// <inheritdoc/>
         internal override void Activate()
         {
-            throw new NotImplementedException();
+            GL.BindVertexArray(handle);
         }
 
         /// <inheritdoc/>
         internal override void Deactivate()
         {
-            throw new NotImplementedException();
+            GL.BindVertexArray(0);
         }
     }
 }
