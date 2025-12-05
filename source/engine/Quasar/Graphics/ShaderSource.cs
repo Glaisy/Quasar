@@ -12,9 +12,9 @@
 namespace Quasar.Graphics
 {
     /// <summary>
-    /// Render shader source structure which stores sub-shader source codes.
+    /// Represents an object which stores sub-shader source codes for a render shader.
     /// </summary>
-    public struct ShaderSource
+    public class ShaderSource
     {
         /// <summary>
         /// The fragment shader source code.

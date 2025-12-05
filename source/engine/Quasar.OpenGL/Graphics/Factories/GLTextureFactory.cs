@@ -39,11 +39,13 @@ namespace Quasar.OpenGL.Internals.Graphics.Factories
         /// <summary>
         /// Initializes a new instance of the <see cref="GLTextureFactory"/> class.
         /// </summary>
-        /// <param name="graphicsContext">The graphics context.</param>
+        /// <param name="graphicsDeviceContext">The graphics device context.</param>
         public unsafe GLTextureFactory(
-            [FromKeyedServices(GraphicsPlatform.OpenGL)] IGraphicsDeviceContext graphicsContext)
+            [FromKeyedServices(GraphicsPlatform.OpenGL)] IGraphicsDeviceContext graphicsDeviceContext)
         {
-            textureResourceDescriptor = new GraphicsResourceDescriptor(graphicsContext.Device, GraphicsResourceUsage.Default);
+            textureResourceDescriptor = new GraphicsResourceDescriptor(
+                graphicsDeviceContext.Device,
+                GraphicsResourceUsage.Default);
 
             // get max level of anisotropic filtering
             fixed (float* ptrMaxAnisotropy = &maxAnisotropy)

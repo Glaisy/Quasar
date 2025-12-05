@@ -21,6 +21,16 @@ namespace Quasar.Graphics.Internals.Factories
     internal interface IShaderFactory
     {
         /// <summary>
+        /// Creates a compute shader by identifier and source code.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="source">The source code.</param>
+        /// <returns>
+        /// The created compute shader instance.
+        /// </returns>
+        ComputeShaderBase CreateComputeShader(string id, string source);
+
+        /// <summary>
         /// Creates a render shader by identifier and source code.
         /// </summary>
         /// <param name="id">The identifier.</param>
