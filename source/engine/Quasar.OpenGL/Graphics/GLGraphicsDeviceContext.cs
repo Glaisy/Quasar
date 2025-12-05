@@ -71,6 +71,9 @@ namespace Quasar.OpenGL.Graphics
         public GraphicsPlatform Platform => GraphicsPlatform.OpenGL;
 
         /// <inheritdoc/>
+        public IFrameBuffer PrimaryFrameBuffer { get; private set; }
+
+        /// <inheritdoc/>
         public Version Version { get; private set; }
 
 
@@ -93,16 +96,21 @@ namespace Quasar.OpenGL.Graphics
             graphicsCommandProcessor.Initialize();
             CommandProcessor = graphicsCommandProcessor;
 
+            var frameBufferFactory = AddOpenGLServiceImplementation<IFrameBufferFactory>();
+            PrimaryFrameBuffer = frameBufferFactory.CreatePrimary(nativeWindow);
+
             AddOpenGLServiceImplementation<IShaderFactory>();
             AddOpenGLServiceImplementation<ITextureFactory>();
             AddOpenGLServiceImplementation<ICubeMapTextureFactory>();
             AddOpenGLServiceImplementation<IMeshFactory>();
         }
 
-        private void AddOpenGLServiceImplementation<T>()
+        private T AddOpenGLServiceImplementation<T>()
         {
             var service = serviceProvider.GetRequiredKeyedService<T>(GraphicsPlatform.OpenGL);
             serviceLoader.AddSingleton(service);
+
+            return service;
         }
     }
 }

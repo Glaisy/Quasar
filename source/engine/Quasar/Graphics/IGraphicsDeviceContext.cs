@@ -36,9 +36,15 @@ namespace Quasar.Graphics
         GraphicsPlatform Platform { get; }
 
         /// <summary>
+        /// Gets the primary frame buffer.
+        /// </summary>
+        IFrameBuffer PrimaryFrameBuffer { get; }
+
+        /// <summary>
         /// Gets the graphics platform version.
         /// </summary>
         Version Version { get; }
+
 
         /// <summary>
         /// Initializes the context by the specified native window.

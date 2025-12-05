@@ -26,6 +26,9 @@ namespace Quasar.Rendering.Pipeline.Internals
         /// <inheritdoc/>
         public IGraphicsCommandProcessor CommandProcessor { get; private set; }
 
+        /// <inheritdoc/>
+        public IFrameBuffer PrimaryFrameBuffer { get; private set; }
+
 
         /// <inheritdoc/>
         public void Initialize(IGraphicsDeviceContext graphicsDeviceContext)
@@ -33,6 +36,7 @@ namespace Quasar.Rendering.Pipeline.Internals
             Assertion.ThrowIfNull(graphicsDeviceContext, nameof(graphicsDeviceContext));
 
             CommandProcessor = graphicsDeviceContext.CommandProcessor;
+            PrimaryFrameBuffer = graphicsDeviceContext.PrimaryFrameBuffer;
         }
     }
 }

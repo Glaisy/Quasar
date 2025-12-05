@@ -54,6 +54,7 @@ namespace Quasar.Rendering.Pipeline
         /// <inheritdoc/>
         protected override void OnExecute()
         {
+            Context.PrimaryFrameBuffer.Clear(Color.Yellow, true);
         }
 
         /// <inheritdoc/>

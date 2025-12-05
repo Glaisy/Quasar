@@ -23,6 +23,11 @@ namespace Quasar.Rendering
         /// </summary>
         IGraphicsCommandProcessor CommandProcessor { get; }
 
+        /// <summary>
+        /// Gets the primary frame buffer.
+        /// </summary>
+        IFrameBuffer PrimaryFrameBuffer { get; }
+
 
         /// <summary>
         /// Initializes the context by the specified graphics device context.

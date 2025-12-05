@@ -15,11 +15,10 @@ using Quasar.Graphics;
 using Quasar.Graphics.Internals;
 using Quasar.Graphics.Internals.Factories;
 using Quasar.OpenGL.Api;
-using Quasar.OpenGL.Graphics;
 
 using Space.Core.DependencyInjection;
 
-namespace Quasar.OpenGL.Internals.Graphics.Factories
+namespace Quasar.OpenGL.Graphics.Factories
 {
     /// <summary>
     /// OpenGL cubemap texture factory implementation.
