@@ -21,7 +21,8 @@ namespace Quasar.Graphics
     /// Abstract base class for graphics resources.
     /// </summary>
     /// <seealso cref="IDisposable" />
-    public abstract class GraphicsResourceBase : IDisposable
+    /// <seealso cref="IEquatable{GraphicsResourceBase}" />
+    public abstract class GraphicsResourceBase : IDisposable, IEquatable<GraphicsResourceBase>
     {
         private static IDispatcher dispatcher;
 
@@ -66,6 +67,23 @@ namespace Quasar.Graphics
         /// </summary>
         public GraphicsResourceUsage Usage { get; private set; }
 
+
+        /// <inheritdoc/>
+        public bool Equals(GraphicsResourceBase other)
+        {
+            return Handle == other.Handle;
+        }
+
+        /// <inheritdoc/>
+        public override bool Equals(object obj)
+        {
+            if (obj is not GraphicsResourceBase other)
+            {
+                return false;
+            }
+
+            return Handle == other.Handle;
+        }
 
         /// <inheritdoc/>
         public override int GetHashCode()
