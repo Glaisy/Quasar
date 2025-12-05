@@ -9,8 +9,8 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using Quasar.Graphics.Internals.Factories;
 using Quasar.Pipelines;
-using Quasar.UI;
 
 using Space.Core.DependencyInjection;
 
@@ -24,16 +24,15 @@ namespace Quasar.Rendering.Pipeline
     [ExecuteAfter(typeof(InitializeRenderingPipelineStage))]
     public sealed class ClearFrameRenderingPipelineStage : RenderingPipelineStageBase
     {
-        private readonly IApplicationWindow applicationWindow;
-
+        private readonly IShaderFactory shaderFactory;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClearFrameRenderingPipelineStage" /> class.
+        /// Initializes a new instance of the <see cref="ClearFrameRenderingPipelineStage"/> class.
         /// </summary>
-        /// <param name="applicationWindow">The application window.</param>
-        internal ClearFrameRenderingPipelineStage(IApplicationWindow applicationWindow)
+        /// <param name="shaderFactory">The shader factory.</param>
+        internal ClearFrameRenderingPipelineStage(IShaderFactory shaderFactory)
         {
-            this.applicationWindow = applicationWindow;
+            this.shaderFactory = shaderFactory;
         }
 
 
@@ -41,6 +40,16 @@ namespace Quasar.Rendering.Pipeline
         protected override void OnExecute(IRenderingContext renderingContext)
         {
             // TODO: implement rendering framebuffer size by the application window size
+        }
+
+        /// <summary>
+        /// Start event handler.
+        /// </summary>
+        protected override void OnStart()
+        {
+            base.OnStart();
+
+            var shaders = shaderFactory.LoadBuiltInShaders();
         }
     }
 }

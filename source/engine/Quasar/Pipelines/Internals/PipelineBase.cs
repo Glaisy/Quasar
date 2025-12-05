@@ -31,16 +31,13 @@ namespace Quasar.Pipelines.Internals
     internal abstract class PipelineBase<TStage>
         where TStage : PipelineStageBase
     {
-        private readonly IServiceProvider serviceProvider;
-
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PipelineBase{TStage}" /> class.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
         protected PipelineBase(IServiceProvider serviceProvider)
         {
-            this.serviceProvider = serviceProvider;
+            ServiceProvider = serviceProvider;
 
             Name = GetType().Name;
 
@@ -83,10 +80,7 @@ namespace Quasar.Pipelines.Internals
             {
                 Logger.TraceMethodStart();
 
-                var unorderedStages = serviceProvider.GetServices<TStage>();
-                Stages = BuildOrderedStageList(unorderedStages);
-
-                OnStart(serviceProvider);
+                OnStart();
             }
             finally
             {
@@ -118,6 +112,11 @@ namespace Quasar.Pipelines.Internals
         protected ILogger Logger { get; }
 
         /// <summary>
+        /// Gets the service provider.
+        /// </summary>
+        protected IServiceProvider ServiceProvider { get; }
+
+        /// <summary>
         /// Gets the settings service.
         /// </summary>
         protected ISettingsService SettingsService { get; }
@@ -136,12 +135,14 @@ namespace Quasar.Pipelines.Internals
         /// <summary>
         /// Start event handler.
         /// </summary>
-        /// <param name="service">The service.</param>
-        protected virtual void OnStart(IServiceProvider service)
+        protected virtual void OnStart()
         {
+            var unorderedStages = ServiceProvider.GetServices<TStage>();
+            Stages = BuildOrderedStageList(unorderedStages);
+
             foreach (var stage in Stages)
             {
-                stage.Start(serviceProvider);
+                stage.Start(ServiceProvider);
             }
         }
 

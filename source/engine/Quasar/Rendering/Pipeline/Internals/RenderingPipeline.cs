@@ -11,7 +11,9 @@
 
 using System;
 
+using Quasar.Graphics.Internals;
 using Quasar.Pipelines.Internals;
+using Quasar.UI;
 using Quasar.Utilities;
 
 using Space.Core.DependencyInjection;
@@ -26,7 +28,10 @@ namespace Quasar.Rendering.Pipeline.Internals
     [Singleton]
     internal sealed class RenderingPipeline : PipelineBase<RenderingPipelineStageBase>
     {
+        private readonly IApplicationWindow applicationWindow;
+        private readonly IGraphicsDeviceContextFactory graphicsDeviceContextFactory;
         private readonly IRenderingContext renderingContext;
+        private readonly IServiceLoader serviceLoader;
         private readonly ActionBasedObserver<IRenderingSettings> settingsObserver;
         private IDisposable settingsSubscription;
 
@@ -34,14 +39,23 @@ namespace Quasar.Rendering.Pipeline.Internals
         /// <summary>
         /// Initializes a new instance of the <see cref="RenderingPipeline" /> class.
         /// </summary>
+        /// <param name="applicationWindow">The application window.</param>
+        /// <param name="graphicsDeviceContextFactory">The graphics device context factory.</param>
         /// <param name="renderingContext">The rendering context.</param>
+        /// <param name="serviceLoader">The service loader.</param>
         /// <param name="serviceProvider">The service provider.</param>
         public RenderingPipeline(
+            IApplicationWindow applicationWindow,
+            IGraphicsDeviceContextFactory graphicsDeviceContextFactory,
             IRenderingContext renderingContext,
+            IServiceLoader serviceLoader,
             IServiceProvider serviceProvider)
             : base(serviceProvider)
         {
+            this.applicationWindow = applicationWindow;
+            this.graphicsDeviceContextFactory = graphicsDeviceContextFactory;
             this.renderingContext = renderingContext;
+            this.serviceLoader = serviceLoader;
 
             settingsObserver = new ActionBasedObserver<IRenderingSettings>(OnSettingsChanged);
         }
@@ -57,13 +71,17 @@ namespace Quasar.Rendering.Pipeline.Internals
         }
 
         /// <inheritdoc/>
-        protected override void OnStart(IServiceProvider serviceProvider)
+        protected override void OnStart()
         {
-            base.OnStart(serviceProvider);
-
-            // subscribe and auto apply settings
-            settingsSubscription = SettingsService.Subscribe(settingsObserver);
+            // initialize rendering context by the actual settings
             var renderingSettings = SettingsService.Get<IRenderingSettings>();
+            InitializeRenderingContext(renderingSettings);
+
+            // collect rendering stages
+            base.OnStart();
+
+            // subscribe for settings changes and auto apply settings
+            settingsSubscription = SettingsService.Subscribe(settingsObserver);
             OnSettingsChanged(renderingSettings);
         }
 
@@ -75,6 +93,15 @@ namespace Quasar.Rendering.Pipeline.Internals
             base.OnShutdown();
         }
 
+
+        private void InitializeRenderingContext(IRenderingSettings renderingSettings)
+        {
+            var graphicsDeviceContext = graphicsDeviceContextFactory.Create(renderingSettings.Platform);
+            serviceLoader.AddSingleton(graphicsDeviceContext);
+
+            graphicsDeviceContext.Initialize(applicationWindow);
+            renderingContext.Initialize(graphicsDeviceContext);
+        }
 
         private void OnSettingsChanged(IRenderingSettings renderingSettings)
         {
