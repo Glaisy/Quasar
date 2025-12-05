@@ -29,7 +29,6 @@ namespace Quasar.Rendering.Pipeline
     public sealed class ClearFrameRenderingPipelineStage : RenderingPipelineStageBase
     {
         private readonly IApplicationWindow applicationWindow;
-        private readonly IRenderingContext renderingContext;
         private readonly ActionBasedObserver<Size> applicationWindowSizeChangedObserver;
         private IDisposable applicationWindowSizeChangedSubscription;
 
@@ -38,17 +37,19 @@ namespace Quasar.Rendering.Pipeline
         /// Initializes a new instance of the <see cref="ClearFrameRenderingPipelineStage" /> class.
         /// </summary>
         /// <param name="applicationWindow">The application window.</param>
-        /// <param name="renderingContext">The rendering context.</param>
-        public ClearFrameRenderingPipelineStage(
-            IApplicationWindow applicationWindow,
-            IRenderingContext renderingContext)
+        public ClearFrameRenderingPipelineStage(IApplicationWindow applicationWindow)
         {
             this.applicationWindow = applicationWindow;
-            this.renderingContext = renderingContext;
 
             applicationWindowSizeChangedObserver = new ActionBasedObserver<Size>(OnApplicationWindowSizeChanged);
         }
 
+
+        /// <inheritdoc/>
+        protected override void OnApplySettings(IRenderingSettings renderingSettings)
+        {
+            applicationWindow.FullscreenMode = renderingSettings.FullScreenMode;
+        }
 
         /// <inheritdoc/>
         protected override void OnExecute()
@@ -72,7 +73,7 @@ namespace Quasar.Rendering.Pipeline
 
         private void OnApplicationWindowSizeChanged(Size size)
         {
-            renderingContext.CommandProcessor.SetViewport(Point.Empty, size);
+            Context.CommandProcessor.SetViewport(Point.Empty, size);
         }
     }
 }

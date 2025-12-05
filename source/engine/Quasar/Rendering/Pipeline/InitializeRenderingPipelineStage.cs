@@ -10,7 +10,6 @@
 //-----------------------------------------------------------------------
 
 using Quasar.Graphics;
-using Quasar.UI;
 
 using Space.Core.DependencyInjection;
 
@@ -23,25 +22,6 @@ namespace Quasar.Rendering.Pipeline
     [Export(typeof(RenderingPipelineStageBase), nameof(InitializeRenderingPipelineStage))]
     public sealed class InitializeRenderingPipelineStage : RenderingPipelineStageBase
     {
-        private readonly IApplicationWindow applicationWindow;
-
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="InitializeRenderingPipelineStage" /> class.
-        /// </summary>
-        /// <param name="applicationWindow">The application window.</param>
-        internal InitializeRenderingPipelineStage(IApplicationWindow applicationWindow)
-        {
-            this.applicationWindow = applicationWindow;
-        }
-
-
-        /// <inheritdoc/>
-        protected override void OnApplySettings(IRenderingSettings renderingSettings)
-        {
-            applicationWindow.FullscreenMode = renderingSettings.FullScreenMode;
-        }
-
         /// <inheritdoc/>
         protected override void OnExecute()
         {
