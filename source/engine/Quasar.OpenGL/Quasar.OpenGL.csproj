@@ -13,12 +13,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Shaders\Test.frag" />
+    <None Remove="Resources\Shaders\Test.vert" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="..\..\AssemblyInfo.Suppressions.shared.cs" Link="Properties\AssemblyInfo.Suppressions.shared.cs" />
     <Compile Include="..\AssemblyInfo.shared.cs" Link="Properties\AssemblyInfo.shared.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="..\..\stylecop.json" Link="Properties\stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Shaders\Test.frag" />
+    <EmbeddedResource Include="Resources\Shaders\Test.vert" />
   </ItemGroup>
 
   <ItemGroup>

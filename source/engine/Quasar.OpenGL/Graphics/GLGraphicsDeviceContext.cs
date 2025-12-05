@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Quasar.Core.Utilities;
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
+using Quasar.Graphics.Internals.Factories;
 using Quasar.OpenGL.Api;
 using Quasar.UI;
 
@@ -33,6 +34,8 @@ namespace Quasar.OpenGL.Graphics
     {
         private readonly IGraphicsOutputProvider graphicsOutputProvider;
         private readonly IInteropFunctionProvider interopFunctionProvider;
+        private readonly IServiceProvider serviceProvider;
+        private readonly IServiceLoader serviceLoader;
         private readonly GLCommandProcessor graphicsCommandProcessor;
 
         /// <summary>
@@ -40,14 +43,20 @@ namespace Quasar.OpenGL.Graphics
         /// </summary>
         /// <param name="graphicsOutputProvider">The graphics output provider.</param>
         /// <param name="interopFunctionProvider">The interop function provider.</param>
+        /// <param name="serviceProvider">The service provider.</param>
+        /// <param name="serviceLoader">The service loader.</param>
         /// <param name="graphicsCommandProcessor">The graphics command processor.</param>
         public GLGraphicsDeviceContext(
             IGraphicsOutputProvider graphicsOutputProvider,
             [FromKeyedServices(GraphicsPlatform.OpenGL)] IInteropFunctionProvider interopFunctionProvider,
+            IServiceProvider serviceProvider,
+            IServiceLoader serviceLoader,
             GLCommandProcessor graphicsCommandProcessor)
         {
             this.graphicsOutputProvider = graphicsOutputProvider;
             this.interopFunctionProvider = interopFunctionProvider;
+            this.serviceProvider = serviceProvider;
+            this.serviceLoader = serviceLoader;
             this.graphicsCommandProcessor = graphicsCommandProcessor;
         }
 
@@ -83,6 +92,16 @@ namespace Quasar.OpenGL.Graphics
             // initialize internal components
             graphicsCommandProcessor.Initialize();
             CommandProcessor = graphicsCommandProcessor;
+
+            AddOpenGLServiceImplementation<IShaderFactory>();
+            AddOpenGLServiceImplementation<ITextureFactory>();
+            AddOpenGLServiceImplementation<ICubeMapTextureFactory>();
+        }
+
+        private void AddOpenGLServiceImplementation<T>()
+        {
+            var service = serviceProvider.GetRequiredKeyedService<T>(GraphicsPlatform.OpenGL);
+            serviceLoader.AddSingleton(service);
         }
     }
 }
