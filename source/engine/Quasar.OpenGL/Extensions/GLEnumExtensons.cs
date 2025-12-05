@@ -52,11 +52,11 @@ namespace Quasar.OpenGL.Extensions
             // None
             BufferTarget.ArrayBuffer,
 
-            // IndexBuffer
-            BufferTarget.ElementArrayBuffer,
-
             // VertexBuffer
-            BufferTarget.ArrayBuffer
+            BufferTarget.ArrayBuffer,
+
+            // IndexBuffer
+            BufferTarget.ElementArrayBuffer
         };
 
         private static readonly BufferUsageHint[] bufferUsageHints =
