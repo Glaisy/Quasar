@@ -14,9 +14,6 @@ using System.Threading;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Quasar.Graphics;
-using Quasar.Graphics.Internals;
-using Quasar.Rendering;
 using Quasar.Rendering.Pipeline.Internals;
 using Quasar.Settings;
 using Quasar.UI;
@@ -89,8 +86,6 @@ namespace Quasar.Internals
             settingsService.Load();
 
             // initialize graphics context and pipelines
-            var renderingSettings = settingsService.Get<IRenderingSettings>();
-            InitializeGraphicsDeviceContext(renderingSettings.Platform);
             renderingPipeline = ServiceProvider.GetRequiredService<RenderingPipeline>();
             renderingPipeline.Start();
 
@@ -132,17 +127,6 @@ namespace Quasar.Internals
             }
 
             return nativeWindowFactory.CreateApplicationWindow(applicationWindowType, title, screenRatio);
-        }
-
-        private void InitializeGraphicsDeviceContext(GraphicsPlatform graphicsPlatform)
-        {
-            var graphicsDeviceContextFactory = ServiceProvider.GetRequiredService<IGraphicsDeviceContextFactory>();
-            var graphicsDeviceContext = graphicsDeviceContextFactory.Create(graphicsPlatform);
-
-            var serviceLoader = ServiceProvider.GetRequiredService<IServiceLoader>();
-            serviceLoader.AddSingleton(graphicsDeviceContext);
-
-            graphicsDeviceContext.Initialize(ApplicationWindow);
         }
     }
 }

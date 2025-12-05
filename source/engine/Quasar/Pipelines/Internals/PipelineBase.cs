@@ -31,13 +31,16 @@ namespace Quasar.Pipelines.Internals
     internal abstract class PipelineBase<TStage>
         where TStage : PipelineStageBase
     {
+        private readonly IServiceProvider serviceProvider;
+
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PipelineBase{TStage}" /> class.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
         protected PipelineBase(IServiceProvider serviceProvider)
         {
-            ServiceProvider = serviceProvider;
+            this.serviceProvider = serviceProvider;
 
             Name = GetType().Name;
 
@@ -63,7 +66,6 @@ namespace Quasar.Pipelines.Internals
             {
                 Logger.TraceMethodStart();
 
-                // invoke execute event handler.
                 OnExecute();
             }
             finally
@@ -81,12 +83,10 @@ namespace Quasar.Pipelines.Internals
             {
                 Logger.TraceMethodStart();
 
-                // initialize the ordered stage list
-                var unorderedStages = ServiceProvider.GetServices<TStage>();
+                var unorderedStages = serviceProvider.GetServices<TStage>();
                 Stages = BuildOrderedStageList(unorderedStages);
 
-                // invoke start event handler
-                OnStart();
+                OnStart(serviceProvider);
             }
             finally
             {
@@ -103,7 +103,6 @@ namespace Quasar.Pipelines.Internals
             {
                 Logger.TraceMethodStart();
 
-                // invoke shutdown event
                 OnShutdown();
             }
             finally
@@ -114,24 +113,19 @@ namespace Quasar.Pipelines.Internals
 
 
         /// <summary>
-        /// Gets the service provider.
-        /// </summary>
-        protected IServiceProvider ServiceProvider { get; }
-
-        /// <summary>
         /// Gets the logger.
         /// </summary>
         protected ILogger Logger { get; }
 
         /// <summary>
-        /// Gets the stages.
-        /// </summary>
-        protected List<TStage> Stages { get; private set; }
-
-        /// <summary>
         /// Gets the settings service.
         /// </summary>
         protected ISettingsService SettingsService { get; }
+
+        /// <summary>
+        /// Gets the stages.
+        /// </summary>
+        protected List<TStage> Stages { get; private set; }
 
 
         /// <summary>
@@ -142,11 +136,12 @@ namespace Quasar.Pipelines.Internals
         /// <summary>
         /// Start event handler.
         /// </summary>
-        protected virtual void OnStart()
+        /// <param name="service">The service.</param>
+        protected virtual void OnStart(IServiceProvider service)
         {
             foreach (var stage in Stages)
             {
-                stage.Start();
+                stage.Start(serviceProvider);
             }
         }
 

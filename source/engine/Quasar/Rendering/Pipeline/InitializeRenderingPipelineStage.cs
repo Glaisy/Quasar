@@ -9,9 +9,9 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System;
+using Microsoft.Extensions.DependencyInjection;
 
-using Quasar.Graphics;
+using Quasar.Graphics.Internals;
 using Quasar.UI;
 
 using Space.Core.DependencyInjection;
@@ -26,27 +26,30 @@ namespace Quasar.Rendering.Pipeline
     public sealed class InitializeRenderingPipelineStage : RenderingPipelineStageBase
     {
         private readonly IApplicationWindow applicationWindow;
-        private readonly IServiceProvider serviceProvider;
+        private readonly IRenderingContext renderingContext;
+        private bool isRenderingContextInitialized;
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InitializeRenderingPipelineStage" /> class.
         /// </summary>
         /// <param name="applicationWindow">The application window.</param>
-        /// <param name="serviceProvider">The service provider.</param>
+        /// <param name="renderingContext">The rendering context.</param>
         internal InitializeRenderingPipelineStage(
             IApplicationWindow applicationWindow,
-            IServiceProvider serviceProvider)
+            IRenderingContext renderingContext)
         {
             this.applicationWindow = applicationWindow;
-            this.serviceProvider = serviceProvider;
+            this.renderingContext = renderingContext;
         }
 
 
         /// <inheritdoc/>
-        protected override void OnApplySettings(IRenderingSettings settings)
+        protected override void OnApplySettings(IRenderingSettings renderingSettings)
         {
-            applicationWindow.FullscreenMode = settings.FullScreenMode;
+            EnsureRenderingContextIsInitialized(renderingSettings);
+
+            applicationWindow.FullscreenMode = renderingSettings.FullScreenMode;
         }
 
         /// <inheritdoc/>
@@ -55,11 +58,24 @@ namespace Quasar.Rendering.Pipeline
             renderingContext.CommandProcessor.ResetState();
         }
 
-        /// <inheritdoc/>
-        protected override void OnStart()
+
+        private void EnsureRenderingContextIsInitialized(IRenderingSettings renderingSettings)
         {
-            // initialize static services for graphics/rendering classes
-            GraphicsResourceBase.InitializeServices(serviceProvider);
+            if (isRenderingContextInitialized)
+            {
+                return;
+            }
+
+            var graphicsDeviceContextFactory = ServiceProvider.GetRequiredService<IGraphicsDeviceContextFactory>();
+            var graphicsDeviceContext = graphicsDeviceContextFactory.Create(renderingSettings.Platform);
+
+            var serviceLoader = ServiceProvider.GetRequiredService<IServiceLoader>();
+            serviceLoader.AddSingleton(graphicsDeviceContext);
+
+            graphicsDeviceContext.Initialize(applicationWindow);
+            renderingContext.Initialize(graphicsDeviceContext);
+
+            isRenderingContextInitialized = true;
         }
     }
 }

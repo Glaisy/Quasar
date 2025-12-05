@@ -24,11 +24,11 @@ namespace Quasar.Rendering.Pipeline
         /// <summary>
         /// Applies the rendering settings for the current stage.
         /// </summary>
-        /// <param name="settings">The settings.</param>
+        /// <param name="renderingSettings">The rendering settings.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void ApplySettings(IRenderingSettings settings)
+        internal void ApplySettings(IRenderingSettings renderingSettings)
         {
-            OnApplySettings(settings);
+            OnApplySettings(renderingSettings);
         }
 
         /// <summary>
@@ -45,8 +45,8 @@ namespace Quasar.Rendering.Pipeline
         /// <summary>
         /// Apply rendering settings event handler.
         /// </summary>
-        /// <param name="settings">The settings.</param>
-        protected virtual void OnApplySettings(IRenderingSettings settings)
+        /// <param name="renderingSettings">The rendering settings.</param>
+        protected virtual void OnApplySettings(IRenderingSettings renderingSettings)
         {
         }
 

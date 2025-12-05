@@ -21,6 +21,7 @@ namespace Quasar.Rendering.Pipeline.Internals
     /// </summary>
     /// <seealso cref="IRenderingContext" />
     [Export(typeof(IRenderingContext))]
+    [Singleton]
     internal sealed class RenderingContext : IRenderingContext
     {
         /// <inheritdoc/>

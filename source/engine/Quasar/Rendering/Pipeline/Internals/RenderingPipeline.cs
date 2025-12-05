@@ -11,9 +11,7 @@
 
 using System;
 
-using Quasar.Graphics;
 using Quasar.Pipelines.Internals;
-using Quasar.UI;
 using Quasar.Utilities;
 
 using Space.Core.DependencyInjection;
@@ -28,39 +26,28 @@ namespace Quasar.Rendering.Pipeline.Internals
     [Singleton]
     internal sealed class RenderingPipeline : PipelineBase<RenderingPipelineStageBase>
     {
-        private readonly IApplicationWindow applicationWindow;
-        private readonly IGraphicsDeviceContext graphicsDeviceContext;
         private readonly IRenderingContext renderingContext;
         private readonly ActionBasedObserver<IRenderingSettings> settingsObserver;
         private IDisposable settingsSubscription;
 
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="RenderingPipeline" /> class.
         /// </summary>
-        /// <param name="applicationWindow">The application window.</param>
-        /// <param name="graphicsDeviceContext">The graphics device context.</param>
         /// <param name="renderingContext">The rendering context.</param>
         /// <param name="serviceProvider">The service provider.</param>
         public RenderingPipeline(
-            IApplicationWindow applicationWindow,
-            IGraphicsDeviceContext graphicsDeviceContext,
             IRenderingContext renderingContext,
             IServiceProvider serviceProvider)
             : base(serviceProvider)
         {
-            this.applicationWindow = applicationWindow;
-            this.graphicsDeviceContext = graphicsDeviceContext;
             this.renderingContext = renderingContext;
 
             settingsObserver = new ActionBasedObserver<IRenderingSettings>(OnSettingsChanged);
         }
 
 
-        /// <summary>
-        /// Execute event handler.
-        /// </summary>
+        /// <inheritdoc/>
         protected override void OnExecute()
         {
             foreach (var stage in Stages)
@@ -69,24 +56,18 @@ namespace Quasar.Rendering.Pipeline.Internals
             }
         }
 
-        /// <summary>
-        /// Start event handler.
-        /// </summary>
-        protected override void OnStart()
+        /// <inheritdoc/>
+        protected override void OnStart(IServiceProvider serviceProvider)
         {
-            base.OnStart();
+            base.OnStart(serviceProvider);
 
-            renderingContext.Initialize(graphicsDeviceContext);
-
-            // subscribe and apply settings
+            // subscribe and auto apply settings
             settingsSubscription = SettingsService.Subscribe(settingsObserver);
-            var settings = SettingsService.Get<IRenderingSettings>();
-            OnSettingsChanged(settings);
+            var renderingSettings = SettingsService.Get<IRenderingSettings>();
+            OnSettingsChanged(renderingSettings);
         }
 
-        /// <summary>
-        /// Shutdown event handler.
-        /// </summary>
+        /// <inheritdoc/>
         protected override void OnShutdown()
         {
             settingsSubscription?.Dispose();
@@ -95,11 +76,11 @@ namespace Quasar.Rendering.Pipeline.Internals
         }
 
 
-        private void OnSettingsChanged(IRenderingSettings settings)
+        private void OnSettingsChanged(IRenderingSettings renderingSettings)
         {
             foreach (var stage in Stages)
             {
-                stage.ApplySettings(settings);
+                stage.ApplySettings(renderingSettings);
             }
         }
     }
