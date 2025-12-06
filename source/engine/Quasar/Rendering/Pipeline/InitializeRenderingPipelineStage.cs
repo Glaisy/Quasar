@@ -22,6 +22,19 @@ namespace Quasar.Rendering.Pipeline
     [Export(typeof(RenderingPipelineStageBase), nameof(InitializeRenderingPipelineStage))]
     public sealed class InitializeRenderingPipelineStage : RenderingPipelineStageBase
     {
+        private readonly IShaderRepository shaderRepository;
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InitializeRenderingPipelineStage"/> class.
+        /// </summary>
+        /// <param name="shaderRepository">The shader repository.</param>
+        public InitializeRenderingPipelineStage(IShaderRepository shaderRepository)
+        {
+            this.shaderRepository = shaderRepository;
+        }
+
+
         /// <inheritdoc/>
         protected override void OnExecute()
         {
@@ -35,9 +48,9 @@ namespace Quasar.Rendering.Pipeline
             GraphicsResourceBase.InitializeServices(ServiceProvider);
             ////Font.InitializeDependecies(resolver);
 
-            ////// load built-in resources
+            // load built-in resources
             ////fontFamilyRepository.LoadBuiltInFontFamilies();
-            ////shaderRepository.LoadBuiltInShaders();
+            shaderRepository.LoadBuiltInShaders();
             ////textureRepository.LoadBuiltInTextures();
             ////cubeMapTextureRepository.LoadBuiltInCubeMapTextures();
 

@@ -64,13 +64,13 @@ namespace Quasar.Collections
             {
                 RepositoryLock.EnterWriteLock();
 
-                if (!items.TryGetValue(id, out var item))
+                var item = GetItem(id);
+                if (item == null)
                 {
                     return;
                 }
 
-                items.Remove(id);
-                OnItemDeleted(item);
+                DeleteItem(id);
             }
             finally
             {
@@ -116,6 +116,15 @@ namespace Quasar.Collections
         }
 
         /// <summary>
+        /// Deletes the item from the repository by the specified identifier (non-synchronized).
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        protected virtual void DeleteItem(TId id)
+        {
+            items.Remove(id);
+        }
+
+        /// <summary>
         /// Check the whether the identifier is available for use.
         /// Throws an error if the identifier is already used (non-synchronized).
         /// </summary>
@@ -129,14 +138,33 @@ namespace Quasar.Collections
         }
 
         /// <summary>
+        /// Finds the items by the specified selector and adds them to the selected items (non-synchronized).
+        /// </summary>
+        /// <param name="selector">The selector.</param>
+        /// <param name="selectedItems">The selected items.</param>
+        protected void FindItems(Func<TItemImpl, bool> selector, in ICollection<TItemImpl> selectedItems)
+        {
+            Assertion.ThrowIfNull(selector, nameof(selector));
+            Assertion.ThrowIfNull(selectedItems, nameof(selectedItems));
+
+            foreach (var item in items.Values)
+            {
+                if (selector(item))
+                {
+                    selectedItems.Add(item);
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets the item by the specified identifier (non-synchronized).
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns>The item object or null if not found.</returns>
         protected TItemImpl GetItem(TId id)
         {
-            items.TryGetValue(id, out var resource);
-            return resource;
+            items.TryGetValue(id, out var item);
+            return item;
         }
 
         /// <summary>

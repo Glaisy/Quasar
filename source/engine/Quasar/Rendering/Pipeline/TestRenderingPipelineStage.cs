@@ -9,11 +9,8 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System.Linq;
-
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
-using Quasar.Graphics.Internals.Factories;
 using Quasar.Pipelines;
 
 using Space.Core.DependencyInjection;
@@ -29,20 +26,20 @@ namespace Quasar.Rendering.Pipeline
     [ExecuteBefore(typeof(FrameBufferSwapperRenderingPipelineStage))]
     public sealed class TestRenderingPipelineStage : RenderingPipelineStageBase
     {
-        private readonly IShaderFactory shaderFactory;
+        private readonly IShaderRepository shaderRepository;
         private readonly IMeshFactory meshFactory;
-
+        private float angle;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TestRenderingPipelineStage" /> class.
         /// </summary>
-        /// <param name="shaderFactory">The shader factory.</param>
+        /// <param name="shaderRepository">The shader repository.</param>
         /// <param name="meshFactory">The mesh factory.</param>
         internal TestRenderingPipelineStage(
-            IShaderFactory shaderFactory,
+            IShaderRepository shaderRepository,
             IMeshFactory meshFactory)
         {
-            this.shaderFactory = shaderFactory;
+            this.shaderRepository = shaderRepository;
             this.meshFactory = meshFactory;
         }
 
@@ -50,25 +47,35 @@ namespace Quasar.Rendering.Pipeline
         /// <inheritdoc/>
         protected override void OnExecute()
         {
+            var rotation = Quaternion.AngleAxis(angle, Vector3.PositiveY);
+            Matrix4 rotationMatrix;
+            rotationMatrix.FromQuaternion(rotation, false);
+
             shader.Activate();
+            shader.SetMatrix(0, rotationMatrix);
             Context.CommandProcessor.DrawMesh(mesh);
             shader.Deactivate();
+
+            angle += 0.1f;
         }
 
         /// <inheritdoc/>
         protected override void OnStart()
         {
-            shader = shaderFactory.LoadBuiltInShaders().FirstOrDefault();
+            shader = (ShaderBase)shaderRepository.Get("Test");
 
             var vertices = new[]
             {
-                new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f, 1), Color = Color.Red },
-                new VertexPositionColor { Position = new Vector3(0.0f, 0.5f, 1), Color = Color.Green },
-                new VertexPositionColor { Position = new Vector3(0.5f, -0.5f, 1), Color = Color.Blue }
+                new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = Color.Red },
+                new VertexPositionColor { Position = new Vector3(0.5f, -0.15f, -0.5f), Color = Color.Green },
+                new VertexPositionColor { Position = new Vector3(0.0f, -0.5f, 0.73f), Color = Color.Blue },
+                new VertexPositionColor { Position = new Vector3(0.0f, 0.65f, 0), Color = Color.Magenta }
             };
+            var indices = new[] { 0, 1, 2, 0, 2, 3, 2, 1, 3, 1, 0, 3 };
 
-            mesh = meshFactory.Create(PrimitiveType.Triangle, VertexPositionColor.Layout, false, "test");
+            mesh = meshFactory.Create(PrimitiveType.Triangle, VertexPositionColor.Layout, true, "test");
             mesh.VertexBuffer.SetData(vertices);
+            mesh.IndexBuffer?.SetData(indices);
         }
 
 

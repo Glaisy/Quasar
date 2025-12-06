@@ -42,6 +42,9 @@ namespace Quasar.Graphics.Internals
         public string Id { get; private set; }
 
         /// <inheritdoc/>
+        public string Tag { get; internal set; }
+
+        /// <inheritdoc/>
         public ShaderType Type { get; private set; }
 
 
@@ -54,6 +57,19 @@ namespace Quasar.Graphics.Internals
             }
 
             return Handle == other.Handle;
+        }
+
+
+        /// <inheritdoc/>
+        void ICoreShader.Activate()
+        {
+            Activate();
+        }
+
+        /// <inheritdoc/>
+        void ICoreShader.Deactivate()
+        {
+            Deactivate();
         }
     }
 }

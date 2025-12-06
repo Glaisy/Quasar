@@ -13,6 +13,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Shaders\Fallback.frag" />
+    <None Remove="Resources\Shaders\Fallback.vert" />
+    <None Remove="Resources\Shaders\Includes\Matrices\MVP.inc" />
     <None Remove="Resources\Shaders\Test.frag" />
     <None Remove="Resources\Shaders\Test.vert" />
   </ItemGroup>
@@ -20,6 +23,8 @@
   <ItemGroup>
     <Compile Include="..\..\AssemblyInfo.Suppressions.shared.cs" Link="Properties\AssemblyInfo.Suppressions.shared.cs" />
     <Compile Include="..\AssemblyInfo.shared.cs" Link="Properties\AssemblyInfo.shared.cs" />
+    <EmbeddedResource Include="Resources\Shaders\Fallback.frag" />
+    <EmbeddedResource Include="Resources\Shaders\Fallback.vert" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Shaders\Includes\Matrices\MVP.inc" />
     <EmbeddedResource Include="Resources\Shaders\Test.frag" />
     <EmbeddedResource Include="Resources\Shaders\Test.vert" />
   </ItemGroup>

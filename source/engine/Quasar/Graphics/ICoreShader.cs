@@ -27,5 +27,21 @@ namespace Quasar.Graphics
         /// Gets the type.
         /// </summary>
         ShaderType Type { get; }
+
+        /// <summary>
+        /// Gets the tag valeu.
+        /// </summary>
+        string Tag { get; }
+
+
+        /// <summary>
+        /// Activates the shader.
+        /// </summary>
+        internal void Activate();
+
+        /// <summary>
+        /// Deactivates the shader.
+        /// </summary>
+        internal void Deactivate();
     }
 }
