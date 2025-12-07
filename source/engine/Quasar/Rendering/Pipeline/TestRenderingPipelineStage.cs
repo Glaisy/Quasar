@@ -62,7 +62,7 @@ namespace Quasar.Rendering.Pipeline
         /// <inheritdoc/>
         protected override void OnStart()
         {
-            shader = (ShaderBase)shaderRepository.Get("Test");
+            shader = shaderRepository.GetShader("Test");
 
             var vertices = new[]
             {

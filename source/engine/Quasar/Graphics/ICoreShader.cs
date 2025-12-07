@@ -21,27 +21,15 @@ namespace Quasar.Graphics
     /// <seealso cref="IGraphicsResource" />
     /// <seealso cref="IIdentifierProvider{String}" />
     /// <seealso cref="IEquatable{ICoreShader}" />
-    public interface ICoreShader : IGraphicsResource, IIdentifierProvider<string>, IEquatable<ICoreShader>
+    public interface ICoreShader :
+        IGraphicsResource,
+        IIdentifierProvider<string>,
+        ITagProvider,
+        IEquatable<ICoreShader>
     {
         /// <summary>
         /// Gets the type.
         /// </summary>
         ShaderType Type { get; }
-
-        /// <summary>
-        /// Gets the tag valeu.
-        /// </summary>
-        string Tag { get; }
-
-
-        /// <summary>
-        /// Activates the shader.
-        /// </summary>
-        internal void Activate();
-
-        /// <summary>
-        /// Deactivates the shader.
-        /// </summary>
-        internal void Deactivate();
     }
 }

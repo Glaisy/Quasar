@@ -27,11 +27,10 @@ namespace Quasar.Graphics.Internals
     /// <seealso cref="IShaderRepository" />
     [Export(typeof(IShaderRepository))]
     [Singleton]
-    internal sealed class ShaderRepository : RepositoryBase<string, IShader, ShaderBase>, IShaderRepository
+    internal sealed class ShaderRepository : ResourceRepositoryBase<string, IShader, ShaderBase>, IShaderRepository
     {
         private readonly IShaderFactory shaderFactory;
         private readonly Dictionary<int, ShaderBase> shadersByHandle = new Dictionary<int, ShaderBase>();
-        private readonly List<ShaderBase> selectedShaders = new List<ShaderBase>();
         private readonly ILogger logger;
 
 
@@ -70,8 +69,7 @@ namespace Quasar.Graphics.Internals
 
                 EnsureIdentifierIsAvailable(id);
 
-                shader = shaderFactory.CreateShader(id, source);
-                shader.Tag = tag;
+                shader = shaderFactory.CreateShader(id, source, tag);
                 AddItem(id, shader);
 
                 return shader;
@@ -89,33 +87,6 @@ namespace Quasar.Graphics.Internals
         }
 
         /// <inheritdoc/>
-        public void DeleteByTag(string tag)
-        {
-            ArgumentException.ThrowIfNullOrEmpty(tag, nameof(tag));
-
-            try
-            {
-                RepositoryLock.EnterWriteLock();
-
-                FindItems(shader => shader.Tag == tag, selectedShaders);
-                if (selectedShaders.Count == 0)
-                {
-                    return;
-                }
-
-                foreach (var shader in selectedShaders)
-                {
-                    DeleteShader(shader);
-                }
-            }
-            finally
-            {
-                selectedShaders.Clear();
-                RepositoryLock.ExitWriteLock();
-            }
-        }
-
-        /// <inheritdoc/>
         public ShaderBase GetShader(string id)
         {
             ValidateIdentifier(id);
@@ -124,7 +95,7 @@ namespace Quasar.Graphics.Internals
             {
                 RepositoryLock.EnterReadLock();
 
-                return GetItem(id);
+                return GetItemById(id);
             }
             finally
             {
@@ -157,36 +128,19 @@ namespace Quasar.Graphics.Internals
 
 
                 // loads built-in shaders
-                var loadedShaders = shaderFactory.LoadBuiltInShaders();
-                AddShaders(loadedShaders, null);
+                shaderFactory.LoadBuiltInShaders(TempItems);
+                AddItems(TempItems);
 
                 // make sure fallback shader is loaded
-                fallbackShader = GetItem(ShaderConstants.FallbackShaderKey);
+                fallbackShader = GetItemById(ShaderConstants.FallbackShaderId);
                 if (fallbackShader == null)
                 {
-                    throw new InvalidOperationException($"Unable to resolve fallback shader '{ShaderConstants.FallbackShaderKey}'.");
+                    throw new InvalidOperationException($"Unable to resolve fallback shader '{ShaderConstants.FallbackShaderId}'.");
                 }
             }
             finally
             {
-                RepositoryLock.ExitWriteLock();
-            }
-        }
-
-        /// <inheritdoc/>
-        public void Load(IResourceProvider resourceProvider, string resourceDirectoryPath, string tag = null)
-        {
-            ArgumentNullException.ThrowIfNull(resourceProvider, nameof(resourceProvider));
-
-            try
-            {
-                RepositoryLock.EnterWriteLock();
-
-                var loadedShaders = shaderFactory.LoadShaders(resourceProvider, resourceDirectoryPath);
-                AddShaders(loadedShaders, tag);
-            }
-            finally
-            {
+                TempItems.Clear();
                 RepositoryLock.ExitWriteLock();
             }
         }
@@ -201,35 +155,27 @@ namespace Quasar.Graphics.Internals
         }
 
         /// <inheritdoc/>
+        protected override void DeleteItem(ShaderBase item)
+        {
+            base.DeleteItem(item);
+
+            shadersByHandle.Remove(item.Handle);
+        }
+
+        /// <inheritdoc/>
+        protected override void LoadItems(
+            IResourceProvider resourceProvider,
+            string resourceDirectoryPath,
+            in ICollection<ShaderBase> loadedItems,
+            string tag = null)
+        {
+            shaderFactory.LoadShaders(resourceProvider, resourceDirectoryPath, loadedItems, tag);
+        }
+
+        /// <inheritdoc/>
         protected override void ValidateIdentifier(string id)
         {
             ArgumentException.ThrowIfNullOrEmpty(id, nameof(id));
-        }
-
-
-        private void AddShaders(List<ShaderBase> shaders, string tag)
-        {
-            foreach (var shader in shaders)
-            {
-                try
-                {
-                    shader.Tag = tag;
-                    AddItem(shader.Id, shader);
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex, $"Unable to add shader: '{shader.Id}'. Skipped.");
-
-                    shader.Dispose();
-                }
-            }
-        }
-
-        private void DeleteShader(ShaderBase shader)
-        {
-            DeleteItem(shader.Id);
-            shadersByHandle.Remove(shader.Handle);
-            shader.Dispose();
         }
     }
 }

@@ -80,9 +80,9 @@ namespace Quasar.Graphics
         public const string DeltaTime = "DeltaTime";
 
         /// <summary>
-        /// The fallback shader key.
+        /// The fallback shader's identifier.
         /// </summary>
-        public const string FallbackShaderKey = "Fallback";
+        public const string FallbackShaderId = "Fallback";
 
         /// <summary>
         /// The light color property name.

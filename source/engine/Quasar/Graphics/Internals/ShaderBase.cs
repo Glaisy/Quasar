@@ -30,9 +30,10 @@ namespace Quasar.Graphics.Internals
         /// Initializes a new instance of the <see cref="ShaderBase" /> class.
         /// </summary>
         /// <param name="id">The identifier.</param>
+        /// <param name="tag">The tag value.</param>
         /// <param name="descriptor">The graphic resource descriptor.</param>
-        protected ShaderBase(string id, in GraphicsResourceDescriptor descriptor)
-            : base(ShaderType.Compute, id, descriptor)
+        protected ShaderBase(string id, string tag, in GraphicsResourceDescriptor descriptor)
+            : base(ShaderType.Compute, id, tag, descriptor)
         {
         }
 

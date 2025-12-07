@@ -10,7 +10,6 @@
 //-----------------------------------------------------------------------
 
 using Quasar.Collections;
-using Quasar.Core.IO;
 using Quasar.Graphics.Internals;
 
 namespace Quasar.Graphics
@@ -19,7 +18,7 @@ namespace Quasar.Graphics
     /// Render shader repository interface definition.
     /// </summary>
     /// <seealso cref="IRepository{String, IShader}" />
-    public interface IShaderRepository : IRepository<string, IShader>
+    public interface IShaderRepository : IResourceRepository<string, IShader>
     {
         /// <summary>
         /// Gets the fallback shader.
@@ -37,20 +36,6 @@ namespace Quasar.Graphics
         /// The create shader instance.
         /// </returns>
         IShader Create(string id, ShaderSource source, string tag = null);
-
-        /// <summary>
-        /// Deletes all shaders in the repository by the specified tag.
-        /// </summary>
-        /// <param name="tag">The tag.</param>
-        void DeleteByTag(string tag);
-
-        /// <summary>
-        /// Loads shaders from the resource directory path by the resource provider.
-        /// </summary>
-        /// <param name="resourceProvider">The resource provider.</param>
-        /// <param name="resourceDirectoryPath">The resource directory path.</param>
-        /// <param name="tag">The custom tag value.</param>
-        void Load(IResourceProvider resourceProvider, string resourceDirectoryPath, string tag = null);
 
 
         /// <summary>

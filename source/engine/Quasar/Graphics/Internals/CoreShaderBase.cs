@@ -23,18 +23,20 @@ namespace Quasar.Graphics.Internals
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="id">The identifier.</param>
+        /// <param name="tag">The tag value.</param>
         /// <param name="descriptor">The graphic resource descriptor.</param>
-        protected CoreShaderBase(ShaderType type, string id, in GraphicsResourceDescriptor descriptor)
+        protected CoreShaderBase(ShaderType type, string id, string tag, in GraphicsResourceDescriptor descriptor)
             : base(descriptor)
         {
             Type = type;
             Id = id;
+            Tag = tag;
         }
 
         /// <inheritdoc/>
         protected override void Dispose(bool disposing)
         {
-            Id = null;
+            Id = Tag = null;
             Type = ShaderType.Unknown;
         }
 
@@ -42,7 +44,7 @@ namespace Quasar.Graphics.Internals
         public string Id { get; private set; }
 
         /// <inheritdoc/>
-        public string Tag { get; internal set; }
+        public string Tag { get; private set; }
 
         /// <inheritdoc/>
         public ShaderType Type { get; private set; }
@@ -57,19 +59,6 @@ namespace Quasar.Graphics.Internals
             }
 
             return Handle == other.Handle;
-        }
-
-
-        /// <inheritdoc/>
-        void ICoreShader.Activate()
-        {
-            Activate();
-        }
-
-        /// <inheritdoc/>
-        void ICoreShader.Deactivate()
-        {
-            Deactivate();
         }
     }
 }

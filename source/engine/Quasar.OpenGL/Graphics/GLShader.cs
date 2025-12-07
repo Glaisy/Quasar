@@ -32,12 +32,14 @@ namespace Quasar.OpenGL.Graphics
         /// </summary>
         /// <param name="handle">The handle.</param>
         /// <param name="id">The identifier.</param>
+        /// <param name="tag">The tag value.</param>
         /// <param name="descriptor">The descriptor.</param>
         public GLShader(
             int handle,
             string id,
+            string tag,
             in GraphicsResourceDescriptor descriptor)
-            : base(id, descriptor)
+            : base(id, tag, descriptor)
         {
             this.handle = handle;
         }

@@ -81,7 +81,7 @@ namespace Quasar.OpenGL.Graphics.Factories
 
 
         /// <inheritdoc/>
-        public ComputeShaderBase CreateComputeShader(string id, string source)
+        public ComputeShaderBase CreateComputeShader(string id, string source, string tag)
         {
             var computeProgramId = 0;
             var shaderHandle = 0;
@@ -99,7 +99,7 @@ namespace Quasar.OpenGL.Graphics.Factories
                 GL.DetachShader(shaderHandle, computeProgramId);
 
                 // create shader instance.
-                return new GLComputeShader(shaderHandle, id, shaderResourceDescriptor);
+                return new GLComputeShader(shaderHandle, id, tag, shaderResourceDescriptor);
             }
             catch
             {
@@ -120,7 +120,7 @@ namespace Quasar.OpenGL.Graphics.Factories
         }
 
         /// <inheritdoc/>
-        public ShaderBase CreateShader(string id, in ShaderSource source)
+        public ShaderBase CreateShader(string id, in ShaderSource source, string tag)
         {
             var vertexProgramId = 0;
             var fragmentProgramId = 0;
@@ -157,7 +157,7 @@ namespace Quasar.OpenGL.Graphics.Factories
                 }
 
                 // create shader instance.
-                var shader = new GLShader(shaderHandle, id, shaderResourceDescriptor);
+                var shader = new GLShader(shaderHandle, id, tag, shaderResourceDescriptor);
                 shader.Initialize();
                 return shader;
             }
@@ -190,13 +190,17 @@ namespace Quasar.OpenGL.Graphics.Factories
         }
 
         /// <inheritdoc/>
-        public List<ShaderBase> LoadBuiltInShaders()
+        public void LoadBuiltInShaders(in ICollection<ShaderBase> loadedShaders)
         {
-            return LoadShaders(builtInShaderResourceProvider, null);
+            LoadShaders(builtInShaderResourceProvider, null, loadedShaders, null);
         }
 
         /// <inheritdoc/>
-        public List<ShaderBase> LoadShaders(IResourceProvider resourceProvider, string resourceDirectoryPath)
+        public void LoadShaders(
+            IResourceProvider resourceProvider,
+            string resourceDirectoryPath,
+            in ICollection<ShaderBase> loadedShaders,
+            string tag)
         {
             // load include files
             var includeFilePath = resourceProvider.PathResolver.Resolve(BuiltInIncludeSubFolderPath, resourceDirectoryPath);
@@ -206,7 +210,6 @@ namespace Quasar.OpenGL.Graphics.Factories
             var shaderSources = LoadShaderSources(resourceProvider, resourceDirectoryPath);
 
             // create and add shaders
-            var shaders = new List<ShaderBase>();
             foreach (var pair in shaderSources)
             {
                 var shaderSource = pair.Value;
@@ -214,8 +217,8 @@ namespace Quasar.OpenGL.Graphics.Factories
                 ShaderBase shader = null;
                 try
                 {
-                    shader = CreateShader(pair.Key, shaderSource);
-                    shaders.Add(shader);
+                    shader = CreateShader(pair.Key, shaderSource, tag);
+                    loadedShaders.Add(shader);
                 }
                 catch (Exception ex)
                 {
@@ -224,8 +227,6 @@ namespace Quasar.OpenGL.Graphics.Factories
                     shader?.Dispose();
                 }
             }
-
-            return shaders;
         }
 
 
