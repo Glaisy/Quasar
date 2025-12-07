@@ -43,7 +43,7 @@ namespace Quasar.Collections
 
                 foreach (var item in items.Values)
                 {
-                    OnItemDeleted(item);
+                    DeleteItem(item);
                 }
 
                 items.Clear();
@@ -54,7 +54,6 @@ namespace Quasar.Collections
             }
         }
 
-
         /// <inheritdoc/>
         public void Delete(TId id)
         {
@@ -64,20 +63,19 @@ namespace Quasar.Collections
             {
                 RepositoryLock.EnterWriteLock();
 
-                var item = GetItem(id);
+                var item = GetItemById(id);
                 if (item == null)
                 {
                     return;
                 }
 
-                DeleteItem(id);
+                DeleteItem(item);
             }
             finally
             {
                 RepositoryLock.ExitWriteLock();
             }
         }
-
 
         /// <inheritdoc/>
         public TItem Get(TId id)
@@ -88,7 +86,7 @@ namespace Quasar.Collections
             {
                 RepositoryLock.EnterReadLock();
 
-                return GetItem(id);
+                return GetItemById(id);
             }
             finally
             {
@@ -116,10 +114,16 @@ namespace Quasar.Collections
         }
 
         /// <summary>
+        /// Deletes the item from the repository (non-synchronized).
+        /// </summary>
+        /// <param name="item">The item.</param>
+        protected abstract void DeleteItem(TItemImpl item);
+
+        /// <summary>
         /// Deletes the item from the repository by the specified identifier (non-synchronized).
         /// </summary>
         /// <param name="id">The identifier.</param>
-        protected virtual void DeleteItem(TId id)
+        protected void DeleteItemById(TId id)
         {
             items.Remove(id);
         }
@@ -161,18 +165,10 @@ namespace Quasar.Collections
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns>The item object or null if not found.</returns>
-        protected TItemImpl GetItem(TId id)
+        protected TItemImpl GetItemById(TId id)
         {
             items.TryGetValue(id, out var item);
             return item;
-        }
-
-        /// <summary>
-        /// Item deleted event handler (synchronized).
-        /// </summary>
-        /// <param name="item">The item.</param>
-        protected virtual void OnItemDeleted(TItemImpl item)
-        {
         }
 
         /// <summary>
