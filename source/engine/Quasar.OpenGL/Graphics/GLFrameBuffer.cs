@@ -179,7 +179,7 @@ namespace Quasar.OpenGL.Graphics
         private GLTexture CreateTexture(int textureId, string id, in Size size)
         {
             var resourceDescriptor = new GraphicsResourceDescriptor(GraphicsDevice, GraphicsResourceUsage.Default);
-            return new GLTexture(textureId, id, size, textureDescriptor, resourceDescriptor);
+            return new GLTexture(textureId, id, size, textureDescriptor, null, resourceDescriptor);
         }
 
         private GLTexture CreateColorBufferTextureAttachment(in Size size, FrameBufferAttachment attachmentId)

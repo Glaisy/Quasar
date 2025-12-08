@@ -30,12 +30,14 @@ namespace Quasar.OpenGL.Graphics
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="size">The size.</param>
+        /// <param name="tag">The tag value.</param>
         /// <param name="graphicsResourceDescriptor">The graphics resource descriptor.</param>
         public GLCubeMapTexture(
             string id,
             in Size size,
+            string tag,
             GraphicsResourceDescriptor graphicsResourceDescriptor)
-            : base(id, size, graphicsResourceDescriptor)
+            : base(id, size, tag, graphicsResourceDescriptor)
         {
             handle = GL.GenTexture();
         }

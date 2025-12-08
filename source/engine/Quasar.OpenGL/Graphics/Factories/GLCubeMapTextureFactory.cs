@@ -45,10 +45,10 @@ namespace Quasar.OpenGL.Graphics.Factories
 
 
         /// <inheritdoc/>
-        public CubeMapTextureBase Create(string key, IImageData imageData)
+        public CubeMapTextureBase Create(string key, IImageData imageData, string tag)
         {
             // create cubemap texture
-            var texture = new GLCubeMapTexture(key, Size.Empty, textureResourceDescriptor);
+            var texture = new GLCubeMapTexture(key, Size.Empty, tag, textureResourceDescriptor);
             texture.Activate();
 
             // set texture parameters

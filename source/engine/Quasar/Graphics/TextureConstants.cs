@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="ICubeMapTexture.cs" company="Space Development">
+// <copyright file="TextureConstants.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,21 +9,21 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using Space.Core;
-
 namespace Quasar.Graphics
 {
     /// <summary>
-    /// Cubemap texture interface definition.
+    /// Texture related constant definitions.
     /// </summary>
-    /// <seealso cref="IGraphicsResource" />
-    /// <seealso cref="IIdentifierProvider{String}" />
-    /// <seealso cref="ITagProvider" />
-    public interface ICubeMapTexture : IGraphicsResource, IIdentifierProvider<string>, ITagProvider
+    public static class TextureConstants
     {
         /// <summary>
-        /// Gets the size.
+        /// The fallback normal texture identifier.
         /// </summary>
-        Size Size { get; }
+        public const string FallbackNormalMapTextureId = "FallbackNormalMap";
+
+        /// <summary>
+        /// The fallback texture identifier.
+        /// </summary>
+        public const string FallbackTextureId = "Fallback";
     }
 }

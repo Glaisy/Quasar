@@ -12,12 +12,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Cubemaps\Fallback.png" />
+    <None Remove="Resources\Textures\Fallback.png" />
+    <None Remove="Resources\Textures\FallbackNormalMap.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="..\..\AssemblyInfo.Suppressions.shared.cs" Link="Properties\AssemblyInfo.Suppressions.shared.cs" />
     <Compile Include="..\AssemblyInfo.shared.cs" Link="Properties\AssemblyInfo.shared.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="..\..\stylecop.json" Link="Properties\stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Cubemaps\Fallback.png" />
+    <EmbeddedResource Include="Resources\Textures\Fallback.png" />
+    <EmbeddedResource Include="Resources\Textures\FallbackNormalMap.png" />
   </ItemGroup>
 
   <ItemGroup>

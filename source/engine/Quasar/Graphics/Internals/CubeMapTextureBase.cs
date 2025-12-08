@@ -22,21 +22,24 @@ namespace Quasar.Graphics.Internals
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="size">The size.</param>
+        /// <param name="tag">The tag value.</param>
         /// <param name="graphicsResourceDescriptor">The graphics resource descriptor.</param>
         protected CubeMapTextureBase(
             string id,
             in Size size,
+            string tag,
             in GraphicsResourceDescriptor graphicsResourceDescriptor)
             : base(graphicsResourceDescriptor)
         {
             Id = id;
             Size = size;
+            Tag = tag;
         }
 
         /// <inheritdoc/>
         protected override void Dispose(bool disposing)
         {
-            Id = null;
+            Id = Tag = null;
             Size = Size.Empty;
         }
 
@@ -46,5 +49,8 @@ namespace Quasar.Graphics.Internals
 
         /// <inheritdoc/>
         public Size Size { get; protected internal set; }
+
+        /// <inheritdoc/>
+        public string Tag { get; private set; }
     }
 }

@@ -27,13 +27,15 @@ namespace Quasar.OpenGL.Graphics
         /// <param name="id">The identifier.</param>
         /// <param name="size">The size.</param>
         /// <param name="textureDescriptor">The texture descriptor.</param>
+        /// <param name="tag">The tag value.</param>
         /// <param name="resourceDescriptor">The resource descriptor.</param>
         public GLTexture(
             string id,
             in Size size,
             in TextureDescriptor textureDescriptor,
+            string tag,
             in GraphicsResourceDescriptor resourceDescriptor)
-            : this(GL.GenTexture(), id, size, textureDescriptor, resourceDescriptor)
+            : this(GL.GenTexture(), id, size, textureDescriptor, tag, resourceDescriptor)
         {
         }
 
@@ -44,14 +46,16 @@ namespace Quasar.OpenGL.Graphics
         /// <param name="id">The identifier.</param>
         /// <param name="size">The size.</param>
         /// <param name="textureDescriptor">The texture descriptor.</param>
+        /// <param name="tag">The tag.</param>
         /// <param name="resourceDescriptor">The resource descriptor.</param>
         public GLTexture(
             int handle,
             string id,
             in Size size,
             in TextureDescriptor textureDescriptor,
+            string tag,
             in GraphicsResourceDescriptor resourceDescriptor)
-            : base(id, size, textureDescriptor, resourceDescriptor)
+            : base(id, size, textureDescriptor, tag, resourceDescriptor)
         {
             this.handle = handle;
         }

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="ICubeMapTexture.cs" company="Space Development">
+// <copyright file="IQuasarContext.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,21 +9,25 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using Quasar.Core.IO;
+
 using Space.Core;
 
-namespace Quasar.Graphics
+namespace Quasar
 {
     /// <summary>
-    /// Cubemap texture interface definition.
+    /// Represents the context information for the Quasar engine.
     /// </summary>
-    /// <seealso cref="IGraphicsResource" />
-    /// <seealso cref="IIdentifierProvider{String}" />
-    /// <seealso cref="ITagProvider" />
-    public interface ICubeMapTexture : IGraphicsResource, IIdentifierProvider<string>, ITagProvider
+    public interface IQuasarContext
     {
         /// <summary>
-        /// Gets the size.
+        /// Gets the environment information.
         /// </summary>
-        Size Size { get; }
+        IEnvironmentInformation EnvironmentInformation { get; }
+
+        /// <summary>
+        /// Gets the resource provider for the built-in engine resources.
+        /// </summary>
+        IResourceProvider ResourceProvider { get; }
     }
 }

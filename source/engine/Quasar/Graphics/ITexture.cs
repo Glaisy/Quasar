@@ -18,7 +18,8 @@ namespace Quasar.Graphics
     /// </summary>
     /// <seealso cref="IGraphicsResource" />
     /// <seealso cref="IIdentifierProvider{String}" />
-    public interface ITexture : IGraphicsResource, IIdentifierProvider<string>
+    /// <seealso cref="ITagProvider" />
+    public interface ITexture : IGraphicsResource, IIdentifierProvider<string>, ITagProvider
     {
         /// <summary>
         /// Gets the anisotropic filtering level (if supported).

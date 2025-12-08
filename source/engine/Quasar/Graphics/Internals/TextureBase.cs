@@ -24,11 +24,13 @@ namespace Quasar.Graphics.Internals
         /// <param name="id">The identifier.</param>
         /// <param name="size">The size.</param>
         /// <param name="textureDescriptor">The texture descriptor.</param>
+        /// <param name="tag">The tag value.</param>
         /// <param name="resourceDescriptor">The resource descriptor.</param>
         protected TextureBase(
             string id,
             in Size size,
             in TextureDescriptor textureDescriptor,
+            string tag,
             in GraphicsResourceDescriptor resourceDescriptor)
             : base(resourceDescriptor)
         {
@@ -39,13 +41,15 @@ namespace Quasar.Graphics.Internals
             Filtered = textureDescriptor.Filtered;
             RepeatModeX = textureDescriptor.RepeatX;
             RepeatModeY = textureDescriptor.RepeatX;
+
+            Tag = tag;
         }
 
 
         /// <inheritdoc/>
         protected override void Dispose(bool disposing)
         {
-            Id = null;
+            Id = Tag = null;
             AnisotropyLevel = 0;
             Filtered = false;
             RepeatModeX = RepeatModeY = TextureRepeatMode.Clamped;
@@ -70,5 +74,8 @@ namespace Quasar.Graphics.Internals
 
         /// <inheritdoc/>
         public Size Size { get; protected set; }
+
+        /// <inheritdoc/>
+        public string Tag { get; private set; }
     }
 }

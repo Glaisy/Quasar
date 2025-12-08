@@ -126,7 +126,6 @@ namespace Quasar.Graphics.Internals
             {
                 RepositoryLock.EnterWriteLock();
 
-
                 // loads built-in shaders
                 shaderFactory.LoadBuiltInShaders(TempItems);
                 AddItems(TempItems);

@@ -21,9 +21,10 @@ namespace Quasar.Graphics.Internals.Factories
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="imageData">The cube map texture image data.</param>
+        /// <param name="tag">The tag value.</param>
         /// <returns>
         /// The created cube map texture instance.
         /// </returns>
-        CubeMapTextureBase Create(string id, IImageData imageData);
+        CubeMapTextureBase Create(string id, IImageData imageData, string tag);
     }
 }

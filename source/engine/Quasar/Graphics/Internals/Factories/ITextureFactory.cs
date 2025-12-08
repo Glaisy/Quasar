@@ -21,10 +21,11 @@ namespace Quasar.Graphics.Internals.Factories
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="imageData">The image data.</param>
+        /// <param name="tag">The tag value.</param>
         /// <param name="textureDescriptor">The texture descriptor.</param>
         /// <returns>
         /// The created texture instance.
         /// </returns>
-        TextureBase Create(string id, IImageData imageData, in TextureDescriptor textureDescriptor);
+        TextureBase Create(string id, IImageData imageData, string tag, in TextureDescriptor textureDescriptor);
     }
 }

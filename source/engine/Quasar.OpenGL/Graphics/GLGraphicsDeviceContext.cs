@@ -100,6 +100,7 @@ namespace Quasar.OpenGL.Graphics
             PrimaryFrameBuffer = frameBufferFactory.CreatePrimary(nativeWindow);
 
             AddOpenGLServiceImplementation<IShaderFactory>();
+            AddOpenGLServiceImplementation<ITextureImageDataLoader>();
             AddOpenGLServiceImplementation<ITextureFactory>();
             AddOpenGLServiceImplementation<ICubeMapTextureFactory>();
             AddOpenGLServiceImplementation<IMeshFactory>();

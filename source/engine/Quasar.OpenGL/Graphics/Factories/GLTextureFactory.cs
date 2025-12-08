@@ -56,7 +56,7 @@ namespace Quasar.OpenGL.Graphics.Factories
 
 
         /// <inheritdoc/>
-        public TextureBase Create(string key, IImageData imageData, in TextureDescriptor textureDescriptor)
+        public TextureBase Create(string key, IImageData imageData, string tag, in TextureDescriptor textureDescriptor)
         {
             var id = 0;
             try
@@ -120,7 +120,7 @@ namespace Quasar.OpenGL.Graphics.Factories
                     (int)TextureMagFilter.Linear);
 
                 // create texture wrapper object.
-                return new GLTexture(id, key, imageData.Size, textureDescriptor, textureResourceDescriptor);
+                return new GLTexture(id, key, imageData.Size, textureDescriptor, tag, textureResourceDescriptor);
             }
             catch
             {

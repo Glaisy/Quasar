@@ -23,15 +23,23 @@ namespace Quasar.Rendering.Pipeline
     public sealed class InitializeRenderingPipelineStage : RenderingPipelineStageBase
     {
         private readonly IShaderRepository shaderRepository;
-
+        private readonly ITextureRepository textureRepository;
+        private readonly ICubeMapTextureRepository cubeMapTextureRepository;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="InitializeRenderingPipelineStage"/> class.
+        /// Initializes a new instance of the <see cref="InitializeRenderingPipelineStage" /> class.
         /// </summary>
         /// <param name="shaderRepository">The shader repository.</param>
-        public InitializeRenderingPipelineStage(IShaderRepository shaderRepository)
+        /// <param name="textureRepository">The texture repository.</param>
+        /// <param name="cubeMapTextureRepository">The cube map texture repository.</param>
+        public InitializeRenderingPipelineStage(
+            IShaderRepository shaderRepository,
+            ITextureRepository textureRepository,
+            ICubeMapTextureRepository cubeMapTextureRepository)
         {
             this.shaderRepository = shaderRepository;
+            this.textureRepository = textureRepository;
+            this.cubeMapTextureRepository = cubeMapTextureRepository;
         }
 
 
@@ -51,8 +59,8 @@ namespace Quasar.Rendering.Pipeline
             // load built-in resources
             ////fontFamilyRepository.LoadBuiltInFontFamilies();
             shaderRepository.LoadBuiltInShaders();
-            ////textureRepository.LoadBuiltInTextures();
-            ////cubeMapTextureRepository.LoadBuiltInCubeMapTextures();
+            textureRepository.LoadBuiltInTextures();
+            cubeMapTextureRepository.LoadBuiltInCubeMapTextures();
 
             ////// initialize internal rendering components
             ////RenderObject.InitializeDependencies(resolver);
