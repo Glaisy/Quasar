@@ -20,7 +20,7 @@ namespace Quasar.Graphics
     /// Represents the texture resource repository.
     /// </summary>
     /// <seealso cref="IRepository{String, ITexture}" />
-    public interface ITextureRepository : IResourceRepository<string, ITexture>
+    public interface ITextureRepository : ITaggedRepository<string, ITexture>
     {
         /// <summary>
         /// Gets the fallback normal texture.
@@ -34,55 +34,55 @@ namespace Quasar.Graphics
 
 
         /// <summary>
-        /// Loads a 2D texture from the image data.
+        /// Creates a 2D texture from the image data.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="imageData">The image data.</param>
         /// <param name="tag">The tag value.</param>
         /// <param name="textureDescriptor">The texture descriptor.</param>
         /// <returns>
-        /// The loaded texture instance.
+        /// The created texture instance.
         /// </returns>
-        ITexture Load(
+        ITexture Create(
             string id,
             IImageData imageData,
             string tag = null,
             in TextureDescriptor textureDescriptor = default);
 
         /// <summary>
-        /// Loads a 2D texture instance from the file path.
+        /// Creates a 2D texture instance from the image file path.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="filePath">The file path.</param>
         /// <param name="tag">The tag value.</param>
         /// <param name="textureDescriptor">The texture descriptor.</param>
         /// <returns>
-        /// The loaded texture instance.
+        /// The created texture instance.
         /// </returns>
-        ITexture Load(
+        ITexture Create(
             string id,
             string filePath,
             string tag = null,
             in TextureDescriptor textureDescriptor = default);
 
         /// <summary>
-        /// Loads a 2D texture instance from the stream.
+        /// Creates a 2D texture instance from the image stream.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="stream">The stream.</param>
         /// <param name="tag">The tag value.</param>
         /// <param name="textureDescriptor">The texture descriptor.</param>
         /// <returns>
-        /// The loaded texture instance.
+        /// The created texture instance.
         /// </returns>
-        ITexture Load(
+        ITexture Create(
             string id,
             Stream stream,
             string tag = null,
             in TextureDescriptor textureDescriptor = default);
 
         /// <summary>
-        /// Loads a 2D texture instance from the resource path.
+        /// Creates a 2D texture instance from the resource path.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="resourceProvider">The resource provider.</param>
@@ -90,9 +90,9 @@ namespace Quasar.Graphics
         /// <param name="tag">The tag value.</param>
         /// <param name="textureDescriptor">The texture descriptor.</param>
         /// <returns>
-        /// The loaded texture instance.
+        /// The created texture instance.
         /// </returns>
-        ITexture Load(
+        ITexture Create(
             string id,
             IResourceProvider resourceProvider,
             string resourcePath,

@@ -17,7 +17,6 @@ using Quasar.Core.IO;
 using Quasar.Graphics.Internals.Factories;
 
 using Space.Core.DependencyInjection;
-using Space.Core.Diagnostics;
 
 namespace Quasar.Graphics.Internals
 {
@@ -27,25 +26,19 @@ namespace Quasar.Graphics.Internals
     /// <seealso cref="IShaderRepository" />
     [Export(typeof(IShaderRepository))]
     [Singleton]
-    internal sealed class ShaderRepository : ResourceRepositoryBase<string, IShader, ShaderBase>, IShaderRepository
+    internal sealed class ShaderRepository : TaggedRepositoryBase<string, IShader, ShaderBase>, IShaderRepository
     {
         private readonly IShaderFactory shaderFactory;
         private readonly Dictionary<int, ShaderBase> shadersByHandle = new Dictionary<int, ShaderBase>();
-        private readonly ILogger logger;
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ShaderRepository" /> class.
         /// </summary>
         /// <param name="shaderFactory">The shader factory.</param>
-        /// <param name="loggerFactory">The logger factory.</param>
-        public ShaderRepository(
-            IShaderFactory shaderFactory,
-            ILoggerFactory loggerFactory)
+        public ShaderRepository(IShaderFactory shaderFactory)
         {
             this.shaderFactory = shaderFactory;
-
-            logger = loggerFactory.Create<ShaderRepository>();
         }
 
 
@@ -70,7 +63,7 @@ namespace Quasar.Graphics.Internals
                 EnsureIdentifierIsAvailable(id);
 
                 shader = shaderFactory.CreateShader(id, source, tag);
-                AddItem(id, shader);
+                AddItem(shader);
 
                 return shader;
             }
@@ -120,15 +113,33 @@ namespace Quasar.Graphics.Internals
         }
 
         /// <inheritdoc/>
+        public void Load(IResourceProvider resourceProvider, string searchPath, string tag)
+        {
+            ArgumentNullException.ThrowIfNull(resourceProvider, nameof(resourceProvider));
+            ArgumentException.ThrowIfNullOrEmpty(tag, nameof(tag));
+
+            try
+            {
+                RepositoryLock.EnterWriteLock();
+
+                var shadersToAdd = shaderFactory.LoadShaders(resourceProvider, searchPath, tag);
+                AddItems(shadersToAdd);
+            }
+            finally
+            {
+                RepositoryLock.ExitWriteLock();
+            }
+        }
+
+        /// <inheritdoc/>
         public void LoadBuiltInShaders()
         {
             try
             {
                 RepositoryLock.EnterWriteLock();
 
-                // loads built-in shaders
-                shaderFactory.LoadBuiltInShaders(TempItems);
-                AddItems(TempItems);
+                var builtInShaders = shaderFactory.LoadBuiltInShaders();
+                AddItems(builtInShaders);
 
                 // make sure fallback shader is loaded
                 fallbackShader = GetItemById(ShaderConstants.FallbackShaderId);
@@ -139,36 +150,30 @@ namespace Quasar.Graphics.Internals
             }
             finally
             {
-                TempItems.Clear();
                 RepositoryLock.ExitWriteLock();
             }
         }
 
 
         /// <inheritdoc/>
-        protected override void AddItem(string id, ShaderBase item)
+        protected override void AddItem(ShaderBase item)
         {
-            base.AddItem(id, item);
+            base.AddItem(item);
 
             shadersByHandle.Add(item.Handle, item);
         }
 
         /// <inheritdoc/>
-        protected override void DeleteItem(ShaderBase item)
+        protected override bool DeleteItem(ShaderBase item)
         {
-            base.DeleteItem(item);
+            var isDeleted = base.DeleteItem(item);
+            if (!isDeleted)
+            {
+                return false;
+            }
 
             shadersByHandle.Remove(item.Handle);
-        }
-
-        /// <inheritdoc/>
-        protected override void LoadItems(
-            IResourceProvider resourceProvider,
-            string resourceDirectoryPath,
-            in ICollection<ShaderBase> loadedItems,
-            string tag = null)
-        {
-            shaderFactory.LoadShaders(resourceProvider, resourceDirectoryPath, loadedItems, tag);
+            return true;
         }
 
         /// <inheritdoc/>

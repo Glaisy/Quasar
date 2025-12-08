@@ -177,7 +177,7 @@ namespace Quasar.Core.IO.Internals
         {
             var basePathPrefix = assembly.GetName().Name.
                 Replace('.', pathResolver.PathSeparator);
-            return pathResolver.Combine(basePathPrefix, basePath);
+            return pathResolver.Resolve(basePath, basePathPrefix);
         }
 
         private bool IsTopLevelResource(string resourcePath, string searchBasePath, int extensionLength)

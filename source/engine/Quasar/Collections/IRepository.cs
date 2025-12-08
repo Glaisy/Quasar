@@ -27,6 +27,7 @@ namespace Quasar.Collections
         /// Deletes the item by the specified identifier.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        void Delete(TId id);
+        /// <returns>True if the item exists and deleted; otherwise false.</returns>
+        bool Delete(TId id);
     }
 }

@@ -45,21 +45,17 @@ namespace Quasar.Graphics.Internals.Factories
         /// <summary>
         /// Loads the built-in render shaders.
         /// </summary>
-        /// <param name="loadedShaders">The loaded shaders.</param>
-        void LoadBuiltInShaders(in ICollection<ShaderBase> loadedShaders);
+        IEnumerable<ShaderBase> LoadBuiltInShaders();
 
         /// <summary>
         /// Loads the shaders by resource provider and resource directory path.
-        /// The loaded shaders are tagged and added to the loaded shaders collection.
         /// </summary>
         /// <param name="resourceProvider">The resource provider.</param>
-        /// <param name="resourceDirectoryPath">The resource directory path.</param>
-        /// <param name="loadedShaders">The loaded shaders.</param>
+        /// <param name="searchPath">The resource search path.</param>
         /// <param name="tag">The tag.</param>
-        void LoadShaders(
+        IEnumerable<ShaderBase> LoadShaders(
             IResourceProvider resourceProvider,
-            string resourceDirectoryPath,
-            in ICollection<ShaderBase> loadedShaders,
+            string searchPath,
             string tag);
     }
 }

@@ -9,6 +9,8 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System.IO;
+
 using Quasar.Collections;
 using Quasar.Core.IO;
 
@@ -18,7 +20,7 @@ namespace Quasar.Graphics
     /// Represents the cube map texture resource repository.
     /// </summary>
     /// <seealso cref="IRepository{String, ICubeMapTexture}" />
-    public interface ICubeMapTextureRepository : IResourceRepository<string, ICubeMapTexture>
+    public interface ICubeMapTextureRepository : ITaggedRepository<string, ICubeMapTexture>
     {
         /// <summary>
         /// Gets the fallback cube map texture.
@@ -27,7 +29,7 @@ namespace Quasar.Graphics
 
 
         /// <summary>
-        /// Loads a cube map texture instance from the image data.
+        /// Creates a cube map texture instance from the image data.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="imageData">The image data(The image should contain the cube map faces in vertical layout, in +X, -X, +Y, -Y, +Z, -Z order).</param>
@@ -35,10 +37,41 @@ namespace Quasar.Graphics
         /// <returns>
         /// The loaded cube map texture instance.
         /// </returns>
-        ICubeMapTexture Load(string id, IImageData imageData, string tag = null);
+        ICubeMapTexture Create(
+            string id,
+            IImageData imageData,
+            string tag = null);
 
         /// <summary>
-        /// Loads a cube map texture instance from the resource path.
+        /// Creates a 2D texture instance from the image file path.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="filePath">The image file path (The image should contain the cube map faces in vertical layout, in +X, -X, +Y, -Y, +Z, -Z order).</param>
+        /// <param name="tag">The tag value.</param>
+        /// <returns>
+        /// The created texture instance.
+        /// </returns>
+        ICubeMapTexture Create(
+            string id,
+            string filePath,
+            string tag = null);
+
+        /// <summary>
+        /// Creates a cube map texture instance from the image stream.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="stream">The image stream (The image should contain the cube map faces in vertical layout, in +X, -X, +Y, -Y, +Z, -Z order).</param>
+        /// <param name="tag">The tag value.</param>
+        /// <returns>
+        /// The created texture instance.
+        /// </returns>
+        ICubeMapTexture Create(
+            string id,
+            Stream stream,
+            string tag = null);
+
+        /// <summary>
+        /// Creates a cube map texture instance from the resource path.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="resourceProvider">The resource provider.</param>
@@ -47,7 +80,7 @@ namespace Quasar.Graphics
         /// <returns>
         /// The loaded cube map texture instance.
         /// </returns>
-        ICubeMapTexture Load(string id, IResourceProvider resourceProvider, string resourcePath, string tag = null);
+        ICubeMapTexture Create(string id, IResourceProvider resourceProvider, string resourcePath, string tag = null);
 
 
         /// <summary>

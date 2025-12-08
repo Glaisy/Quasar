@@ -35,7 +35,7 @@ namespace Quasar.OpenGL.Graphics.Factories
     [Singleton]
     internal sealed class GLShaderFactory : IShaderFactory
     {
-        private const string BuiltInShaderResourcePath = "Resources/Shaders";
+        private const string BuiltInShaderResourcePath = "./Resources/Shaders";
         private const string BuiltInIncludeSubFolderPath = "Includes";
         private const string IncludeFileExtension = ".inc";
         private const string IncludeTokenStart = "#include <";
@@ -190,24 +190,23 @@ namespace Quasar.OpenGL.Graphics.Factories
         }
 
         /// <inheritdoc/>
-        public void LoadBuiltInShaders(in ICollection<ShaderBase> loadedShaders)
+        public IEnumerable<ShaderBase> LoadBuiltInShaders()
         {
-            LoadShaders(builtInShaderResourceProvider, null, loadedShaders, null);
+            return LoadShaders(builtInShaderResourceProvider, null, null);
         }
 
         /// <inheritdoc/>
-        public void LoadShaders(
+        public IEnumerable<ShaderBase> LoadShaders(
             IResourceProvider resourceProvider,
-            string resourceDirectoryPath,
-            in ICollection<ShaderBase> loadedShaders,
+            string searchPath,
             string tag)
         {
             // load include files
-            var includeFilePath = resourceProvider.PathResolver.Resolve(BuiltInIncludeSubFolderPath, resourceDirectoryPath);
+            var includeFilePath = resourceProvider.PathResolver.Resolve(BuiltInIncludeSubFolderPath, searchPath);
             LoadIncludes(resourceProvider, includeFilePath);
 
             // load shader sources
-            var shaderSources = LoadShaderSources(resourceProvider, resourceDirectoryPath);
+            var shaderSources = LoadShaderSources(resourceProvider, searchPath);
 
             // create and add shaders
             foreach (var pair in shaderSources)
@@ -218,14 +217,21 @@ namespace Quasar.OpenGL.Graphics.Factories
                 try
                 {
                     shader = CreateShader(pair.Key, shaderSource, tag);
-                    loadedShaders.Add(shader);
                 }
                 catch (Exception ex)
                 {
                     logger.Error(ex, $"Unable to load create shader '{pair.Key}'. Skipped.");
 
                     shader?.Dispose();
+                    shader = null;
                 }
+
+                if (shader == null)
+                {
+                    continue;
+                }
+
+                yield return shader;
             }
         }
 

@@ -9,6 +9,9 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+
 namespace Quasar.Collections
 {
     /// <summary>
@@ -23,6 +26,20 @@ namespace Quasar.Collections
         /// </summary>
         int Count { get; }
 
+
+        /// <summary>
+        /// Finds the matching items by the specified predicate.
+        /// </summary>
+        /// <param name="predicate">The predicate.</param>
+        /// <returns>The list of matching items in the repository.</returns>
+        List<TItem> Find(Func<TItem, bool> predicate);
+
+        /// <summary>
+        /// Finds the matching items by the specified predicate and adds them to the items collection.
+        /// </summary>
+        /// <param name="predicate">The predicate.</param>
+        /// <param name="items">The items.</param>
+        void Find(Func<TItem, bool> predicate, in ICollection<TItem> items);
 
         /// <summary>
         /// Gets the item by the specified identifier.

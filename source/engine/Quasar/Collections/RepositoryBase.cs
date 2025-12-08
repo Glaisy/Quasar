@@ -26,6 +26,7 @@ namespace Quasar.Collections
     /// <seealso cref=" IRepository{TId, TItem}" />
     public abstract class RepositoryBase<TId, TItem, TItemImpl> : IRepository<TId, TItem>
         where TItemImpl : TItem
+        where TItem : IIdentifierProvider<TId>
     {
         private readonly Dictionary<TId, TItemImpl> items = new Dictionary<TId, TItemImpl>();
 
@@ -55,7 +56,7 @@ namespace Quasar.Collections
         }
 
         /// <inheritdoc/>
-        public void Delete(TId id)
+        public bool Delete(TId id)
         {
             ValidateIdentifier(id);
 
@@ -63,17 +64,48 @@ namespace Quasar.Collections
             {
                 RepositoryLock.EnterWriteLock();
 
-                var item = GetItemById(id);
-                if (item == null)
-                {
-                    return;
-                }
-
-                DeleteItem(item);
+                return DeleteItemById(id);
             }
             finally
             {
                 RepositoryLock.ExitWriteLock();
+            }
+        }
+
+        /// <inheritdoc/>
+        public List<TItem> Find(Func<TItem, bool> predicate)
+        {
+            ArgumentNullException.ThrowIfNull(predicate, nameof(predicate));
+
+            try
+            {
+                RepositoryLock.EnterReadLock();
+
+                var items = new List<TItem>();
+                FindItems(predicate, items);
+                return items;
+            }
+            finally
+            {
+                RepositoryLock.ExitReadLock();
+            }
+        }
+
+        /// <inheritdoc/>
+        public void Find(Func<TItem, bool> predicate, in ICollection<TItem> items)
+        {
+            ArgumentNullException.ThrowIfNull(predicate, nameof(predicate));
+            ArgumentNullException.ThrowIfNull(items, nameof(items));
+
+            try
+            {
+                RepositoryLock.EnterReadLock();
+
+                FindItems(predicate, items);
+            }
+            finally
+            {
+                RepositoryLock.ExitReadLock();
             }
         }
 
@@ -104,28 +136,44 @@ namespace Quasar.Collections
         /// <summary>
         /// Adds the item to the repository by the specified identifier (non-synchronized).
         /// </summary>
-        /// <param name="id">The identifier.</param>
         /// <param name="item">The item.</param>
-        protected virtual void AddItem(TId id, TItemImpl item)
+        protected virtual void AddItem(TItemImpl item)
         {
             Assertion.ThrowIfNull(item, nameof(item));
 
-            items.Add(id, item);
+            items.Add(item.Id, item);
+        }
+
+        /// <summary>
+        /// Adds the items to the repository by the specified tag (non-synchronized).
+        /// </summary>
+        /// <param name="items">The items.</param>
+        protected void AddItems(IEnumerable<TItemImpl> items)
+        {
+            foreach (var item in items)
+            {
+                AddItem(item);
+            }
         }
 
         /// <summary>
         /// Deletes the item from the repository (non-synchronized).
         /// </summary>
         /// <param name="item">The item.</param>
-        protected abstract void DeleteItem(TItemImpl item);
+        /// <returns>True if the item exists and deleted; otherwise false.</returns>
+        protected virtual bool DeleteItem(TItemImpl item)
+        {
+            return items.Remove(item.Id);
+        }
 
         /// <summary>
         /// Deletes the item from the repository by the specified identifier (non-synchronized).
         /// </summary>
         /// <param name="id">The identifier.</param>
-        protected void DeleteItemById(TId id)
+        /// <returns>True if the item exists and deleted; otherwise false.</returns>
+        protected virtual bool DeleteItemById(TId id)
         {
-            items.Remove(id);
+            return items.Remove(id);
         }
 
         /// <summary>
@@ -142,18 +190,35 @@ namespace Quasar.Collections
         }
 
         /// <summary>
-        /// Finds the items by the specified selector and adds them to the selected items (non-synchronized).
+        /// Finds the items by the specified predicate (non-synchronized).
         /// </summary>
-        /// <param name="selector">The selector.</param>
-        /// <param name="selectedItems">The selected items.</param>
-        protected void FindItems(Func<TItemImpl, bool> selector, in ICollection<TItemImpl> selectedItems)
+        /// <param name="predicate">The predicate.</param>
+        protected IEnumerable<TItemImpl> FindItems(Func<TItem, bool> predicate)
         {
-            Assertion.ThrowIfNull(selector, nameof(selector));
+            Assertion.ThrowIfNull(predicate, nameof(predicate));
+
+            foreach (var item in items.Values)
+            {
+                if (predicate(item))
+                {
+                    yield return item;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Finds the items by the specified predicate and adds them to the selected items (non-synchronized).
+        /// </summary>
+        /// <param name="predicate">The predicate.</param>
+        /// <param name="selectedItems">The selected items.</param>
+        protected void FindItems(Func<TItem, bool> predicate, in ICollection<TItem> selectedItems)
+        {
+            Assertion.ThrowIfNull(predicate, nameof(predicate));
             Assertion.ThrowIfNull(selectedItems, nameof(selectedItems));
 
             foreach (var item in items.Values)
             {
-                if (selector(item))
+                if (predicate(item))
                 {
                     selectedItems.Add(item);
                 }

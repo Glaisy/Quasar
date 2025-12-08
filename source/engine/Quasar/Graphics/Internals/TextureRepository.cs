@@ -10,7 +10,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 using Quasar.Collections;
@@ -24,14 +23,15 @@ namespace Quasar.Graphics.Internals
     /// <summary>
     /// Texture repository implementation.
     /// </summary>
-    /// <seealso cref="ResourceRepositoryBase{String, ITexture, TextureBase}" />
+    /// <seealso cref="TaggedRepositoryBase{String, ITexture, TextureBase}" />
     /// <seealso cref="ITextureRepository" />
     [Export(typeof(ITextureRepository))]
     [Singleton]
     internal sealed class TextureRepository
-        : ResourceRepositoryBase<string, ITexture, TextureBase>, ITextureRepository
+        : TaggedRepositoryBase<string, ITexture, TextureBase>, ITextureRepository
     {
-        private const string BuiltInTextureDirectoryPath = "Resources/Textures";
+        private const string BuiltInTextureIdPrefix = "Textures/";
+        private const string BuiltInTextureSearchPath = "./" + BuiltInTextureIdPrefix;
 
 
         private readonly IResourceProvider resourceProvider;
@@ -67,7 +67,7 @@ namespace Quasar.Graphics.Internals
 
 
         /// <inheritdoc/>
-        public ITexture Load(
+        public ITexture Create(
             string id,
             IImageData imageData,
             string tag = null,
@@ -91,7 +91,7 @@ namespace Quasar.Graphics.Internals
         }
 
         /// <inheritdoc/>
-        public ITexture Load(
+        public ITexture Create(
             string id,
             string filePath,
             string tag = null,
@@ -123,7 +123,7 @@ namespace Quasar.Graphics.Internals
         }
 
         /// <inheritdoc/>
-        public ITexture Load(
+        public ITexture Create(
             string id,
             Stream stream,
             string tag = null,
@@ -151,7 +151,7 @@ namespace Quasar.Graphics.Internals
         }
 
         /// <inheritdoc/>
-        public ITexture Load(
+        public ITexture Create(
             string id,
             IResourceProvider resourceProvider,
             string resourcePath,
@@ -217,20 +217,6 @@ namespace Quasar.Graphics.Internals
         }
 
 
-        /// <inheritdoc/>
-        protected override void DeleteItem(TextureBase item)
-        {
-            base.DeleteItem(item);
-
-            item.Dispose();
-        }
-
-        /// <inheritdoc/>
-        protected override void LoadItems(IResourceProvider resourceProvider, string resourceDirectoryPath, in ICollection<TextureBase> loadedItems, string tag = null)
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// Validates the identifier.
         /// Should throw an argument exception if the identifier is not valid.
@@ -242,27 +228,9 @@ namespace Quasar.Graphics.Internals
         }
 
 
-        private TextureBase CreateTexture(string id, IImageData imageData, string tag, in TextureDescriptor textureDescriptor)
-        {
-            TextureBase texture = null;
-            try
-            {
-                texture = textureFactory.Create(id, imageData, tag, textureDescriptor);
-                AddItem(id, texture);
-                return texture;
-            }
-            catch
-            {
-                // rollback and propagate error
-                texture?.Dispose();
-
-                throw;
-            }
-        }
-
         private void LoadBuiltInTexturesInternal()
         {
-            var resourcePaths = resourceProvider.EnumerateResources(null, true);
+            var resourcePaths = resourceProvider.EnumerateResources(BuiltInTextureSearchPath, true);
             var textureDescriptor = new TextureDescriptor(
                 0,
                 TextureRepeatMode.Repeat,
@@ -272,6 +240,7 @@ namespace Quasar.Graphics.Internals
             {
                 // extract texture identifier from resource path
                 var id = resourceProvider.GetRelativePathWithoutExtension(resourcePath);
+                id = id.Substring(BuiltInTextureIdPrefix.Length);
 
                 // create texture
                 Stream stream = null;
@@ -287,6 +256,24 @@ namespace Quasar.Graphics.Internals
                     imageData?.Dispose();
                     stream?.Dispose();
                 }
+            }
+        }
+
+        private TextureBase CreateTexture(string id, IImageData imageData, string tag, in TextureDescriptor textureDescriptor)
+        {
+            TextureBase texture = null;
+            try
+            {
+                texture = textureFactory.Create(id, imageData, tag, textureDescriptor);
+                AddItem(texture);
+                return texture;
+            }
+            catch
+            {
+                // rollback and propagate error
+                texture?.Dispose();
+
+                throw;
             }
         }
     }
