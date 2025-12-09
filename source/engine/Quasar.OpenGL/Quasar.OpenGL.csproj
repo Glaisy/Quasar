@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\AssemblyInfo.Suppressions.shared.cs" Link="Properties\AssemblyInfo.Suppressions.shared.cs" />
-    <Compile Include="..\AssemblyInfo.shared.cs" Link="Properties\AssemblyInfo.shared.cs" />
+    <Compile Include="..\..\AssemblyInfo.shared.cs" Link="Properties\AssemblyInfo.shared.cs" />
     <EmbeddedResource Include="Resources\Shaders\Fallback.frag" />
     <EmbeddedResource Include="Resources\Shaders\Fallback.vert" />
   </ItemGroup>
