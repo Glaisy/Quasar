@@ -12,6 +12,8 @@
 using System;
 using System.Windows.Forms;
 
+using Quasar.UI;
+
 namespace Quasar.FontGenerator
 {
     /// <summary>
@@ -28,7 +30,7 @@ namespace Quasar.FontGenerator
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            ////Application.Run(new MainForm());
+            Application.Run(new MainForm());
         }
     }
 }

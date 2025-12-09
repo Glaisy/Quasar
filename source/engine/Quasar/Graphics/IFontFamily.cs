@@ -23,6 +23,9 @@ namespace Quasar.Graphics
         /// Gets the <see cref="IFontStyleInformation" /> with the specified font style.
         /// </summary>
         /// <param name="fontStyle">The font style.</param>
+        /// <returns>
+        /// The font style information.
+        /// </returns>
         IFontStyleInformation this[FontStyle fontStyle] { get; }
 
 
@@ -50,5 +53,10 @@ namespace Quasar.Graphics
         /// Gets the first character.
         /// </summary>
         char FirstCharacter { get; }
+
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
+        string Name { get; }
     }
 }
