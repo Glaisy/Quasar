@@ -10,7 +10,8 @@
 //-----------------------------------------------------------------------
 
 using Quasar.Graphics;
-using Quasar.Settings;
+
+using Space.Core.Settings;
 
 namespace Quasar.Rendering
 {

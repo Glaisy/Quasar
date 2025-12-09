@@ -12,6 +12,8 @@
 using System;
 using System.Reflection;
 
+using Space.Core.Settings;
+
 namespace Quasar.Settings
 {
     /// <summary>

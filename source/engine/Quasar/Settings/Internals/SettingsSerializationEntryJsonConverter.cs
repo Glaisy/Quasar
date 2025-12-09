@@ -13,6 +13,8 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using Space.Core.Settings;
+
 namespace Quasar.Settings.Internals
 {
     /// <summary>
