@@ -9,6 +9,8 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using Space.Core.Settings;
+
 namespace Quasar.Settings.Internals
 {
     /// <summary>

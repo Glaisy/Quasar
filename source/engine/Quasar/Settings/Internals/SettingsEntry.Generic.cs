@@ -9,6 +9,7 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using Space.Core.Settings;
 using Space.Core.Utilities;
 
 namespace Quasar.Settings.Internals

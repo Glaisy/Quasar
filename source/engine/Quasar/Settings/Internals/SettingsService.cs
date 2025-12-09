@@ -24,6 +24,7 @@ using Space.Core;
 using Space.Core.DependencyInjection;
 using Space.Core.Diagnostics;
 using Space.Core.IO;
+using Space.Core.Settings;
 
 namespace Quasar.Settings.Internals
 {
