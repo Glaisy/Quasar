@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 using Space.Core;
@@ -19,13 +20,18 @@ namespace Quasar.Entities.Internals
     /// <summary>
     /// Represent an allocation table structure.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 8)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     internal unsafe struct AllocationTable
     {
         /// <summary>
-        /// The number of entries in the allocation table.
+        /// The maximum number of entries in an allocation table.
         /// </summary>
-        public const ushort EntryCount = BitmapArrayLength * BitCount;
+        public const int MaxEntryCount = BitmapArrayLength * BitCount;
+
+        /// <summary>
+        /// The size of the structure in bytes.
+        /// </summary>
+        public static readonly int Size = Marshal.SizeOf<AllocationTable>();
 
 
         private const int BitmapArrayLength = 16;
@@ -35,8 +41,9 @@ namespace Quasar.Entities.Internals
         private const ulong FullBitmap = 0xFFFFFFFFFFFFFFFF;
 
 
+        private int entryCount;
         private int freeEntryCount;
-        private fixed ulong bitmaps[BitmapArrayLength];
+        private fixed ulong bitmapArray[BitmapArrayLength];
 
 
         /// <summary>
@@ -45,23 +52,26 @@ namespace Quasar.Entities.Internals
         /// <param name="index">The index.</param>
         public void Free(int index)
         {
-            Assertion.ThrowIfGreaterThanOrEqual(index, EntryCount, nameof(index));
+            Assertion.ThrowIfGreaterThanOrEqual(index, entryCount, nameof(index));
             Assertion.ThrowIfNegative(index, nameof(index));
 
             var bitIndex = index % BitCount;
             var bitmask = 1UL << bitIndex;
             var bitmapIndex = index / BitCount;
-            var bitmap = bitmaps[bitmapIndex];
-#if DEBUG
+            var bitmap = bitmapArray[bitmapIndex];
+
+#if QUASAR_ECS_SANITY_CHECKS
             if ((bitmap & bitmask) == 0)
             {
                 throw new InvalidOperationException($"Unable to free allocation table slot at index: {index}. Not allocated yet.");
             }
 #endif
-            bitmaps[bitmapIndex] &= ~bitmask;
+
+            bitmapArray[bitmapIndex] &= ~bitmask;
             freeEntryCount++;
-#if DEBUG
-            if (freeEntryCount > EntryCount)
+
+#if QUASAR_ECS_SANITY_CHECKS
+            if (freeEntryCount > entryCount)
             {
                 throw new InvalidOperationException($"Allocation table free entry count is out of range: {freeEntryCount}.");
             }
@@ -70,13 +80,18 @@ namespace Quasar.Entities.Internals
 
         /// <summary>
         /// Initializes the allocation table.
+        /// The maximum number of entries should in the range [0...AllocationTable.MaxEntryCount].
         /// </summary>
-        public void Initialize()
+        /// <param name="entryCount">The maximum number of entries.</param>
+        public void Initialize(int entryCount)
         {
-            freeEntryCount = EntryCount;
+            Assertion.ThrowIfEqual(entryCount < 0 || entryCount > MaxEntryCount, true, nameof(entryCount));
+
+            this.entryCount = entryCount;
+            freeEntryCount = entryCount;
             for (var i = 0; i < BitmapArrayLength; i++)
             {
-                bitmaps[i] = 0UL;
+                bitmapArray[i] = 0UL;
             }
         }
 
@@ -95,7 +110,7 @@ namespace Quasar.Entities.Internals
 
             for (var i = 0; i < BitmapArrayLength; i++)
             {
-                var bitmap = bitmaps[i];
+                var bitmap = bitmapArray[i];
                 if (bitmap == FullBitmap)
                 {
                     continue;
@@ -105,7 +120,7 @@ namespace Quasar.Entities.Internals
                 var slotIndex = FindFirstFreeSlotIndex(bitmap, out var mask);
 
                 // update bitmaps
-                bitmaps[i] = bitmap | mask;
+                bitmapArray[i] = bitmap | mask;
                 freeEntryCount--;
 
                 // calculate final index
@@ -118,6 +133,7 @@ namespace Quasar.Entities.Internals
         }
 
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int FindFirstFreeSlotIndex(ulong bitmap, out ulong mask)
         {
             mask = 1UL;

@@ -11,6 +11,10 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);QUASAR_ECS_SANITY_CHECKS</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Resources\Cubemaps\Fallback.png" />
     <None Remove="Resources\Textures\Fallback.png" />

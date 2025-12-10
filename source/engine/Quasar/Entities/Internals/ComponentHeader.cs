@@ -20,6 +20,12 @@ namespace Quasar.Entities.Internals
     internal unsafe struct ComponentHeader
     {
         /// <summary>
+        /// The size of the structure in bytes.
+        /// </summary>
+        public static readonly int Size = Marshal.SizeOf<ComponentHeader>();
+
+
+        /// <summary>
         /// The link to the previous component header.
         /// </summary>
         public ComponentHeader* Previous;
