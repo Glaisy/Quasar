@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="TestRenderingPipelineStage.cs" company="Space Development">
+// <copyright file="CustomRenderPipelineStage.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,33 +9,37 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using Quasar;
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
 using Quasar.Pipelines;
+using Quasar.Rendering.Pipeline;
 
 using Space.Core.DependencyInjection;
 
-namespace Quasar.Rendering.Pipeline
+namespace DemoApplication.Tutorial01
 {
     /// <summary>
-    /// Rendering pipeline stage which allows to run test code.
+    /// Rendering pipeline stage which allows to run custom code.
     /// </summary>
     /// <seealso cref="RenderingPipelineStageBase" />
-    [Export(typeof(RenderingPipelineStageBase), nameof(TestRenderingPipelineStage))]
+    [Export(typeof(RenderingPipelineStageBase), nameof(CustomRenderPipelineStage))]
     [ExecuteAfter(typeof(ClearFrameRenderingPipelineStage))]
     [ExecuteBefore(typeof(FrameBufferSwapperRenderingPipelineStage))]
-    public sealed class TestRenderingPipelineStage : RenderingPipelineStageBase
+    internal sealed class CustomRenderPipelineStage : RenderingPipelineStageBase
     {
         private readonly IShaderRepository shaderRepository;
         private readonly IMeshFactory meshFactory;
+        private IMesh mesh;
+        private ShaderBase shader;
         private float angle;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TestRenderingPipelineStage" /> class.
+        /// Initializes a new instance of the <see cref="CustomRenderPipelineStage" /> class.
         /// </summary>
         /// <param name="shaderRepository">The shader repository.</param>
         /// <param name="meshFactory">The mesh factory.</param>
-        internal TestRenderingPipelineStage(
+        internal CustomRenderPipelineStage(
             IShaderRepository shaderRepository,
             IMeshFactory meshFactory)
         {
@@ -77,9 +81,5 @@ namespace Quasar.Rendering.Pipeline
             mesh.VertexBuffer.SetData(vertices);
             mesh.IndexBuffer?.SetData(indices);
         }
-
-
-        private IMesh mesh;
-        private ShaderBase shader;
     }
 }

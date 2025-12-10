@@ -9,6 +9,8 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System.Reflection;
+
 using Quasar;
 using Quasar.UI;
 
@@ -27,6 +29,8 @@ namespace DemoApplication
         private static void Main()
         {
             var builder = new QuasarApplicationBuilder();
+
+            builder.ServiceLoader.AddExportedServices(Assembly.GetExecutingAssembly());
 
             builder.ConfigureLoggerService(configuration =>
             {
