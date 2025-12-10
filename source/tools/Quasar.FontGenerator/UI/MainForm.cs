@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Drawing;
 using System.IO;
 using System.Text.Json;
 using System.Windows.Forms;
@@ -35,6 +36,7 @@ namespace Quasar.UI
         private readonly GeneratorService generatorService = new GeneratorService();
         private readonly string settingsFilePath;
         private GeneratorSettings settings;
+        private Bitmap previewBitmap;
 
 
         /// <summary>
@@ -54,6 +56,10 @@ namespace Quasar.UI
             base.OnLoad(e);
 
             LoadGeneratorSettings();
+
+            // TODO: remove this test code.
+            var font = new Font("Segoe UI", 32, FontStyle.Regular, GraphicsUnit.Pixel);
+            previewBitmap = generatorService.GeneratePreviewBitmap(settings.FontDataSettings, font, Color.White, Color.Black);
         }
 
         /// <inheritdoc/>
@@ -64,6 +70,16 @@ namespace Quasar.UI
             SaveGeneratorSettings();
         }
 
+
+        private void PaintPreviewPanel(object sender, PaintEventArgs e)
+        {
+            if (previewBitmap == null)
+            {
+                return;
+            }
+
+            e.Graphics.DrawImage(previewBitmap, Point.Empty);
+        }
 
         private void LoadGeneratorSettings()
         {

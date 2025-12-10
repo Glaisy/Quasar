@@ -28,44 +28,44 @@ namespace Quasar.FontGenerator.Models
         /////// </summary>
         ////public char FallbackCharacter { get; set; }
 
-        /////// <summary>
-        /////// Gets or sets the first character.
-        /////// </summary>
-        ////public char FirstCharacter { get; set; }
+        /// <summary>
+        /// Gets the first character.
+        /// </summary>
+        char FirstCharacter { get; }
 
         /////// <summary>
         /////// Gets or sets the font name override.
         /////// </summary>
         ////public string FontNameOverride { get; set; }
 
-        /////// <summary>
-        /////// Gets or sets the horizontal scale.
-        /////// </summary>
-        ////public float HorizontalScale { get; set; }
+        /// <summary>
+        /// Gets the horizontal scale.
+        /// </summary>
+        float HorizontalScale { get; }
 
         /////// <summary>
         /////// Gets or sets the generated styles.
         /////// </summary>
         ////public List<FontStyle> GeneratedStyles { get; set; }
 
-        /////// <summary>
-        /////// Gets or sets the X offset.
-        /////// </summary>
-        ////public int OffsetX { get; set; }
+        /// <summary>
+        /// Gets the horizontal offset.
+        /// </summary>
+        int OffsetX { get; }
 
-        /////// <summary>
-        /////// Gets or sets the Y offset.
-        /////// </summary>
-        ////public int OffsetY { get; set; }
+        /// <summary>
+        /// Gets the vertical offset.
+        /// </summary>
+        int OffsetY { get; }
 
-        /////// <summary>
-        /////// Gets or sets the padding.
-        /////// </summary>
-        ////public int Padding { get; set; }
+        /// <summary>
+        /// Gets the padding.
+        /// </summary>
+        int Padding { get; }
 
-        /////// <summary>
-        /////// Gets or sets the number of character pages.
-        /////// </summary>
-        ////public int PageCount { get; set; }
+        /// <summary>
+        /// Gets the number of character pages.
+        /// </summary>
+        int PageCount { get; }
     }
 }
