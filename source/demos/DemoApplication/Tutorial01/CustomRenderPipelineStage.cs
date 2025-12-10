@@ -14,6 +14,7 @@ using Quasar.Graphics;
 using Quasar.Graphics.Internals;
 using Quasar.Pipelines;
 using Quasar.Rendering.Pipeline;
+using Quasar.Rendering.Procedurals;
 
 using Space.Core.DependencyInjection;
 
@@ -29,7 +30,7 @@ namespace DemoApplication.Tutorial01
     internal sealed class CustomRenderPipelineStage : RenderingPipelineStageBase
     {
         private readonly IShaderRepository shaderRepository;
-        private readonly IMeshFactory meshFactory;
+        private readonly IProceduralMeshGenerator proceduralMeshGenerator;
         private IMesh mesh;
         private ShaderBase shader;
         private float angle;
@@ -38,13 +39,13 @@ namespace DemoApplication.Tutorial01
         /// Initializes a new instance of the <see cref="CustomRenderPipelineStage" /> class.
         /// </summary>
         /// <param name="shaderRepository">The shader repository.</param>
-        /// <param name="meshFactory">The mesh factory.</param>
+        /// <param name="proceduralMeshGenerator">The procedural mesh generator.</param>
         internal CustomRenderPipelineStage(
             IShaderRepository shaderRepository,
-            IMeshFactory meshFactory)
+            IProceduralMeshGenerator proceduralMeshGenerator)
         {
             this.shaderRepository = shaderRepository;
-            this.meshFactory = meshFactory;
+            this.proceduralMeshGenerator = proceduralMeshGenerator;
         }
 
 
@@ -67,19 +68,7 @@ namespace DemoApplication.Tutorial01
         protected override void OnStart()
         {
             shader = shaderRepository.GetShader("Test");
-
-            var vertices = new[]
-            {
-                new VertexPositionColor { Position = new Vector3(-0.5f, -0.5f, -0.5f), Color = Color.Red },
-                new VertexPositionColor { Position = new Vector3(0.5f, -0.15f, -0.5f), Color = Color.Green },
-                new VertexPositionColor { Position = new Vector3(0.0f, -0.5f, 0.73f), Color = Color.Blue },
-                new VertexPositionColor { Position = new Vector3(0.0f, 0.65f, 0), Color = Color.Magenta }
-            };
-            var indices = new[] { 0, 1, 2, 0, 2, 3, 2, 1, 3, 1, 0, 3 };
-
-            mesh = meshFactory.Create(PrimitiveType.Triangle, VertexPositionColor.Layout, true, "test");
-            mesh.VertexBuffer.SetData(vertices);
-            mesh.IndexBuffer?.SetData(indices);
+            proceduralMeshGenerator.GenerateEllipsoid(ref mesh, 3, 3, Vector3.One);
         }
     }
 }

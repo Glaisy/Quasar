@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------
 
 using Quasar.Graphics;
+using Quasar.Rendering.Procedurals;
 
 using Space.Core.DependencyInjection;
 
@@ -62,7 +63,8 @@ namespace Quasar.Rendering.Pipeline
             textureRepository.LoadBuiltInTextures();
             cubeMapTextureRepository.LoadBuiltInCubeMapTextures();
 
-            ////// initialize internal rendering components
+            // initialize internal rendering/graphics related components
+            MeshGeneratorBase.InitializeServices(ServiceProvider);
             ////RenderObject.InitializeDependencies(resolver);
             ////Material.InitializeDependencies(resolver);
         }
