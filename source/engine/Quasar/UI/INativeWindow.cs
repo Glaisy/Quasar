@@ -24,6 +24,16 @@ namespace Quasar.UI
     public interface INativeWindow : IDisposable
     {
         /// <summary>
+        /// Gets or sets the cursor.
+        /// </summary>
+        Cursor Cursor { get; set; }
+
+        /// <summary>
+        /// Gets or sets the cursor mode.
+        /// </summary>
+        CursorMode CursorMode { get; set; }
+
+        /// <summary>
         /// Gets the handle.
         /// </summary>
         IntPtr Handle { get; }

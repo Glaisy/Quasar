@@ -29,11 +29,16 @@ namespace Quasar.Windows.UI
     /// <seealso cref="IApplicationWindow" />
     internal sealed class ApplicationWindow : Form, IApplicationWindow
     {
+        private const string DefaultIconAndCursorId = "Windows.Default";
+
+
         private System.Drawing.Point savedLocation;
         private System.Drawing.Size savedClientSize;
         private FormBorderStyle savedFormBorderStyle;
         private IDisplayMode currentDisplayMode;
         private IntPtr deviceContext;
+        private WindowsCursor defaultCursor;
+        private WindowsIcon defaultIcon;
 
 
         /// <summary>
@@ -71,6 +76,10 @@ namespace Quasar.Windows.UI
 
             StartPosition = FormStartPosition.CenterScreen;
             ClientSize = size;
+
+            defaultIcon = new WindowsIcon(DefaultIconAndCursorId, Icon.Size, Icon, false);
+            defaultCursor = new WindowsCursor(DefaultIconAndCursorId, Cursor.Size, Cursor.HotSpot, Cursor, false);
+            cursor = defaultCursor;
         }
 
 
@@ -83,9 +92,60 @@ namespace Quasar.Windows.UI
                 deviceContext = IntPtr.Zero;
             }
 
+            Icon = defaultIcon.NativeIcon;
+            Cursor = defaultCursor.NativeCursor;
+            if (cursor != defaultCursor && cursor != null)
+            {
+                cursor.Dispose();
+            }
+
+            if (icon != defaultIcon && icon != null)
+            {
+                cursor.Dispose();
+            }
+
+
+            defaultCursor.Dispose();
+            defaultIcon.Dispose();
+
             base.Dispose(disposing);
         }
 
+
+        private WindowsCursor cursor;
+        /// <inheritdoc/>
+        Quasar.UI.Cursor INativeWindow.Cursor
+        {
+            get => cursor;
+            set
+            {
+                if (value is not WindowsCursor windowsCursor)
+                {
+                    windowsCursor = defaultCursor;
+                }
+
+                cursor?.Dispose();
+                cursor = windowsCursor;
+                Cursor = windowsCursor.NativeCursor;
+            }
+        }
+
+        private CursorMode cursorMode = CursorMode.Visible;
+        /// <inheritdoc/>
+        public CursorMode CursorMode
+        {
+            get => cursorMode;
+            set
+            {
+                if (cursorMode == value)
+                {
+                    return;
+                }
+
+                cursorMode = value;
+                ApplyCursorMode();
+            }
+        }
 
         private bool fullscreen;
         /// <inheritdoc/>
@@ -116,6 +176,24 @@ namespace Quasar.Windows.UI
                 }
 
                 fullscreen = value;
+            }
+        }
+
+        private WindowsIcon icon;
+        /// <inheritdoc/>
+        Icon IApplicationWindow.Icon
+        {
+            get => icon;
+            set
+            {
+                if (value is not WindowsIcon windowsIcon)
+                {
+                    windowsIcon = defaultIcon;
+                }
+
+                icon?.Dispose();
+                icon = windowsIcon;
+                Icon = windowsIcon.NativeIcon;
             }
         }
 
@@ -178,6 +256,18 @@ namespace Quasar.Windows.UI
             sizeChanged.Push(Size);
         }
 
+
+        private void ApplyCursorMode()
+        {
+            if (cursorMode == CursorMode.Visible)
+            {
+                System.Windows.Forms.Cursor.Show();
+            }
+            else
+            {
+                System.Windows.Forms.Cursor.Hide();
+            }
+        }
 
         private IntPtr CreateDeviceContext(IDisplayMode displayMode)
         {

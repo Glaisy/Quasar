@@ -23,6 +23,16 @@ namespace Quasar.Windows.Interop.User32
 
 
         /// <summary>
+        /// Creates the icon indirect.
+        /// </summary>
+        /// <param name="iconInfo">The icon information.</param>
+        /// <returns>
+        /// The icon handle if the operation was successful otherwise zero.
+        /// </returns>
+        [DllImport(DllName)]
+        public static extern IntPtr CreateIconIndirect([In] ref IconInfo iconInfo);
+
+        /// <summary>
         /// Enumerates the display devices.
         /// </summary>
         /// <param name="deviceName">Name of the device or null.</param>
@@ -54,6 +64,17 @@ namespace Quasar.Windows.Interop.User32
         /// <returns>The device context or zero if not available.</returns>
         [DllImport(DllName)]
         public static extern IntPtr GetDC(IntPtr handle);
+
+        /// <summary>
+        /// Gets the icon information.
+        /// </summary>
+        /// <param name="handle">The handle.</param>
+        /// <param name="iconInfo">The icon information.</param>
+        /// <returns>
+        /// True if the operation was successful otherwise false.
+        /// </returns>
+        [DllImport(DllName)]
+        public static extern bool GetIconInfo(IntPtr handle, out IconInfo iconInfo);
 
         /// <summary>
         /// Releases a window's device context.
