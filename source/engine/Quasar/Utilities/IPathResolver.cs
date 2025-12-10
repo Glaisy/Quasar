@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 // <copyright file="IPathResolver.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
@@ -9,7 +9,7 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-namespace Quasar.Core.IO
+namespace Quasar.Utilities
 {
     /// <summary>
     /// Path resolver interface definition.

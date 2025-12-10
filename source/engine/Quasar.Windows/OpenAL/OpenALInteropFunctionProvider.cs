@@ -14,7 +14,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 
 using Quasar.Audio;
-using Quasar.Core.Utilities;
+using Quasar.Utilities;
 using Quasar.Windows.Interop;
 
 using Space.Core.DependencyInjection;

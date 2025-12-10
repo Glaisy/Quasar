@@ -11,7 +11,7 @@
 
 using System.Diagnostics;
 
-using Quasar.Core.Utilities;
+using Quasar.Utilities;
 
 using Space.Core;
 

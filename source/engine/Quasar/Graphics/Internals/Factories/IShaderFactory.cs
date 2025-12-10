@@ -11,7 +11,7 @@
 
 using System.Collections.Generic;
 
-using Quasar.Core.IO;
+using Quasar.Utilities;
 
 namespace Quasar.Graphics.Internals.Factories
 {

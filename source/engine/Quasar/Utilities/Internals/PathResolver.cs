@@ -14,12 +14,10 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-using Quasar.Utilities;
-
 using Space.Core.DependencyInjection;
 using Space.Core.Extensions;
 
-namespace Quasar.Core.IO.Internals
+namespace Quasar.Utilities.Internals
 {
     /// <summary>
     /// Path resolver implementation.

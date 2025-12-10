@@ -13,12 +13,12 @@ using System;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Quasar.Core.Utilities;
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
 using Quasar.Graphics.Internals.Factories;
 using Quasar.OpenGL.Api;
 using Quasar.UI;
+using Quasar.Utilities;
 
 using Space.Core.DependencyInjection;
 

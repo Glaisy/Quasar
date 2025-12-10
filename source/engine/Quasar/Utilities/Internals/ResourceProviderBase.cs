@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Quasar.Core.IO.Internals
+namespace Quasar.Utilities.Internals
 {
     /// <summary>
     /// Abstract base class for resource providers.

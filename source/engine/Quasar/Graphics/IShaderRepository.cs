@@ -10,8 +10,8 @@
 //-----------------------------------------------------------------------
 
 using Quasar.Collections;
-using Quasar.Core.IO;
 using Quasar.Graphics.Internals;
+using Quasar.Utilities;
 
 namespace Quasar.Graphics
 {

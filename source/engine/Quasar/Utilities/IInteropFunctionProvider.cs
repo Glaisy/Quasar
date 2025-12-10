@@ -11,7 +11,7 @@
 
 using System;
 
-namespace Quasar.Core.Utilities
+namespace Quasar.Utilities
 {
     /// <summary>
     /// Represents a operating system specific interop function provider.
