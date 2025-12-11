@@ -21,7 +21,7 @@ namespace Quasar.Mathematics
         /// <summary>
         /// Initializes a new instance of the <see cref="EuclideanPlaneD" /> struct.
         /// </summary>
-        /// <param name="normal">The normal.</param>
+        /// <param name="normal">The normal vector.</param>
         /// <param name="point">The point on the plane.</param>
         public EuclideanPlaneD(in Vector3D normal, in Vector3D point)
         {
@@ -34,24 +34,24 @@ namespace Quasar.Mathematics
         /// <summary>
         /// Initializes a new instance of the <see cref="EuclideanPlaneD" /> struct.
         /// </summary>
-        /// <param name="normal">The normal direction (Coefficients A, B, C).</param>
-        /// <param name="d">The distance coefficient (D).</param>
-        public EuclideanPlaneD(in Vector3D normal, double d)
+        /// <param name="normal">The normal vector.</param>
+        /// <param name="distance">The distance from origin.</param>
+        public EuclideanPlaneD(in Vector3D normal, double distance)
         {
             ArgumentOutOfRangeException.ThrowIfZero(normal.LengthSquared, nameof(normal));
 
-            var length = normal.Length;
-            Normal = normal / length;
-            D = d / length;
+            Normal = normal.Normalize();
+            D = distance;
         }
 
+
         /// <summary>
-        /// The distant coefficient (D).
+        /// The distance from origin.
         /// </summary>
         public readonly double D;
 
         /// <summary>
-        /// The normal vector (Coefficients A, B, C).
+        /// The unit normal vector.
         /// </summary>
         public readonly Vector3D Normal;
 
@@ -67,7 +67,7 @@ namespace Quasar.Mathematics
         /// </returns>
         public double Distance(double x, double y, double z)
         {
-            return Normal.X * x + Normal.Y * y + Normal.Z * z - D;
+            return Normal.X * x + Normal.Y * y + Normal.Z * z + D;
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Quasar.Mathematics
         /// <returns>The calculated distance.</returns>
         public double Distance(in Vector3D point)
         {
-            return Normal.Dot(point) - D;
+            return Normal.Dot(point) + D;
         }
     }
 }

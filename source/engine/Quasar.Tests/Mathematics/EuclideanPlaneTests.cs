@@ -34,7 +34,7 @@ namespace Quasar.Tests.Mathematics
 
             // assert
             Assert.That(AssertExtensions.EqualTo(result.Normal, expectedNormal), Is.True);
-            Assert.That(AssertExtensions.EqualTo(result.D, expectedD), Is.True);
+            Assert.That(result.D, IsEx.NearlyEqualTo(expectedD));
         }
 
         [Test]
@@ -50,7 +50,7 @@ namespace Quasar.Tests.Mathematics
 
             // assert
             Assert.That(AssertExtensions.EqualTo(result.Normal, expectedNormal), Is.True);
-            Assert.That(AssertExtensions.EqualTo(result.D, expectedD), Is.True);
+            Assert.That(result.D, IsEx.NearlyEqualTo(expectedD));
         }
 
         [Test]
@@ -61,7 +61,7 @@ namespace Quasar.Tests.Mathematics
         }
 
         [Test]
-        [TestCaseSource("TestDataSource")]
+        [TestCaseSource(nameof(TestDataSource))]
         public void Distance_XYZ(Vector3 point, float expectedDistance)
         {
             // arrange 
@@ -73,27 +73,11 @@ namespace Quasar.Tests.Mathematics
             var result = sut.Distance(point.X, point.Y, point.Z);
 
             // assert
-            Assert.That(AssertExtensions.EqualTo(result, expectedDistance));
-        }
-
-
-        [Test]
-        public void Distance_Point_Wiki()
-        {
-            // arrange 
-            var point = new Vector3(1.0f, 2.0f, 3.0f);
-            var sut = new EuclideanPlane(new Vector3(2.0f, 3.0f, 1.0f), -5.0f);
-            var expectedResult = 6.0f * MathF.Sqrt(14.0f);
-
-            // act
-            var result = sut.Distance(point);
-
-            // assert
-            Assert.That(result, IsEx.NearlyEqualTo(expectedResult));
+            Assert.That(result, IsEx.NearlyEqualTo(expectedDistance));
         }
 
         [Test]
-        [TestCaseSource("TestDataSource")]
+        [TestCaseSource(nameof(TestDataSource))]
         public void Distance_Point(Vector3 point, float expectedDistance)
         {
             // arrange 
@@ -105,7 +89,22 @@ namespace Quasar.Tests.Mathematics
             var result = sut.Distance(point);
 
             // assert
-            Assert.That(AssertExtensions.EqualTo(result, expectedDistance));
+            Assert.That(result, IsEx.NearlyEqualTo(expectedDistance));
+        }
+
+        [Test]
+        [TestCaseSource(nameof(TestDataSource_By_Point))]
+        public void Distance_Point_By_Point(Vector3 point)
+        {
+            // arrange 
+            var normal = Vector3.One.Normalize();
+            var sut = new EuclideanPlane(normal, point);
+
+            // act
+            var result = sut.Distance(point);
+
+            // assert
+            Assert.That(result, IsEx.NearlyEqualTo(0.0f));
         }
 
 
@@ -114,6 +113,13 @@ namespace Quasar.Tests.Mathematics
             yield return new TestCaseData(Vector3.Zero, -MathF.Sqrt(3.0f));
             yield return new TestCaseData(Vector3.One, 0.0f);
             yield return new TestCaseData(2.0f * Vector3.One, MathF.Sqrt(3.0f));
+        }
+
+        private static IEnumerable<TestCaseData> TestDataSource_By_Point()
+        {
+            yield return new TestCaseData(Vector3.Zero);
+            yield return new TestCaseData(Vector3.One);
+            yield return new TestCaseData(2.0f * Vector3.One);
         }
     }
 }

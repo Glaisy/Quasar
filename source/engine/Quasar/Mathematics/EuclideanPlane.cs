@@ -21,7 +21,7 @@ namespace Quasar.Mathematics
         /// <summary>
         /// Initializes a new instance of the <see cref="EuclideanPlane" /> struct.
         /// </summary>
-        /// <param name="normal">The normal.</param>
+        /// <param name="normal">The normal vector.</param>
         /// <param name="point">The point on the plane.</param>
         public EuclideanPlane(in Vector3 normal, in Vector3 point)
         {
@@ -34,24 +34,24 @@ namespace Quasar.Mathematics
         /// <summary>
         /// Initializes a new instance of the <see cref="EuclideanPlane" /> struct.
         /// </summary>
-        /// <param name="normal">The normal direction (Coefficients A, B, C).</param>
-        /// <param name="d">The distance coefficient (D).</param>
-        public EuclideanPlane(in Vector3 normal, float d)
+        /// <param name="normal">The normal vector.</param>
+        /// <param name="distance">The distance from origin.</param>
+        public EuclideanPlane(in Vector3 normal, float distance)
         {
             ArgumentOutOfRangeException.ThrowIfZero(normal.LengthSquared, nameof(normal));
 
-            var length = normal.Length;
-            Normal = normal / length;
-            D = d / length;
+            Normal = normal.Normalize();
+            D = distance;
         }
 
+
         /// <summary>
-        /// The distant coefficient (D).
+        /// The distance from origin.
         /// </summary>
         public readonly float D;
 
         /// <summary>
-        /// The normal vector (Coefficients A, B, C).
+        /// The unit normal vector.
         /// </summary>
         public readonly Vector3 Normal;
 
@@ -67,7 +67,7 @@ namespace Quasar.Mathematics
         /// </returns>
         public float Distance(float x, float y, float z)
         {
-            return Normal.X * x + Normal.Y * y + Normal.Z * z - D;
+            return Normal.X * x + Normal.Y * y + Normal.Z * z + D;
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Quasar.Mathematics
         /// <returns>The calculated distance.</returns>
         public float Distance(in Vector3 point)
         {
-            return Normal.Dot(point) - D;
+            return Normal.Dot(point) + D;
         }
     }
 }
