@@ -38,6 +38,7 @@ namespace Quasar.OpenGL.Graphics
         private readonly IServiceLoader serviceLoader;
         private readonly GLCommandProcessor graphicsCommandProcessor;
 
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GLGraphicsDeviceContext" /> class.
         /// </summary>
@@ -99,8 +100,9 @@ namespace Quasar.OpenGL.Graphics
             var frameBufferFactory = AddOpenGLServiceImplementation<IFrameBufferFactory>();
             PrimaryFrameBuffer = frameBufferFactory.CreatePrimary(nativeWindow);
 
-            AddOpenGLServiceImplementation<IShaderFactory>();
             AddOpenGLServiceImplementation<ITextureImageDataLoader>();
+            AddOpenGLServiceImplementation<IMatrixFactory>();
+            AddOpenGLServiceImplementation<IShaderFactory>();
             AddOpenGLServiceImplementation<ITextureFactory>();
             AddOpenGLServiceImplementation<ICubeMapTextureFactory>();
             AddOpenGLServiceImplementation<IMeshFactory>();
