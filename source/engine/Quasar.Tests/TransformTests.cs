@@ -18,7 +18,7 @@ using Space.Core.Mathematics;
 namespace Quasar.Tests
 {
     [TestFixture]
-    public class TransformTests
+    internal sealed class TransformTests
     {
         [Test]
         public void TestRotationX()

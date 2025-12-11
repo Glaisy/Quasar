@@ -17,7 +17,7 @@ using Quasar.Tests.Extensions;
 namespace Quasar.Tests
 {
     [TestFixture]
-    internal class Matrix4Tests
+    internal sealed class Matrix4Tests
     {
         [Test]
         public void FromQuaternion_RowMajor()

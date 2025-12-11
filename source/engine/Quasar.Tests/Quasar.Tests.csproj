@@ -25,4 +25,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Quasar\Quasar.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Performance\Legacy\" />
+  </ItemGroup>
 </Project>

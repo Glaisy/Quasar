@@ -22,7 +22,7 @@ using Space.Core.DependencyInjection;
 namespace Quasar.Tests.Utilities
 {
     [TestFixture]
-    internal class PathResolverTests
+    internal sealed class PathResolverTests
     {
         private static readonly IPathResolver sut;
 
