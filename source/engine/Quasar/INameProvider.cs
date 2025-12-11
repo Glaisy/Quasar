@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="ITagProvider.cs" company="Space Development">
+// <copyright file="INameProvider.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -12,13 +12,13 @@
 namespace Quasar
 {
     /// <summary>
-    /// Represents an object with a tag value property.
+    /// Represents an object with a name property.
     /// </summary>
-    public interface ITagProvider
+    public interface INameProvider
     {
         /// <summary>
-        /// Gets the tag value.
+        /// Gets the name.
         /// </summary>
-        string Tag { get; }
+        string Name { get; }
     }
 }
