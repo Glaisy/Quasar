@@ -10,13 +10,7 @@
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Resources\Cubemaps\Fallback.png" />
-    <None Remove="Resources\Textures\Fallback.png" />
-    <None Remove="Resources\Textures\FallbackNormalMap.png" />
-  </ItemGroup>
-
+    
   <ItemGroup>
     <Compile Include="..\..\AssemblyInfo.Suppressions.shared.cs" Link="Properties\AssemblyInfo.Suppressions.shared.cs" />
     <Compile Include="..\AssemblyInfo.shared.cs" Link="Properties\AssemblyInfo.shared.cs" />
@@ -28,6 +22,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\Cubemaps\Fallback.png" />
+    <EmbeddedResource Include="Resources\FontFamilies\Conthrax.zip" />
     <EmbeddedResource Include="Resources\Textures\Fallback.png" />
     <EmbeddedResource Include="Resources\Textures\FallbackNormalMap.png" />
   </ItemGroup>
