@@ -26,6 +26,8 @@ namespace Quasar.Rendering.Pipeline
         private readonly IShaderRepository shaderRepository;
         private readonly ITextureRepository textureRepository;
         private readonly ICubeMapTextureRepository cubeMapTextureRepository;
+        private readonly IFontFamilyRepository fontFamilyRepository;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InitializeRenderingPipelineStage" /> class.
@@ -33,14 +35,17 @@ namespace Quasar.Rendering.Pipeline
         /// <param name="shaderRepository">The shader repository.</param>
         /// <param name="textureRepository">The texture repository.</param>
         /// <param name="cubeMapTextureRepository">The cube map texture repository.</param>
+        /// <param name="fontFamilyRepository">The font family repository.</param>
         public InitializeRenderingPipelineStage(
             IShaderRepository shaderRepository,
             ITextureRepository textureRepository,
-            ICubeMapTextureRepository cubeMapTextureRepository)
+            ICubeMapTextureRepository cubeMapTextureRepository,
+            IFontFamilyRepository fontFamilyRepository)
         {
             this.shaderRepository = shaderRepository;
             this.textureRepository = textureRepository;
             this.cubeMapTextureRepository = cubeMapTextureRepository;
+            this.fontFamilyRepository = fontFamilyRepository;
         }
 
 
@@ -55,13 +60,13 @@ namespace Quasar.Rendering.Pipeline
         {
             // initialize internal graphics components
             GraphicsResourceBase.InitializeServices(ServiceProvider);
-            ////Font.InitializeDependecies(resolver);
+            Font.InitializeServices(ServiceProvider);
 
             // load built-in resources
-            ////fontFamilyRepository.LoadBuiltInFontFamilies();
             shaderRepository.LoadBuiltInShaders();
             textureRepository.LoadBuiltInTextures();
             cubeMapTextureRepository.LoadBuiltInCubeMapTextures();
+            fontFamilyRepository.LoadBuiltInFontFamilies();
 
             // initialize internal rendering/graphics related components
             MeshGeneratorBase.InitializeServices(ServiceProvider);
