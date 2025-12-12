@@ -33,6 +33,8 @@ namespace Quasar.OpenAL.Audio
     [Singleton]
     internal sealed class ALAudioDeviceContext : DisposableBase, IAudioDeviceContext
     {
+        private readonly IAudioDeviceProvider audioDeviceProvider;
+        private readonly IInteropFunctionProvider interopFunctionProvider;
         private readonly IServiceProvider serviceProvider;
         private readonly IServiceLoader serviceLoader;
         private IntPtr deviceId;
@@ -52,34 +54,10 @@ namespace Quasar.OpenAL.Audio
             IServiceProvider serviceProvider,
             IServiceLoader serviceLoader)
         {
+            this.audioDeviceProvider = audioDeviceProvider;
+            this.interopFunctionProvider = interopFunctionProvider;
             this.serviceProvider = serviceProvider;
             this.serviceLoader = serviceLoader;
-
-            AL.Initialize(interopFunctionProvider);
-            audioDeviceProvider.Initialize();
-
-            // initialize active output device and version
-            OutputDevice = audioDeviceProvider.GetActiveOutputDevice();
-            if (!String.IsNullOrEmpty(OutputDevice.Name))
-            {
-                deviceId = AL.OpenDevice(OutputDevice.Name);
-                AL.CheckErrors();
-
-                // initialize device context
-                deviceContext = AL.CreateContext(deviceId, IntPtr.Zero);
-                AL.MakeContextCurrent(deviceContext);
-                AL.CheckErrors();
-            }
-
-            var majorVersion = AL.GetInteger(deviceId, IntegerType.MajorVersion);
-            var minorVersion = AL.GetInteger(deviceId, IntegerType.MinorVersion);
-            Version = new Version(majorVersion, minorVersion);
-
-            // initialize internal components
-            AddOpenALServiceImplementation<IAudioDeviceProvider>();
-            AddOpenALServiceImplementation<IAudioListenerProvider>();
-            AddOpenALServiceImplementation<IAudioSourceFactory>();
-            AddOpenALServiceImplementation<ISoundEffectFactory>();
         }
 
         /// <inheritdoc/>
@@ -110,6 +88,37 @@ namespace Quasar.OpenAL.Audio
 
         /// <inheritdoc/>
         public Version Version { get; private set; }
+
+
+        /// <inheritdoc/>
+        public void Initialize()
+        {
+            AL.Initialize(interopFunctionProvider);
+            audioDeviceProvider.Initialize();
+
+            // initialize active output device and version
+            OutputDevice = audioDeviceProvider.GetActiveOutputDevice();
+            if (!String.IsNullOrEmpty(OutputDevice.Name))
+            {
+                deviceId = AL.OpenDevice(OutputDevice.Name);
+                AL.CheckErrors();
+
+                // initialize device context
+                deviceContext = AL.CreateContext(deviceId, IntPtr.Zero);
+                AL.MakeContextCurrent(deviceContext);
+                AL.CheckErrors();
+            }
+
+            var majorVersion = AL.GetInteger(deviceId, IntegerType.MajorVersion);
+            var minorVersion = AL.GetInteger(deviceId, IntegerType.MinorVersion);
+            Version = new Version(majorVersion, minorVersion);
+
+            // initialize internal components
+            AddOpenALServiceImplementation<IAudioDeviceProvider>();
+            AddOpenALServiceImplementation<IAudioListenerProvider>();
+            AddOpenALServiceImplementation<IAudioSourceFactory>();
+            AddOpenALServiceImplementation<ISoundEffectFactory>();
+        }
 
 
         private T AddOpenALServiceImplementation<T>()

@@ -32,5 +32,11 @@ namespace Quasar.Audio
         /// Gets the audio platform version.
         /// </summary>
         Version Version { get; }
+
+
+        /// <summary>
+        /// Initializes tha context.
+        /// </summary>
+        internal void Initialize();
     }
 }

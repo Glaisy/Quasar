@@ -16,5 +16,11 @@ namespace Quasar.Audio.Internals
     /// </summary>
     internal interface IAudioDeviceContextFactory
     {
+        /// <summary>
+        /// Creates the audio device context by the specified audio platform.
+        /// </summary>
+        /// <param name="audioPlatform">The audio platform.</param>
+        /// <returns>The created audio device context instance.</returns>
+        IAudioDeviceContext Create(AudioPlatform audioPlatform);
     }
 }
