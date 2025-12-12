@@ -89,8 +89,8 @@ namespace Quasar.OpenGL.Graphics
             // initialize graphics device and version
             var deviceName = GL.GetString(StringType.GL_RENDERER);
             var vendor = GL.GetString(StringType.GL_VENDOR);
-            var versionString = vendor.Substring(0, vendor.IndexOf(' '));
-            Version = new Version(versionString);
+            var version = GL.GetString(StringType.GL_VERSION);
+            Version = new Version(version.Substring(0, version.IndexOf(' ')));
             Device = new GraphicsDevice(deviceName, vendor);
 
             // initialize internal components

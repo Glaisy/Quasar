@@ -28,7 +28,7 @@ namespace Quasar.OpenAL.Audio
     [Singleton]
     internal sealed class ALAudioDeviceProvider : IAudioDeviceProvider
     {
-        private static readonly IAudioDevice EmptyAudioDevice = new AudioDevice(null, null, null);
+        private static readonly AudioDevice EmptyAudioDevice = new AudioDevice(null, null);
         private readonly List<IAudioDevice> outputDevices = new List<IAudioDevice>();
         private IAudioDevice defaultActiveOutputDevice;
 
@@ -50,33 +50,55 @@ namespace Quasar.OpenAL.Audio
         {
             // enumerate output devices
             List<string> deviceNames;
-            if (AL.IsExtensionPresent(IntPtr.Zero, ExtensionNames.ALC_enumeration_EXT))
+            if (AL.IsExtensionPresent(IntPtr.Zero, ExtensionNames.ALC_ENUMERATION_EXT))
             {
-                if (AL.IsExtensionPresent(IntPtr.Zero, ExtensionNames.ALC_enumerate_all_EXT))
+                if (AL.IsExtensionPresent(IntPtr.Zero, ExtensionNames.ALC_ENUMERATE_ALL_EXT))
                 {
-                    deviceNames = AL.GetStrings(IntPtr.Zero, StringType.AllDeviceSpecifiers);
+                    deviceNames = AL.GetStrings(IntPtr.Zero, StringTypeExt.AllDeviceSpecifiers);
                 }
                 else
                 {
-                    deviceNames = AL.GetStrings(IntPtr.Zero, StringType.DeviceSpecifier);
+                    deviceNames = AL.GetStrings(IntPtr.Zero, StringTypeExt.DeviceSpecifier);
                 }
 
                 foreach (var deviceName in deviceNames)
                 {
-                    var outputDevice = new AudioDevice(deviceName, deviceName, null);
+                    var outputDevice = CreateAudioDevice(deviceName);
                     outputDevices.Add(outputDevice);
                 }
             }
 
             // find default active output device
-            var defaultDeviceName = AL.GetString(IntPtr.Zero, StringType.DefaultDeviceSpecifier);
+            var defaultDeviceName = AL.GetString(IntPtr.Zero, StringTypeExt.DefaultDeviceSpecifier);
             if (!String.IsNullOrEmpty(defaultDeviceName))
             {
-                defaultActiveOutputDevice = outputDevices.Find(device => device.Name == defaultDeviceName);
+                defaultActiveOutputDevice = outputDevices.Find(device => device.Name.Contains(defaultDeviceName));
             }
-            else
+
+            defaultActiveOutputDevice ??= EmptyAudioDevice;
+        }
+
+
+        private AudioDevice CreateAudioDevice(string deviceName)
+        {
+            var deviceId = IntPtr.Zero;
+            try
             {
-                defaultActiveOutputDevice = EmptyAudioDevice;
+                deviceId = AL.OpenDevice(deviceName);
+                if (deviceId == IntPtr.Zero)
+                {
+                    return EmptyAudioDevice;
+                }
+
+                var vendor = AL.GetString(StringType.Vendor);
+                return new AudioDevice(deviceName, vendor);
+            }
+            finally
+            {
+                if (deviceId != IntPtr.Zero)
+                {
+                    AL.CloseDevice(deviceId);
+                }
             }
         }
     }

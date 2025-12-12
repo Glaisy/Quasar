@@ -98,20 +98,24 @@ namespace Quasar.OpenAL.Audio
 
             // initialize active output device and version
             OutputDevice = audioDeviceProvider.GetActiveOutputDevice();
-            if (!String.IsNullOrEmpty(OutputDevice.Name))
+            deviceId = AL.OpenDevice(OutputDevice.Name);
+            if (deviceId == IntPtr.Zero)
             {
-                deviceId = AL.OpenDevice(OutputDevice.Name);
-                AL.CheckErrors();
-
-                // initialize device context
-                deviceContext = AL.CreateContext(deviceId, IntPtr.Zero);
-                AL.MakeContextCurrent(deviceContext);
-                AL.CheckErrors();
+                throw new OpenALException("Unable to open audio output device.");
             }
 
-            var majorVersion = AL.GetInteger(deviceId, IntegerType.MajorVersion);
-            var minorVersion = AL.GetInteger(deviceId, IntegerType.MinorVersion);
-            Version = new Version(majorVersion, minorVersion);
+            // initialize device context
+            deviceContext = AL.CreateContext(deviceId, IntPtr.Zero);
+            if (deviceContext == IntPtr.Zero)
+            {
+                throw new OpenALException("Unable to create audio device context.");
+            }
+
+            AL.MakeContextCurrent(deviceContext);
+
+            // initialize version
+            var version = AL.GetString(StringType.Version);
+            Version = new Version(version);
 
             // initialize internal components
             AddOpenALServiceImplementation<IAudioDeviceProvider>();

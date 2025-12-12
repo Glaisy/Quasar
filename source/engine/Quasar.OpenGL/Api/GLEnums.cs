@@ -4156,6 +4156,11 @@ namespace Quasar.OpenGL.Api
     internal enum StringType
     {
         /// <summary>
+        /// The extensions string.
+        /// </summary>
+        GL_EXTENSIONS = 0x1F03,
+
+        /// <summary>
         /// The renderer name string.
         /// </summary>
         GL_RENDERER = 0x1F01,
@@ -4163,7 +4168,12 @@ namespace Quasar.OpenGL.Api
         /// <summary>
         /// The vendor name string.
         /// </summary>
-        GL_VENDOR = 0x1F02
+        GL_VENDOR = 0x1F00,
+
+        /// <summary>
+        /// The version string.
+        /// </summary>
+        GL_VERSION = 0x1F02
     }
 
     /// <summary>

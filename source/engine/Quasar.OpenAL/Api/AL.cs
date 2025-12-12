@@ -31,7 +31,8 @@ namespace Quasar.OpenAL.Api
         private static alGetListenerfv getListenerfv;
         private static alListenerfv listenerfv;
         private static alcGetIntegerv getIntegerv;
-        private static alcGetString getString;
+        private static alGetString getString;
+        private static alcGetString getStringExt;
         private static alcIsExtensionPresent isExtensionPresent;
 
 
@@ -80,7 +81,8 @@ namespace Quasar.OpenAL.Api
             getListenerf = functionProvider.GetFunction<alGetListenerf>();
             getListener3f = functionProvider.GetFunction<alGetListener3f>();
             getListenerfv = functionProvider.GetFunction<alGetListenerfv>();
-            getString = functionProvider.GetFunction<alcGetString>();
+            getString = functionProvider.GetFunction<alGetString>();
+            getStringExt = functionProvider.GetFunction<alcGetString>();
             getIntegerv = functionProvider.GetFunction<alcGetIntegerv>();
             listenerfv = functionProvider.GetFunction<alListenerfv>();
             isExtensionPresent = functionProvider.GetFunction<alcIsExtensionPresent>();

@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 // <copyright file="ALEnums.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
@@ -86,13 +86,12 @@ namespace Quasar.OpenAL.Api
         /// <summary>
         /// The ALC enumeration extension.
         /// </summary>
-        ALC_enumeration_EXT,
-
+        ALC_ENUMERATION_EXT,
 
         /// <summary>
         /// The ALC enumerate all extension.
         /// </summary>
-        ALC_enumerate_all_EXT
+        ALC_ENUMERATE_ALL_EXT = 1
     }
 
     /// <summary>
@@ -147,10 +146,37 @@ namespace Quasar.OpenAL.Api
         Velocity = 0x1006
     }
 
+
     /// <summary>
-    /// String type enumeration.
+    /// AL String type enumeration.
     /// </summary>
     internal enum StringType
+    {
+        /// <summary>
+        /// The extensions.
+        /// </summary>
+        Extensions = 0xB004,
+
+        /// <summary>
+        /// The renderer.
+        /// </summary>
+        Renderer = 0xB003,
+
+        /// <summary>
+        /// The vendor.
+        /// </summary>
+        Vendor = 0xB001,
+
+        /// <summary>
+        /// The version.
+        /// </summary>
+        Version = 0xB002,
+    }
+
+    /// <summary>
+    /// ALC String type enumeration.
+    /// </summary>
+    internal enum StringTypeExt
     {
         /// <summary>
         /// The default device specifier.
