@@ -12,7 +12,7 @@
 namespace Quasar.Graphics
 {
     /// <summary>
-    /// Represents a graphics device.
+    /// Represents the basic properties of a graphics device.
     /// </summary>
     public interface IGraphicsDevice
     {

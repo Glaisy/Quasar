@@ -11,7 +11,7 @@
 
 using System;
 
-using Quasar.Graphics.Internals;
+using Quasar.Graphics.Internals.Factories;
 using Quasar.Pipelines.Internals;
 using Quasar.UI;
 using Quasar.Utilities;

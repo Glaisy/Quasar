@@ -9,7 +9,7 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-namespace Quasar.Graphics.Internals
+namespace Quasar.Graphics.Internals.Factories
 {
     /// <summary>
     /// Represents the graphics device context factory component.

@@ -17,7 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Space.Core.DependencyInjection;
 
-namespace Quasar.Graphics.Internals
+namespace Quasar.Graphics.Internals.Factories
 {
     /// <summary>
     /// Graphics device context factory implementation.
