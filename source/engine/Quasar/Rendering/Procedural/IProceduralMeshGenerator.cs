@@ -11,7 +11,7 @@
 
 using Quasar.Graphics;
 
-namespace Quasar.Rendering.Procedurals
+namespace Quasar.Rendering.Procedural
 {
     /// <summary>
     /// Procedural mesh generatro interface definition.

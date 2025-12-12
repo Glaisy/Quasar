@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------
 
 using Quasar.Graphics;
-using Quasar.Rendering.Procedurals;
+using Quasar.Rendering.Procedural;
 
 using Space.Core.DependencyInjection;
 

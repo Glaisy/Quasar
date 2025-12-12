@@ -15,7 +15,7 @@ using Quasar.Graphics;
 
 using Space.Core.DependencyInjection;
 
-namespace Quasar.Rendering.Procedurals.Internals
+namespace Quasar.Rendering.Procedural.Internals
 {
     /// <summary>
     /// Plane mesh generator implementation.

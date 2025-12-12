@@ -13,7 +13,7 @@ using Quasar.Graphics;
 
 using Space.Core.DependencyInjection;
 
-namespace Quasar.Rendering.Procedurals.Internals
+namespace Quasar.Rendering.Procedural.Internals
 {
     /// <summary>
     /// Procedural mesh generator implementation.
