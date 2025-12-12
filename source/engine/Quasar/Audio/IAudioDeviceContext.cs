@@ -29,11 +29,6 @@ namespace Quasar.Audio
         AudioPlatform Platform { get; }
 
         /// <summary>
-        /// Gets the name of the audio platform.
-        /// </summary>
-        string PlatformName { get; }
-
-        /// <summary>
         /// Gets the audio platform version.
         /// </summary>
         Version Version { get; }

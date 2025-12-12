@@ -9,8 +9,6 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System;
-
 namespace Quasar.Audio.Internals
 {
     /// <summary>
@@ -30,8 +28,6 @@ namespace Quasar.Audio.Internals
             string name,
             string vendor)
         {
-            ArgumentException.ThrowIfNullOrEmpty(id, nameof(id));
-
             Id = id;
             Name = name;
             Vendor = vendor;

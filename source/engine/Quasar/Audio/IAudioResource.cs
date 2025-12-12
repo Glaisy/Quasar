@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="IAudioDevice.cs" company="Space Development">
+// <copyright file="IAudioResource.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,21 +9,24 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System;
+
 namespace Quasar.Audio
 {
     /// <summary>
-    /// Represents the basic properties of an audio device.
+    /// Represents an audio resource.
     /// </summary>
-    public interface IAudioDevice
+    /// <seealso cref="IEquatable{IAudioResource}" />
+    public interface IAudioResource : IEquatable<IAudioResource>
     {
         /// <summary>
-        /// Gets the name.
+        /// Gets the audio device.
         /// </summary>
-        string Name { get; }
+        IAudioDevice AudioDevice { get; }
 
         /// <summary>
-        /// Gets the vendor.
+        /// Gets the internal resource handle.
         /// </summary>
-        string Vendor { get; }
+        int Handle { get; }
     }
 }

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="IAudioDevice.cs" company="Space Development">
+// <copyright file="IAttenuationProfile.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -12,18 +12,23 @@
 namespace Quasar.Audio
 {
     /// <summary>
-    /// Represents the basic properties of an audio device.
+    /// Represents an attenuation profile for audio sources.
     /// </summary>
-    public interface IAudioDevice
+    public interface IAttenuationProfile
     {
         /// <summary>
-        /// Gets the name.
+        /// Gets or sets the attenuation rate [0...+Inf].
         /// </summary>
-        string Name { get; }
+        float AttenuationRate { get; set; }
 
         /// <summary>
-        /// Gets the vendor.
+        /// Gets or sets the maximum distance [0...+Inf].
         /// </summary>
-        string Vendor { get; }
+        float MaximumDistance { get; set; }
+
+        /// <summary>
+        /// Gets or sets the reference distance [0...+Inf].
+        /// </summary>
+        float ReferenceDistance { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="IAudioDevice.cs" company="Space Development">
+// <copyright file="ISoundEffect.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,21 +9,25 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using Space.Core;
+
 namespace Quasar.Audio
 {
     /// <summary>
-    /// Represents the basic properties of an audio device.
+    /// Represents a sound effect.
     /// </summary>
-    public interface IAudioDevice
+    /// <seealso cref="IAudioResource" />
+    /// <seealso cref="IIdentifierProvider{String}" />
+    public interface ISoundEffect : IAudioResource, IIdentifierProvider<string>
     {
         /// <summary>
-        /// Gets the name.
+        /// Gets the audio format.
         /// </summary>
-        string Name { get; }
+        AudioFormat Format { get; }
 
         /// <summary>
-        /// Gets the vendor.
+        /// Gets the sample count.
         /// </summary>
-        string Vendor { get; }
+        int SampleCount { get; }
     }
 }

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="IAudioDevice.cs" company="Space Development">
+// <copyright file="IAudioSourceFactory.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -12,18 +12,17 @@
 namespace Quasar.Audio
 {
     /// <summary>
-    /// Represents the basic properties of an audio device.
+    /// Represents the audio source factory component.
     /// </summary>
-    public interface IAudioDevice
+    public interface IAudioSourceFactory
     {
         /// <summary>
-        /// Gets the name.
+        /// Creates a new audio source instance by the specified identifier.
         /// </summary>
-        string Name { get; }
-
-        /// <summary>
-        /// Gets the vendor.
-        /// </summary>
-        string Vendor { get; }
+        /// <param name="id">The identifier.</param>
+        /// <returns>
+        /// The created audio source instance.
+        /// </returns>
+        IAudioSource Create(string id);
     }
 }

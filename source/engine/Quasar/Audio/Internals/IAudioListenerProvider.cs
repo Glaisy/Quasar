@@ -1,5 +1,5 @@
-//-----------------------------------------------------------------------
-// <copyright file="IAudioDevice.cs" company="Space Development">
+﻿//-----------------------------------------------------------------------
+// <copyright file="IAudioListenerProvider.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,21 +9,17 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-namespace Quasar.Audio
+namespace Quasar.Audio.Internals
 {
     /// <summary>
-    /// Represents the basic properties of an audio device.
+    /// Internal audio listener provider interface definition.
     /// </summary>
-    public interface IAudioDevice
+    internal interface IAudioListenerProvider
     {
         /// <summary>
-        /// Gets the name.
+        /// Gets the audio listener.
         /// </summary>
-        string Name { get; }
-
-        /// <summary>
-        /// Gets the vendor.
-        /// </summary>
-        string Vendor { get; }
+        /// <returns>The audio listener instance.</returns>
+        AudioListenerBase GetListener();
     }
 }
