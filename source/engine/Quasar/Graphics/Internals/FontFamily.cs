@@ -19,12 +19,13 @@ namespace Quasar.Graphics.Internals
     /// <summary>
     /// Quasar font family implementation.
     /// </summary>
-    public sealed class FontFamily : IFontFamily
+    internal sealed class FontFamily : IFontFamily
     {
         private IFontStyleInformation fallbackFontStyleInformation;
 
-        [JsonPropertyName("FontStyles")]
+        [JsonInclude]
         [JsonRequired]
+        [JsonPropertyName("FontStyles")]
         private List<FontStyleInformation> fontStyleInformations;
 
 
@@ -48,13 +49,13 @@ namespace Quasar.Graphics.Internals
 
         private float baseSize;
         /// <summary>
-        /// Gets the base size of the font.
+        /// Gets or sets the base size of the font.
         /// </summary>
         [JsonRequired]
         public float BaseSize
         {
             get => baseSize;
-            internal set
+            set
             {
                 ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value, nameof(BaseSize));
                 baseSize = value;
@@ -63,13 +64,13 @@ namespace Quasar.Graphics.Internals
 
         private int characterCount;
         /// <summary>
-        /// Gets the character count.
+        /// Gets or sets the character count.
         /// </summary>
         [JsonRequired]
         public int CharacterCount
         {
             get => characterCount;
-            internal set
+            set
             {
                 ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value, nameof(CharacterCount));
                 characterCount = value;
@@ -78,13 +79,13 @@ namespace Quasar.Graphics.Internals
 
         private float characterSpacing;
         /// <summary>
-        /// Gets the character spacing. (relative to character width).
+        /// Gets or sets the character spacing. (relative to character width).
         /// </summary>
         [JsonRequired]
         public float CharacterSpacing
         {
             get => characterSpacing;
-            internal set
+            set
             {
                 ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(CharacterSpacing));
                 characterSpacing = value;

@@ -37,7 +37,8 @@ namespace Quasar.Graphics.Internals
 
         private readonly IResourceProvider resourceProvider;
         private readonly ITextureRepository textureRepository;
-        private readonly TextureDescriptor textureDescriptor = new TextureDescriptor(0, TextureRepeatMode.Clamped, TextureRepeatMode.Clamped);
+        private readonly TextureDescriptor textureDescriptor =
+            new TextureDescriptor(0, TextureRepeatMode.Clamped, TextureRepeatMode.Clamped);
 
 
         /// <summary>
