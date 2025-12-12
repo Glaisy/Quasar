@@ -47,7 +47,7 @@ namespace Quasar.Rendering.Pipeline
         /// <inheritdoc/>
         protected override void OnExecute()
         {
-            Context.CommandProcessor.ResetState();
+            Context.CommandProcessor.Reset();
         }
 
         /// <inheritdoc/>

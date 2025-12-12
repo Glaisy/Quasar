@@ -30,7 +30,25 @@ namespace Quasar.Graphics
         /// <summary>
         /// Resets the state of the processsor.
         /// </summary>
-        void ResetState();
+        void Reset();
+
+        /// <summary>
+        /// Enables/disables the backface culling.
+        /// </summary>
+        /// <param name="enabled">The enabled flag.</param>
+        void SetBackfaceCulling(bool enabled);
+
+        /// <summary>
+        /// Enables/disables the depth testing.
+        /// </summary>
+        /// <param name="enabled">The enabled flag.</param>
+        void SetDepthTesting(bool enabled);
+
+        /// <summary>
+        /// Sets the depth test mode.
+        /// </summary>
+        /// <param name="depthTestMode">The depth test mode.</param>
+        void SetDepthTestMode(DepthTestMode depthTestMode);
 
         /// <summary>
         /// Sets the viewport.
