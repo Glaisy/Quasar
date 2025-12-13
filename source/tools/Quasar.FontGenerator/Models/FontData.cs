@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="IGeneratorSettings.cs" company="Space Development">
+// <copyright file="FontData.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,23 +9,21 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using Space.Core.Settings;
-
 namespace Quasar.FontGenerator.Models
 {
     /// <summary>
-    /// Represents the settings values for the generator tool.
+    /// The font data structure.
     /// </summary>
-    internal interface IGeneratorSettings : ISettings
+    internal struct FontData
     {
-        /// <summary>
-        /// Gets the export folder path.
-        /// </summary>
-        string ExportFolderPath { get; }
+        /////// <summary>
+        /////// The font family.
+        /////// </summary>
+        ////public Graphics.Internals.FontFamily FontFamily;
 
-        /// <summary>
-        /// Gets the font data settings.
-        /// </summary>
-        IFontDataSettings FontDataSettings { get; }
+        /////// <summary>
+        /////// The fontstyle - bitmap dictionary.
+        /////// </summary>
+        ////public Dictionary<Graphics.FontStyle, Bitmap> Bitmaps;
     }
 }
