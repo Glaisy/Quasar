@@ -53,10 +53,5 @@ namespace Quasar.Graphics
         /// Gets the first character.
         /// </summary>
         char FirstCharacter { get; }
-
-        /// <summary>
-        /// Gets the name.
-        /// </summary>
-        string Name { get; }
     }
 }

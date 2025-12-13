@@ -197,8 +197,6 @@ namespace Quasar.FontGenerator.Services
                 var offsetY = settings.Padding;
                 var characterArray = stackalloc char[1];
                 var characterSpan = new Span<char>(characterArray, 1);
-                var horizontalOffset = settings.OffsetX;
-                var verticalOffset = settings.OffsetY;
                 for (int i = settings.FirstCharacter, j = 0; j < fontFamilyData.CharacterCount; i++, j++)
                 {
                     // get character string
@@ -229,8 +227,8 @@ namespace Quasar.FontGenerator.Services
                         characterSpan,
                         font,
                         brush,
-                        x + horizontalOffset,
-                        y + verticalOffset,
+                        x,
+                        y,
                         StringFormat.GenericTypographic);
                 }
 

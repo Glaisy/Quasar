@@ -10,8 +10,10 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Windows.Forms;
 
@@ -35,7 +37,9 @@ namespace Quasar.UI
 
         private readonly GeneratorService generatorService = new GeneratorService();
         private readonly string settingsFilePath;
+        private List<DataSourceItem<FontFamily>> fontFamilyDataSource;
         private GeneratorSettings settings;
+        private bool isRefreshEnabled;
         private Bitmap previewBitmap;
 
 
@@ -55,12 +59,12 @@ namespace Quasar.UI
         {
             base.OnLoad(e);
 
+            PopulateFontFamilies();
             LoadGeneratorSettings();
-
-            // TODO: remove this test code.
-            var font = new Font("Segoe UI", 32, FontStyle.Regular, GraphicsUnit.Pixel);
-            previewBitmap = generatorService.GeneratePreviewBitmap(settings.FontDataSettings, font, Color.White, Color.Black);
+            ApplyGeneratorSettings();
+            RefreshPreview();
         }
+
 
         /// <inheritdoc/>
         protected override void OnClosed(EventArgs e)
@@ -71,14 +75,25 @@ namespace Quasar.UI
         }
 
 
-        private void PaintPreviewPanel(object sender, PaintEventArgs e)
+        private void ApplyGeneratorSettings()
         {
-            if (previewBitmap == null)
-            {
-                return;
-            }
+            isRefreshEnabled = false;
 
-            e.Graphics.DrawImage(previewBitmap, Point.Empty);
+            var fontDataSettings = settings.FontDataSettings;
+            var fontFamilyName = fontDataSettings.FontFamilyName ?? txtPreview.Font.Name;
+            cbFontFamilies.SelectedItem = fontFamilyDataSource
+                .FirstOrDefault(x => x.DisplayValue == fontFamilyName);
+
+            udBaseSize.Value = fontDataSettings.BaseSize;
+            txtFirstCharacter.Text = new string(fontDataSettings.FirstCharacter, 1);
+            txtFallbackCharacter.Text = new string(fontDataSettings.FallbackCharacter, 1);
+            udPageCount.Value = fontDataSettings.PageCount;
+            udPadding.Value = fontDataSettings.Padding;
+            udCharacterSpacing.Value = (decimal)fontDataSettings.CharacterSpacing;
+            udHorizontalScale.Value = (decimal)fontDataSettings.HorizontalScale;
+            txtFontFamilyNameOverride.Text = fontDataSettings.FontFamilyNameOverride;
+
+            isRefreshEnabled = true;
         }
 
         private void LoadGeneratorSettings()
@@ -101,6 +116,37 @@ namespace Quasar.UI
             }
         }
 
+        private void PopulateFontFamilies()
+        {
+            fontFamilyDataSource = new List<DataSourceItem<FontFamily>>();
+            var fontFamilies = FontFamily.Families.OrderBy(x => x.Name);
+            foreach (var fontFamily in fontFamilies)
+            {
+                fontFamilyDataSource.Add(new DataSourceItem<FontFamily>(fontFamily.Name, fontFamily));
+            }
+
+            cbFontFamilies.DisplayMember = nameof(DataSourceItem<FontFamily>.DisplayValue);
+            cbFontFamilies.ValueMember = nameof(DataSourceItem<FontFamily>.Value);
+            cbFontFamilies.DataSource = fontFamilyDataSource;
+        }
+
+        private void RefreshPreview()
+        {
+            if (!isRefreshEnabled)
+            {
+                return;
+            }
+
+            var fontDataSettings = settings.FontDataSettings;
+            var font = new Font(
+                fontDataSettings.FontFamilyName,
+                fontDataSettings.BaseSize,
+                FontStyle.Regular,
+                GraphicsUnit.Pixel);
+            previewBitmap = generatorService.GeneratePreviewBitmap(settings.FontDataSettings, font, Color.White, Color.Black);
+            pnlPreview.Invalidate();
+        }
+
         private void SaveGeneratorSettings()
         {
             Stream stream = null;
@@ -117,5 +163,102 @@ namespace Quasar.UI
                 stream?.Dispose();
             }
         }
+
+        #region Event handlers
+        private void OnBaseSizeValueChanged(object sender, EventArgs e)
+        {
+            settings.FontDataSettings.BaseSize = (int)udBaseSize.Value;
+            RefreshPreview();
+        }
+
+        private void OnCharacterSpacingValueChanged(object sender, EventArgs e)
+        {
+            settings.FontDataSettings.CharacterSpacing = (float)udCharacterSpacing.Value;
+        }
+
+        private void OnExportClick(object sender, MouseEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OnExportDirectoryPathClick(object sender, MouseEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OnFallbackCharacterTextChanged(object sender, EventArgs e)
+        {
+            var fallbackCharacter = txtFallbackCharacter.TextLength == 0 ? ' ' : txtFallbackCharacter.Text[0];
+            settings.FontDataSettings.FallbackCharacter = fallbackCharacter;
+        }
+
+        private void OnFirstCharacterTextChanged(object sender, EventArgs e)
+        {
+            var firstCharacter = txtFirstCharacter.TextLength == 0 ? ' ' : txtFirstCharacter.Text[0];
+            if (firstCharacter == settings.FontDataSettings.FirstCharacter)
+            {
+                return;
+            }
+
+            settings.FontDataSettings.FirstCharacter = firstCharacter;
+            RefreshPreview();
+        }
+
+        private void OnFontFamiliesSelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbFontFamilies.SelectedValue is not FontFamily selectedFontFamily)
+            {
+                return;
+            }
+
+            txtPreview.Font = new Font(selectedFontFamily, txtPreview.Font.Size, txtPreview.Font.Style);
+
+            if (settings == null)
+            {
+                return;
+            }
+
+            settings.FontDataSettings.FontFamilyName = selectedFontFamily.Name;
+            RefreshPreview();
+        }
+
+        private void OnHorizontalScaleValueChanged(object sender, EventArgs e)
+        {
+            settings.FontDataSettings.HorizontalScale = (float)udHorizontalScale.Value;
+        }
+
+        private void OnPaddingValueChanged(object sender, EventArgs e)
+        {
+            settings.FontDataSettings.Padding = (int)udPadding.Value;
+            RefreshPreview();
+        }
+
+        private void OnFontFamilyNameOverrideTextChanged(object sender, EventArgs e)
+        {
+            var fontfamilyNameOverride = txtFontFamilyNameOverride.Text;
+            if (String.IsNullOrEmpty(fontfamilyNameOverride))
+            {
+                fontfamilyNameOverride = null;
+            }
+
+            settings.FontDataSettings.FontFamilyNameOverride = fontfamilyNameOverride;
+        }
+
+        private void OnPageCountValueChanged(object sender, EventArgs e)
+        {
+            settings.FontDataSettings.PageCount = (int)udPageCount.Value;
+            RefreshPreview();
+        }
+
+        private void OnPaintPreviewPanel(object sender, PaintEventArgs e)
+        {
+            if (previewBitmap == null)
+            {
+                return;
+            }
+
+            e.Graphics.DrawImage(previewBitmap, Point.Empty);
+        }
+        #endregion
     }
 }
