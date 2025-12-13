@@ -10,6 +10,12 @@
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="UI\VisualElements\**" />
+    <EmbeddedResource Remove="UI\VisualElements\**" />
+    <None Remove="UI\VisualElements\**" />
+  </ItemGroup>
     
   <ItemGroup>
     <Compile Include="..\..\AssemblyInfo.Suppressions.shared.cs" Link="Properties\AssemblyInfo.Suppressions.shared.cs" />

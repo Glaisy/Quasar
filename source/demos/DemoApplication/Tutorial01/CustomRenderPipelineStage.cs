@@ -13,8 +13,9 @@ using Quasar;
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
 using Quasar.Pipelines;
-using Quasar.Rendering.Pipeline;
+using Quasar.Rendering.Pipelines;
 using Quasar.Rendering.Procedurals;
+using Quasar.UI.Pipelines;
 
 using Space.Core.DependencyInjection;
 
@@ -26,7 +27,7 @@ namespace DemoApplication.Tutorial01
     /// <seealso cref="RenderingPipelineStageBase" />
     [Export(typeof(RenderingPipelineStageBase), nameof(CustomRenderPipelineStage))]
     [ExecuteAfter(typeof(ClearFrameRenderingPipelineStage))]
-    [ExecuteBefore(typeof(FrameBufferSwapperRenderingPipelineStage))]
+    [ExecuteBefore(typeof(UIRenderingPipelineStage))]
     internal sealed class CustomRenderPipelineStage : RenderingPipelineStageBase
     {
         private readonly IShaderRepository shaderRepository;

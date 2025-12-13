@@ -15,7 +15,7 @@ using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 
 using Quasar.Pipelines.Internals;
-using Quasar.Rendering.Pipeline.Internals;
+using Quasar.Rendering.Pipelines.Internals;
 using Quasar.Settings;
 using Quasar.UI;
 using Quasar.UI.Internals;

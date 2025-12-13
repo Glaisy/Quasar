@@ -18,7 +18,7 @@ using Quasar.Utilities;
 
 using Space.Core.DependencyInjection;
 
-namespace Quasar.Rendering.Pipeline
+namespace Quasar.Rendering.Pipelines
 {
     /// <summary>
     /// Render pipeline's clear stage implementation.

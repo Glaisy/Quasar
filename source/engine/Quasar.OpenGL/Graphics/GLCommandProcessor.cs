@@ -25,6 +25,8 @@ namespace Quasar.OpenGL.Graphics
     internal sealed class GLCommandProcessor : IGraphicsCommandProcessor
     {
         private int lastMeshHandle;
+        private bool isBackfaceCullingEnabled;
+        private bool isDepthTestingEnabled;
 
 
         /// <inheritdoc/>
@@ -53,6 +55,25 @@ namespace Quasar.OpenGL.Graphics
         }
 
         /// <inheritdoc/>
+        public void DrawMesh(in RawMesh rawMesh)
+        {
+            if (rawMesh.Handle != lastMeshHandle)
+            {
+                GL.BindVertexArray(rawMesh.Handle);
+                lastMeshHandle = rawMesh.Handle;
+            }
+
+            if (rawMesh.IsIndexed)
+            {
+                GL.DrawElements(rawMesh.PrimitiveType, rawMesh.ElementCount, DrawElementsType.UnsignedInt, 0);
+            }
+            else
+            {
+                GL.DrawArrays(rawMesh.PrimitiveType, 0, rawMesh.ElementCount);
+            }
+        }
+
+        /// <inheritdoc/>
         public void Reset()
         {
             SetBackfaceCulling(true);
@@ -61,29 +82,43 @@ namespace Quasar.OpenGL.Graphics
         }
 
         /// <inheritdoc/>
-        public void SetBackfaceCulling(bool enabled)
+        public bool SetBackfaceCulling(bool enabled)
         {
-            if (enabled)
+            var previousValue = isBackfaceCullingEnabled;
+            if (isBackfaceCullingEnabled != enabled)
             {
-                GL.Enable(Capability.CullFace);
+                isBackfaceCullingEnabled = enabled;
+                if (isBackfaceCullingEnabled)
+                {
+                    GL.Enable(Capability.CullFace);
+                }
+                else
+                {
+                    GL.Disable(Capability.CullFace);
+                }
             }
-            else
-            {
-                GL.Disable(Capability.CullFace);
-            }
+
+            return previousValue;
         }
 
         /// <inheritdoc/>
-        public void SetDepthTesting(bool enabled)
+        public bool SetDepthTesting(bool enabled)
         {
-            if (enabled)
+            var previousValue = isDepthTestingEnabled;
+            if (isDepthTestingEnabled != enabled)
             {
-                GL.Enable(Capability.DepthTest);
+                isDepthTestingEnabled = enabled;
+                if (isDepthTestingEnabled)
+                {
+                    GL.Enable(Capability.DepthTest);
+                }
+                else
+                {
+                    GL.Disable(Capability.DepthTest);
+                }
             }
-            else
-            {
-                GL.Disable(Capability.DepthTest);
-            }
+
+            return previousValue;
         }
 
         /// <inheritdoc/>

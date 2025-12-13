@@ -13,7 +13,7 @@ using Quasar.UI;
 
 using Space.Core.DependencyInjection;
 
-namespace Quasar.Rendering.Pipeline
+namespace Quasar.Rendering.Pipelines
 {
     /// <summary>
     /// Rendering pipeline stage which swaps the front and back buffers.

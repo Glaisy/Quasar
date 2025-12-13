@@ -15,7 +15,7 @@ using Quasar.Graphics;
 
 using Space.Core.DependencyInjection;
 
-namespace Quasar.Rendering.Procedural.Internals
+namespace Quasar.Rendering.Procedurals.Internals
 {
     /// <summary>
     /// Cube mesh generator implementation.

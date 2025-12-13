@@ -9,7 +9,7 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-namespace Quasar.Rendering.Procedural
+namespace Quasar.Rendering.Procedurals
 {
     /// <summary>
     /// Ellipsoid radius provider implementation.

@@ -15,7 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Quasar.Graphics;
 
-namespace Quasar.Rendering.Procedural
+namespace Quasar.Rendering.Procedurals
 {
     /// <summary>
     /// Abstract base class for mesh generators.

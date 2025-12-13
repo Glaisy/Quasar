@@ -10,11 +10,11 @@
 //-----------------------------------------------------------------------
 
 using Quasar.Graphics;
-using Quasar.Rendering.Procedural;
+using Quasar.Rendering.Procedurals;
 
 using Space.Core.DependencyInjection;
 
-namespace Quasar.Rendering.Pipeline
+namespace Quasar.Rendering.Pipelines
 {
     /// <summary>
     /// Render pipeline's frame initialization stage implementation.

@@ -28,6 +28,12 @@ namespace Quasar.Graphics
         void DrawMesh(IMesh mesh);
 
         /// <summary>
+        /// Executes a draw call for by the specified mesh.
+        /// </summary>
+        /// <param name="rawMesh">The raw mesh.</param>
+        void DrawMesh(in RawMesh rawMesh);
+
+        /// <summary>
         /// Resets the state of the processsor.
         /// </summary>
         void Reset();
@@ -36,13 +42,15 @@ namespace Quasar.Graphics
         /// Enables/disables the backface culling.
         /// </summary>
         /// <param name="enabled">The enabled flag.</param>
-        void SetBackfaceCulling(bool enabled);
+        /// <returns>The previous state of backface culling.</returns>
+        bool SetBackfaceCulling(bool enabled);
 
         /// <summary>
         /// Enables/disables the depth testing.
         /// </summary>
         /// <param name="enabled">The enabled flag.</param>
-        void SetDepthTesting(bool enabled);
+        /// <returns>The previous state of depth testing.</returns>
+        bool SetDepthTesting(bool enabled);
 
         /// <summary>
         /// Sets the depth test mode.

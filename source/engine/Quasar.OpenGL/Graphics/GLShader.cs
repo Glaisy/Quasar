@@ -121,6 +121,15 @@ namespace Quasar.OpenGL.Graphics
         }
 
         /// <inheritdoc/>
+        internal override void SetTexture(int index, int value)
+        {
+            var textureUnit = Properties[index].TextureUnit;
+            GL.ActiveTexture(TextureUnit.Texture0 + textureUnit);
+            GL.BindTexture(TextureTarget.Texture2D, value);
+            GL.Uniform1i(index, textureUnit);
+        }
+
+        /// <inheritdoc/>
         internal override void SetVector2(int index, in Vector2 value)
         {
             GL.Uniform2f(index, value.X, value.Y);

@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 
 using Quasar.Pipelines;
 
-namespace Quasar.Rendering.Pipeline
+namespace Quasar.Rendering.Pipelines
 {
     /// <summary>
     /// Represents an abstract base class for Quasar rendering pipeline's processing stages.

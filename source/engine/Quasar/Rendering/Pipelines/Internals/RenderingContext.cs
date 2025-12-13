@@ -14,7 +14,7 @@ using Quasar.Graphics;
 using Space.Core;
 using Space.Core.DependencyInjection;
 
-namespace Quasar.Rendering.Pipeline.Internals
+namespace Quasar.Rendering.Pipelines.Internals
 {
     /// <summary>
     /// The rendering pipeline's context object implementation.

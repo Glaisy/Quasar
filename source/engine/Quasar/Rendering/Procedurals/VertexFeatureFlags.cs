@@ -11,7 +11,7 @@
 
 using System;
 
-namespace Quasar.Rendering.Procedural
+namespace Quasar.Rendering.Procedurals
 {
     /// <summary>
     /// Vertex feature flags enumeration type.

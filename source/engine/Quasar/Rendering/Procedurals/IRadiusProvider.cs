@@ -9,7 +9,7 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-namespace Quasar.Rendering.Procedural
+namespace Quasar.Rendering.Procedurals
 {
     /// <summary>
     /// Represents a radius provider component for sphere like 3D object.
