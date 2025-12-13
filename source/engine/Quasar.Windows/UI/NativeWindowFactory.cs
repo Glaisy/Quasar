@@ -9,10 +9,10 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Windows.Forms;
 
 using Quasar.Graphics;
+using Quasar.Inputs.Internals;
 using Quasar.UI;
 using Quasar.UI.Internals;
 
@@ -28,6 +28,24 @@ namespace Quasar.Windows.UI
     [Singleton]
     internal sealed class NativeWindowFactory : INativeWindowFactory
     {
+        private readonly InputMapper inputMapper;
+        private readonly IInputEventProcessor inputEventProcessor;
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NativeWindowFactory"/> class.
+        /// </summary>
+        /// <param name="inputMapper">The input mapper.</param>
+        /// <param name="inputEventProcessor">The input event processor.</param>
+        public NativeWindowFactory(
+            InputMapper inputMapper,
+            IInputEventProcessor inputEventProcessor)
+        {
+            this.inputMapper = inputMapper;
+            this.inputEventProcessor = inputEventProcessor;
+        }
+
+
         /// <inheritdoc/>
         public IApplicationWindow CreateApplicationWindow(
             ApplicationWindowType applicationWindowType,
@@ -37,14 +55,7 @@ namespace Quasar.Windows.UI
             var screenSize = Screen.PrimaryScreen.Bounds.Size;
 
             var size = new Size((int)(screenSize.Width * screenRatio), (int)(screenSize.Height * screenRatio));
-            var applicationWindow = new ApplicationWindow(applicationWindowType, title, size);
-            return applicationWindow;
-        }
-
-        /// <inheritdoc/>
-        public INativeWindow CreateChildWindow(INativeWindow parent)
-        {
-            throw new NotImplementedException();
+            return new ApplicationWindow(inputMapper, inputEventProcessor, applicationWindowType, title, size);
         }
     }
 }

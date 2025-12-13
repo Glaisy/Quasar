@@ -43,7 +43,7 @@ namespace Quasar.OpenGL.Tests.Api
                     Screen.PrimaryScreen.BitsPerPixel,
                     60);
 
-                applicationWindow = new ApplicationWindow(ApplicationWindowType.Borderless, String.Empty, Size.Empty);
+                applicationWindow = new ApplicationWindow(null, null, ApplicationWindowType.Borderless, String.Empty, Size.Empty);
                 deviceContext = applicationWindow.GetDeviceContext(displayMode);
                 var functionProvider = new OpenGLInteropFunctionProvider();
 

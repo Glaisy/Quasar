@@ -11,7 +11,7 @@
 
 using System.Reflection;
 
-namespace Quasar.Core.IO
+namespace Quasar.Utilities
 {
     /// <summary>
     /// Represents a resource provider factory.

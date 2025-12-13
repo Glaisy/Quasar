@@ -16,6 +16,7 @@
     <None Remove="Resources\Shaders\Fallback.frag" />
     <None Remove="Resources\Shaders\Fallback.vert" />
     <None Remove="Resources\Shaders\Includes\Matrices\MVP.inc" />
+    <None Remove="Resources\Shaders\Includes\Matrices\Projection.inc" />
     <None Remove="Resources\Shaders\Test.frag" />
     <None Remove="Resources\Shaders\Test.vert" />
   </ItemGroup>
@@ -33,8 +34,11 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\Shaders\Includes\Matrices\MVP.inc" />
+    <EmbeddedResource Include="Resources\Shaders\Includes\Matrices\Projection.inc" />
     <EmbeddedResource Include="Resources\Shaders\Test.frag" />
     <EmbeddedResource Include="Resources\Shaders\Test.vert" />
+    <EmbeddedResource Include="Resources\Shaders\UI\UIElement.frag" />
+    <EmbeddedResource Include="Resources\Shaders\UI\UIElement.vert" />
   </ItemGroup>
 
   <ItemGroup>

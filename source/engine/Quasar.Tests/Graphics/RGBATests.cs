@@ -16,7 +16,7 @@ using Quasar.Graphics;
 namespace Quasar.Tests.Graphics
 {
     [TestFixture]
-    public sealed class RGBATests
+    internal sealed class RGBATests
     {
         [TestCaseSource(nameof(Source_UInt32))]
         public void Constructor_UInt32(uint rgba, byte r, byte g, byte b, byte a)

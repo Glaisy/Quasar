@@ -9,6 +9,10 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System.Reflection;
+
+using Microsoft.Extensions.DependencyInjection;
+
 using Quasar;
 using Quasar.UI;
 
@@ -27,6 +31,8 @@ namespace DemoApplication
         private static void Main()
         {
             var builder = new QuasarApplicationBuilder();
+
+            builder.ServiceLoader.AddExportedServices(Assembly.GetExecutingAssembly());
 
             builder.ConfigureLoggerService(configuration =>
             {
@@ -48,6 +54,13 @@ namespace DemoApplication
 
             using (var application = builder.Build())
             {
+                // TODO: add configurability option for default icon and cursor or startup action?
+                var iconRepository = application.ServiceProvider.GetRequiredService<IIconRepository>();
+                application.ApplicationWindow.Icon = iconRepository.Load("Demo", "./Contents/Logo.png");
+
+                var cursorRepository = application.ServiceProvider.GetRequiredService<ICursorRepository>();
+                application.ApplicationWindow.Cursor = cursorRepository.Load("Demo", "./Contents/Cursor.png", default);
+
                 application.Run();
             }
         }

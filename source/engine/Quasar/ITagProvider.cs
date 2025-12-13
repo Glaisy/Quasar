@@ -12,7 +12,7 @@
 namespace Quasar
 {
     /// <summary>
-    /// Represents a tag value provider object.
+    /// Represents an object with a tag value property.
     /// </summary>
     public interface ITagProvider
     {

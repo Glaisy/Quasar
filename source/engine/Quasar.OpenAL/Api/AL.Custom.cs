@@ -109,16 +109,15 @@ namespace Quasar.OpenAL.Api
         }
 
         /// <summary>
-        /// Gets the string by the specified device identifier and type.
+        /// Gets the string by the specified type.
         /// </summary>
-        /// <param name="deviceId">The device identifier.</param>
         /// <param name="stringType">The string type enumeration value.</param>
         /// <returns>
         /// The string value.
         /// </returns>
-        public static string GetString(IntPtr deviceId, StringType stringType)
+        public static string GetString(StringType stringType)
         {
-            var bytes = getString(deviceId, stringType);
+            var bytes = getString(stringType);
             return UnsafeUtility.GetString(bytes);
         }
 
@@ -130,9 +129,23 @@ namespace Quasar.OpenAL.Api
         /// <returns>
         /// The string value.
         /// </returns>
-        public static List<string> GetStrings(IntPtr deviceId, StringType stringType)
+        public static string GetString(IntPtr deviceId, StringTypeExt stringType)
         {
-            var bytes = getString(deviceId, stringType);
+            var bytes = getStringExt(deviceId, stringType);
+            return UnsafeUtility.GetString(bytes);
+        }
+
+        /// <summary>
+        /// Gets the list of strings by the specified device identifier and type.
+        /// </summary>
+        /// <param name="deviceId">The device identifier.</param>
+        /// <param name="stringType">The string type enumeration value.</param>
+        /// <returns>
+        /// The string value.
+        /// </returns>
+        public static List<string> GetStrings(IntPtr deviceId, StringTypeExt stringType)
+        {
+            var bytes = getStringExt(deviceId, stringType);
             var list = new List<string>();
             while (*bytes != 0)
             {

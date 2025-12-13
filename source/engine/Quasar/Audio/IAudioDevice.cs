@@ -12,7 +12,7 @@
 namespace Quasar.Audio
 {
     /// <summary>
-    /// Audio device interface definition.
+    /// Represents the basic properties of an audio device.
     /// </summary>
     public interface IAudioDevice
     {

@@ -16,7 +16,7 @@ using Quasar.Tests.Extensions;
 namespace Quasar.Tests
 {
     [TestFixture]
-    internal class QuaternionDTests
+    internal sealed class QuaternionDTests
     {
         [Test]
         public void AngleAxis_X()

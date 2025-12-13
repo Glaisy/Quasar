@@ -12,7 +12,7 @@
 using System.IO;
 
 using Quasar.Collections;
-using Quasar.Core.IO;
+using Quasar.Utilities;
 
 namespace Quasar.Graphics
 {

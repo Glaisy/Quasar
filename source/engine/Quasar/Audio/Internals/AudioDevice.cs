@@ -9,8 +9,6 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System;
-
 namespace Quasar.Audio.Internals
 {
     /// <summary>
@@ -22,26 +20,16 @@ namespace Quasar.Audio.Internals
         /// <summary>
         /// Initializes a new instance of the <see cref="AudioDevice" /> class.
         /// </summary>
-        /// <param name="id">The identifier.</param>
         /// <param name="name">The name.</param>
         /// <param name="vendor">The vendor.</param>
         public AudioDevice(
-            string id,
             string name,
             string vendor)
         {
-            ArgumentException.ThrowIfNullOrEmpty(id, nameof(id));
-
-            Id = id;
             Name = name;
             Vendor = vendor;
         }
 
-
-        /// <summary>
-        /// Gets the identifier.
-        /// </summary>
-        public string Id { get; }
 
         /// <summary>
         /// Gets the name.

@@ -12,8 +12,8 @@
 using System;
 using System.Runtime.InteropServices;
 
-using Quasar.Core.Utilities;
 using Quasar.Graphics;
+using Quasar.Utilities;
 using Quasar.Windows.Interop;
 
 using Space.Core.DependencyInjection;

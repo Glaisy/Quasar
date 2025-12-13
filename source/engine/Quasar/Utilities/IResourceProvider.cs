@@ -12,7 +12,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Quasar.Core.IO
+namespace Quasar.Utilities
 {
     /// <summary>
     /// Represents a general resource provider component.

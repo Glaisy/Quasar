@@ -16,23 +16,23 @@ using Space.Core;
 namespace Quasar.Graphics
 {
     /// <summary>
-    /// Represents the style information of a Quasar font family.
+    /// Represents the style information for a Font.
     /// </summary>
     /// <seealso cref="IIdentifierProvider{FontStyle}" />
     public interface IFontStyleInformation : IIdentifierProvider<FontStyle>
     {
         /// <summary>
-        /// Gets the ascent of the font.
+        /// Gets the ascent of the font [pixels].
         /// </summary>
         float Ascent { get; }
 
         /// <summary>
-        /// Gets the descent of the font.
+        /// Gets the descent of the font [pixels].
         /// </summary>
         float Descent { get; }
 
         /// <summary>
-        /// Gets the line spacing of the font.
+        /// Gets the line spacing of the font [pixels].
         /// </summary>
         float LineSpacing { get; }
 
@@ -43,8 +43,8 @@ namespace Quasar.Graphics
         internal IReadOnlyList<float> CharacterWidths { get; }
 
         /// <summary>
-        /// Gets the list of texture coordinates.
+        /// Gets the list of  UV texture coordinates.
         /// </summary>
-        internal IReadOnlyList<Vector2> TextureCoordinates { get; }
+        internal IReadOnlyList<Vector2> UVs { get; }
     }
 }

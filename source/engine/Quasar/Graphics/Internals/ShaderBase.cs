@@ -118,63 +118,70 @@ namespace Quasar.Graphics.Internals
         }
 
         /// <summary>
-        /// Sets the shader property value at index.
+        /// Sets the shader color property value at index.
         /// </summary>
         /// <param name="index">The index.</param>
         /// <param name="value">The value.</param>
         internal abstract void SetColor(int index, in Color value);
 
         /// <summary>
-        /// Sets the shader property value at index.
+        /// Sets the shader cubemap texture property value at index.
         /// </summary>
         /// <param name="index">The index.</param>
         /// <param name="value">The value.</param>
         internal abstract void SetCubeMapTexture(int index, ICubeMapTexture value);
 
         /// <summary>
-        /// Sets the shader property value at index.
+        /// Sets the shader float property value at index.
         /// </summary>
         /// <param name="index">The index.</param>
         /// <param name="value">The value.</param>
         internal abstract void SetFloat(int index, float value);
 
         /// <summary>
-        /// Sets the shader property value at index.
+        /// Sets the shader integer property value at index.
         /// </summary>
         /// <param name="index">The index.</param>
         /// <param name="value">The value.</param>
         internal abstract void SetInteger(int index, int value);
 
         /// <summary>
-        /// Sets the shader property value at index.
+        /// Sets the shader matrix property value at index.
         /// </summary>
         /// <param name="index">The index.</param>
         /// <param name="value">The value.</param>
         internal abstract void SetMatrix(int index, in Matrix4 value);
 
         /// <summary>
-        /// Sets the shader property value at index.
+        /// Sets the shader texture property value at index.
         /// </summary>
         /// <param name="index">The index.</param>
         /// <param name="value">The value.</param>
         internal abstract void SetTexture(int index, ITexture value);
 
         /// <summary>
-        /// Sets the shader property value at index.
+        /// Sets the shader texture property value (by handle) at index.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <param name="value">The value.</param>
+        internal abstract void SetTexture(int index, int value);
+
+        /// <summary>
+        /// Sets the shader Vector2 property value at index.
         /// </summary>
         /// <param name="index">The index.</param>
         /// <param name="value">The value.</param>
         internal abstract void SetVector2(int index, in Vector2 value);
 
         /// <summary>
-        /// Sets the shader property value at index.
+        /// Sets the shader Vector3 property value at index.
         /// </summary>
         /// <param name="index">The index.</param>
         /// <param name="value">The value.</param>
         internal abstract void SetVector3(int index, in Vector3 value);
 
         /// <summary>
-        /// Sets the shader property value at index.
+        /// Sets the shader Vector4 property value at index.
         /// </summary>
         /// <param name="index">The index.</param>
         /// <param name="value">The value.</param>

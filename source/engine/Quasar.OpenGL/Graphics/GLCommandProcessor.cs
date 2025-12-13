@@ -11,6 +11,7 @@
 
 using Quasar.Graphics;
 using Quasar.OpenGL.Api;
+using Quasar.OpenGL.Extensions;
 
 using Space.Core.DependencyInjection;
 
@@ -24,6 +25,9 @@ namespace Quasar.OpenGL.Graphics
     internal sealed class GLCommandProcessor : IGraphicsCommandProcessor
     {
         private int lastMeshHandle;
+        private bool isBackfaceCullingEnabled;
+        private bool isDepthTestingEnabled;
+
 
         /// <inheritdoc/>
         public void CheckErrors()
@@ -51,9 +55,77 @@ namespace Quasar.OpenGL.Graphics
         }
 
         /// <inheritdoc/>
-        public void ResetState()
+        public void DrawMesh(in RawMesh rawMesh)
         {
-            GL.Clear(BufferClearMask.ColorBuffer | BufferClearMask.DepthBuffer);
+            if (rawMesh.Handle != lastMeshHandle)
+            {
+                GL.BindVertexArray(rawMesh.Handle);
+                lastMeshHandle = rawMesh.Handle;
+            }
+
+            if (rawMesh.IsIndexed)
+            {
+                GL.DrawElements(rawMesh.PrimitiveType, rawMesh.ElementCount, DrawElementsType.UnsignedInt, 0);
+            }
+            else
+            {
+                GL.DrawArrays(rawMesh.PrimitiveType, 0, rawMesh.ElementCount);
+            }
+        }
+
+        /// <inheritdoc/>
+        public void Reset()
+        {
+            SetBackfaceCulling(true);
+            SetDepthTesting(true);
+            SetDepthTestMode(DepthTestMode.Less);
+        }
+
+        /// <inheritdoc/>
+        public bool SetBackfaceCulling(bool enabled)
+        {
+            var previousValue = isBackfaceCullingEnabled;
+            if (isBackfaceCullingEnabled != enabled)
+            {
+                isBackfaceCullingEnabled = enabled;
+                if (isBackfaceCullingEnabled)
+                {
+                    GL.Enable(Capability.CullFace);
+                }
+                else
+                {
+                    GL.Disable(Capability.CullFace);
+                }
+            }
+
+            return previousValue;
+        }
+
+        /// <inheritdoc/>
+        public bool SetDepthTesting(bool enabled)
+        {
+            var previousValue = isDepthTestingEnabled;
+            if (isDepthTestingEnabled != enabled)
+            {
+                isDepthTestingEnabled = enabled;
+                if (isDepthTestingEnabled)
+                {
+                    GL.Enable(Capability.DepthTest);
+                }
+                else
+                {
+                    GL.Disable(Capability.DepthTest);
+                }
+            }
+
+            return previousValue;
+        }
+
+        /// <inheritdoc/>
+        public void SetDepthTestMode(DepthTestMode depthTestMode)
+        {
+            var depthFunction = depthTestMode.ToDepthFunction();
+            GL.DepthFunc(depthFunction);
         }
 
         /// <inheritdoc/>
@@ -87,7 +159,6 @@ namespace Quasar.OpenGL.Graphics
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             // face culling
-            GL.Enable(Capability.CullFace);
             GL.CullFace(CullFaceMode.Back);
             GL.FrontFace(FrontFaceDirection.Clockwise);
         }

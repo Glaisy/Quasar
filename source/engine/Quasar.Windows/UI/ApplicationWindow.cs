@@ -13,6 +13,7 @@ using System;
 using System.Windows.Forms;
 
 using Quasar.Graphics;
+using Quasar.Inputs.Internals;
 using Quasar.UI;
 using Quasar.Windows.Interop.Gdi32;
 using Quasar.Windows.Interop.User32;
@@ -29,6 +30,13 @@ namespace Quasar.Windows.UI
     /// <seealso cref="IApplicationWindow" />
     internal sealed class ApplicationWindow : Form, IApplicationWindow
     {
+        private const string DefaultIconAndCursorId = "Windows.Default";
+
+
+        private readonly WindowsCursor defaultCursor;
+        private readonly WindowsIcon defaultIcon;
+        private readonly InputMapper inputMapper;
+        private readonly IInputEventProcessor inputEventProcessor;
         private System.Drawing.Point savedLocation;
         private System.Drawing.Size savedClientSize;
         private FormBorderStyle savedFormBorderStyle;
@@ -39,14 +47,21 @@ namespace Quasar.Windows.UI
         /// <summary>
         /// Initializes a new instance of the <see cref="ApplicationWindow" /> class.
         /// </summary>
+        /// <param name="inputMapper">The input mapper.</param>
+        /// <param name="inputEventProcessor">The input event processor.</param>
         /// <param name="windowType">The window type.</param>
         /// <param name="title">The title.</param>
         /// <param name="size">The size.</param>
         public ApplicationWindow(
+            InputMapper inputMapper,
+            IInputEventProcessor inputEventProcessor,
             ApplicationWindowType windowType,
             string title,
             in Size size)
         {
+            this.inputMapper = inputMapper;
+            this.inputEventProcessor = inputEventProcessor;
+
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             SetStyle(ControlStyles.StandardClick, true);
             SetStyle(ControlStyles.StandardDoubleClick, true);
@@ -71,6 +86,10 @@ namespace Quasar.Windows.UI
 
             StartPosition = FormStartPosition.CenterScreen;
             ClientSize = size;
+
+            defaultIcon = new WindowsIcon(DefaultIconAndCursorId, Icon.Size, Icon, false);
+            defaultCursor = new WindowsCursor(DefaultIconAndCursorId, Cursor.Size, Cursor.HotSpot, Cursor, false);
+            cursor = defaultCursor;
         }
 
 
@@ -83,9 +102,60 @@ namespace Quasar.Windows.UI
                 deviceContext = IntPtr.Zero;
             }
 
+            Icon = defaultIcon.NativeIcon;
+            Cursor = defaultCursor.NativeCursor;
+            if (cursor != defaultCursor && cursor != null)
+            {
+                cursor.Dispose();
+            }
+
+            if (icon != defaultIcon && icon != null)
+            {
+                cursor.Dispose();
+            }
+
+
+            defaultCursor.Dispose();
+            defaultIcon.Dispose();
+
             base.Dispose(disposing);
         }
 
+
+        private WindowsCursor cursor;
+        /// <inheritdoc/>
+        Quasar.UI.Cursor INativeWindow.Cursor
+        {
+            get => cursor;
+            set
+            {
+                if (value is not WindowsCursor windowsCursor)
+                {
+                    windowsCursor = defaultCursor;
+                }
+
+                cursor?.Dispose();
+                cursor = windowsCursor;
+                Cursor = windowsCursor.NativeCursor;
+            }
+        }
+
+        private CursorMode cursorMode = CursorMode.Visible;
+        /// <inheritdoc/>
+        public CursorMode CursorMode
+        {
+            get => cursorMode;
+            set
+            {
+                if (cursorMode == value)
+                {
+                    return;
+                }
+
+                cursorMode = value;
+                ApplyCursorMode();
+            }
+        }
 
         private bool fullscreen;
         /// <inheritdoc/>
@@ -116,6 +186,24 @@ namespace Quasar.Windows.UI
                 }
 
                 fullscreen = value;
+            }
+        }
+
+        private WindowsIcon icon;
+        /// <inheritdoc/>
+        Icon IApplicationWindow.Icon
+        {
+            get => icon;
+            set
+            {
+                if (value is not WindowsIcon windowsIcon)
+                {
+                    windowsIcon = defaultIcon;
+                }
+
+                icon?.Dispose();
+                icon = windowsIcon;
+                Icon = windowsIcon.NativeIcon;
             }
         }
 
@@ -172,12 +260,97 @@ namespace Quasar.Windows.UI
 
 
         /// <inheritdoc/>
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            var mappedKey = inputMapper.MapKey(e.KeyCode, e.Shift);
+            inputEventProcessor.ProcessKeyDown(mappedKey.KeyCode, mappedKey.Character);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnKeyUp(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            var mappedKey = inputMapper.MapKey(e.KeyCode, e.Shift);
+            inputEventProcessor.ProcessKeyUp(mappedKey.KeyCode, mappedKey.Character);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+
+            var mappedPointerButton = inputMapper.MapMouseButton(e.Button);
+            inputEventProcessor.ProcessPointerButtonDown(mappedPointerButton);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            base.OnMouseEnter(e);
+
+            var clientPosition = PointToClient(MousePosition);
+            var pointerPosition = new Vector2(clientPosition.X, clientPosition.Y);
+            inputEventProcessor.ProcessPointerEnter(pointerPosition);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            base.OnMouseLeave(e);
+
+            inputEventProcessor.ProcessPointerLeave();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+
+            var pointerPosition = new Vector2(e.Location.X, e.Location.Y);
+            inputEventProcessor.ProcessPointerMove(pointerPosition);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            base.OnMouseUp(e);
+
+            var mappedPointerButton = inputMapper.MapMouseButton(e.Button);
+            inputEventProcessor.ProcessPointerButtonUp(mappedPointerButton);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            base.OnMouseWheel(e);
+
+            inputEventProcessor.ProcessPointerWheel(e.Delta);
+        }
+
+        /// <inheritdoc/>
         protected override void OnSizeChanged(EventArgs e)
         {
+            base.OnSizeChanged(e);
+
             Size = ClientSize;
             sizeChanged.Push(Size);
         }
 
+
+        private void ApplyCursorMode()
+        {
+            if (cursorMode == CursorMode.Visible)
+            {
+                System.Windows.Forms.Cursor.Show();
+            }
+            else
+            {
+                System.Windows.Forms.Cursor.Hide();
+            }
+        }
 
         private IntPtr CreateDeviceContext(IDisplayMode displayMode)
         {

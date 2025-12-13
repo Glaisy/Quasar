@@ -14,7 +14,7 @@ using System.Collections.Generic;
 namespace Quasar.Audio
 {
     /// <summary>
-    /// Audio device provider.
+    /// Represents the audio device provider.
     /// </summary>
     public interface IAudioDeviceProvider
     {
@@ -24,8 +24,14 @@ namespace Quasar.Audio
         IReadOnlyList<IAudioDevice> GetOutputDevices();
 
         /// <summary>
-        /// Gets the default output device.
+        /// Gets the active output device.
         /// </summary>
-        IAudioDevice GetDefaultOutputDevice();
+        IAudioDevice GetActiveOutputDevice();
+
+
+        /// <summary>
+        /// Initializes tha audio device provider.
+        /// </summary>
+        internal void Initialize();
     }
 }

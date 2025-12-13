@@ -14,7 +14,8 @@ using System.Threading;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Quasar.Rendering.Pipeline.Internals;
+using Quasar.Pipelines.Internals;
+using Quasar.Rendering.Pipelines.Internals;
 using Quasar.Settings;
 using Quasar.UI;
 using Quasar.UI.Internals;
@@ -38,6 +39,7 @@ namespace Quasar.Internals
 
 
         private ILoggerService loggerService;
+        private UpdatePipeline updatePipeline;
         private RenderingPipeline renderingPipeline;
 
 
@@ -85,16 +87,17 @@ namespace Quasar.Internals
             var settingsService = ServiceProvider.GetRequiredService<ISettingsService>();
             settingsService.Load();
 
-            // initialize graphics context and pipelines
+            // initialize pipelines
+            updatePipeline = ServiceProvider.GetRequiredService<UpdatePipeline>();
+            updatePipeline.Start();
             renderingPipeline = ServiceProvider.GetRequiredService<RenderingPipeline>();
             renderingPipeline.Start();
 
             // show application window and execute application loop
             ApplicationWindow.Show();
-            var nativeMessageHandler = ServiceProvider.GetRequiredService<INativeMessageHandler>();
             while (ApplicationWindow.Visible)
             {
-                nativeMessageHandler.ProcessMessages();
+                updatePipeline.Execute();
                 renderingPipeline.Execute();
                 Thread.Sleep(20);
             }

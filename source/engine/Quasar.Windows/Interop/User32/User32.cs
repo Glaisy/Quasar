@@ -11,6 +11,8 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
 
 namespace Quasar.Windows.Interop.User32
 {
@@ -21,6 +23,16 @@ namespace Quasar.Windows.Interop.User32
     {
         private const string DllName = "user32.dll";
 
+
+        /// <summary>
+        /// Creates the icon indirect.
+        /// </summary>
+        /// <param name="iconInfo">The icon information.</param>
+        /// <returns>
+        /// The icon handle if the operation was successful otherwise zero.
+        /// </returns>
+        [DllImport(DllName)]
+        public static extern IntPtr CreateIconIndirect([In] ref IconInfo iconInfo);
 
         /// <summary>
         /// Enumerates the display devices.
@@ -56,6 +68,26 @@ namespace Quasar.Windows.Interop.User32
         public static extern IntPtr GetDC(IntPtr handle);
 
         /// <summary>
+        /// Gets the icon information.
+        /// </summary>
+        /// <param name="handle">The handle.</param>
+        /// <param name="iconInfo">The icon information.</param>
+        /// <returns>
+        /// True if the operation was successful otherwise false.
+        /// </returns>
+        [DllImport(DllName)]
+        public static extern bool GetIconInfo(IntPtr handle, out IconInfo iconInfo);
+
+        /// <summary>
+        /// Maps the virtual key to character or scan code.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="mappingType">Ther key mapping type.</param>
+        /// <returns>The mapped value.</returns>
+        [DllImport(DllName)]
+        public static extern int MapVirtualKey(Keys key, KeyMappingType mappingType);
+
+        /// <summary>
         /// Releases a window's device context.
         /// </summary>
         /// <param name="handle">The window handle.</param>
@@ -65,5 +97,23 @@ namespace Quasar.Windows.Interop.User32
         /// </returns>
         [DllImport(DllName)]
         public static extern bool ReleaseDC(IntPtr handle, IntPtr deviceContext);
+
+        /// <summary>
+        /// Translates the specified virtual-key code and keyboard state to the corresponding Unicode character or characters.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="scanCode">The scan code.</param>
+        /// <param name="keyboardState">The keyboard state buffer.</param>
+        /// <param name="receivingBuffer">The receiving buffer.</param>
+        /// <param name="bufferSize">The buffer size.</param>
+        /// <param name="flags">The flags.</param>
+        [DllImport(DllName, CharSet = CharSet.Unicode)]
+        public static extern bool ToUnicode(
+            Keys key,
+            uint scanCode,
+            byte[] keyboardState,
+            StringBuilder receivingBuffer,
+            int bufferSize,
+            uint flags);
     }
 }

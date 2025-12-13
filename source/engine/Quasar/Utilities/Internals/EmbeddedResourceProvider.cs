@@ -15,7 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Quasar.Core.IO.Internals
+namespace Quasar.Utilities.Internals
 {
     /// <summary>
     /// Embedded resouce provider implementation.

@@ -9,12 +9,15 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using Space.Core;
+
 namespace Quasar.Graphics
 {
     /// <summary>
-    /// Font family interface definition.
+    /// Represents a FontFamily object.
     /// </summary>
-    public interface IFontFamily
+    /// <seealso cref="IIdentifierProvider{String}" />
+    public interface IFontFamily : IIdentifierProvider<string>
     {
         /// <summary>
         /// Gets the <see cref="IFontStyleInformation" /> with the specified font style.
@@ -27,7 +30,7 @@ namespace Quasar.Graphics
 
 
         /// <summary>
-        /// Gets the base size.
+        /// Gets the base size [pixels].
         /// </summary>
         float BaseSize { get; }
 

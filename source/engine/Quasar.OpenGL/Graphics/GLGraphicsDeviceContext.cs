@@ -13,12 +13,12 @@ using System;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Quasar.Core.Utilities;
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
 using Quasar.Graphics.Internals.Factories;
 using Quasar.OpenGL.Api;
 using Quasar.UI;
+using Quasar.Utilities;
 
 using Space.Core.DependencyInjection;
 
@@ -37,6 +37,7 @@ namespace Quasar.OpenGL.Graphics
         private readonly IServiceProvider serviceProvider;
         private readonly IServiceLoader serviceLoader;
         private readonly GLCommandProcessor graphicsCommandProcessor;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GLGraphicsDeviceContext" /> class.
@@ -88,8 +89,8 @@ namespace Quasar.OpenGL.Graphics
             // initialize graphics device and version
             var deviceName = GL.GetString(StringType.GL_RENDERER);
             var vendor = GL.GetString(StringType.GL_VENDOR);
-            var versionString = vendor.Substring(0, vendor.IndexOf(' '));
-            Version = new Version(versionString);
+            var version = GL.GetString(StringType.GL_VERSION);
+            Version = new Version(version.Substring(0, version.IndexOf(' ')));
             Device = new GraphicsDevice(deviceName, vendor);
 
             // initialize internal components
@@ -99,8 +100,9 @@ namespace Quasar.OpenGL.Graphics
             var frameBufferFactory = AddOpenGLServiceImplementation<IFrameBufferFactory>();
             PrimaryFrameBuffer = frameBufferFactory.CreatePrimary(nativeWindow);
 
-            AddOpenGLServiceImplementation<IShaderFactory>();
             AddOpenGLServiceImplementation<ITextureImageDataLoader>();
+            AddOpenGLServiceImplementation<IMatrixFactory>();
+            AddOpenGLServiceImplementation<IShaderFactory>();
             AddOpenGLServiceImplementation<ITextureFactory>();
             AddOpenGLServiceImplementation<ICubeMapTextureFactory>();
             AddOpenGLServiceImplementation<IMeshFactory>();

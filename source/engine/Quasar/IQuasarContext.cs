@@ -9,7 +9,7 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using Quasar.Core.IO;
+using Quasar.Utilities;
 
 using Space.Core;
 

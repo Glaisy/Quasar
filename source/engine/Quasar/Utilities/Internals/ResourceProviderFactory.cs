@@ -14,7 +14,7 @@ using System.Reflection;
 
 using Space.Core.DependencyInjection;
 
-namespace Quasar.Core.IO.Internals
+namespace Quasar.Utilities.Internals
 {
     /// <summary>
     /// Resource provider factory implementation.

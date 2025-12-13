@@ -29,12 +29,5 @@ namespace Quasar.UI.Internals
             ApplicationWindowType applicationWindowType,
             string title,
             float screenRatio);
-
-        /// <summary>
-        /// Creates a new child window.
-        /// </summary>
-        /// <param name="parent">The parent window.</param>
-        /// <returns>The created window instance.</returns>
-        INativeWindow CreateChildWindow(INativeWindow parent);
     }
 }

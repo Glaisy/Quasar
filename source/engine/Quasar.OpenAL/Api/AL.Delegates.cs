@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 // <copyright file="AL.Delegates.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
@@ -29,7 +29,8 @@ namespace Quasar.OpenAL.Api
         private delegate void alGetListener3f(ListenerProperty property, float* x, float* y, float* z);
         private delegate void alGetListenerfv(ListenerProperty property, float* values);
 
-        private delegate byte* alcGetString(IntPtr deviceId, StringType stringType);
+        private delegate byte* alGetString(StringType stringType);
+        private delegate byte* alcGetString(IntPtr deviceId, StringTypeExt stringType);
         private delegate int alcGetIntegerv(IntPtr deviceId, IntegerType intergerType, int bufferSize, int* values);
         private delegate bool alcIsExtensionPresent(IntPtr deviceId, string extensionName);
 
