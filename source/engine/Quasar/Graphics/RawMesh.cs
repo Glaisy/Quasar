@@ -9,12 +9,10 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using Quasar.Graphics;
-
-namespace Quasar
+namespace Quasar.Graphics
 {
     /// <summary>
-    /// Raw mesh data structure.
+    /// Raw mesh information structure for draw calls.
     /// </summary>
     public readonly struct RawMesh
     {

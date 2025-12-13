@@ -98,7 +98,7 @@ namespace Quasar.Graphics
             Size = size;
 
             // set font parameters
-            characterSpacing = fontFamily.CharacterSpacing;
+            characterSpacing = 1.0f; // fontFamily.CharacterSpacing;
             firstIndex = fontFamily.FirstCharacter;
             lastIndex = firstIndex + fontFamily.CharacterCount - 1;
             fallbackIndex = fontFamily.FallbackCharacter - firstIndex;
@@ -262,7 +262,7 @@ namespace Quasar.Graphics
                 var uvIndex = 4 * characterIndex;
 
                 // right x
-                var characterWidth = scale * characterWidths[characterIndex];
+                var characterWidth = MathF.Round(scale * characterWidths[characterIndex]);
                 var right = left + characterWidth;
 
                 // add new indices for the 2 triangles of the character quad
@@ -288,7 +288,7 @@ namespace Quasar.Graphics
                 vertices[vertexIndex++].UV = uvs[uvIndex];
 
                 // next character position (letter spacing)
-                left += characterWidth * characterSpacing;
+                left += MathF.Round(characterWidth * characterSpacing);
             }
         }
 
