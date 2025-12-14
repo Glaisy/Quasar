@@ -125,6 +125,7 @@ namespace Quasar.Graphics.Internals
         /// Gets or sets the identifier.
         /// </summary>
         [JsonRequired]
+        [JsonPropertyOrder(-1)]
         public string Id
         {
             get => id;

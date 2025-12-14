@@ -9,6 +9,9 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System.Collections.Generic;
+using System.Drawing;
+
 namespace Quasar.FontGenerator.Models
 {
     /// <summary>
@@ -16,14 +19,14 @@ namespace Quasar.FontGenerator.Models
     /// </summary>
     internal struct FontData
     {
-        /////// <summary>
-        /////// The font family.
-        /////// </summary>
-        ////public Graphics.Internals.FontFamily FontFamily;
+        /// <summary>
+        /// The font family.
+        /// </summary>
+        public Graphics.Internals.FontFamily FontFamily;
 
-        /////// <summary>
-        /////// The fontstyle - bitmap dictionary.
-        /////// </summary>
-        ////public Dictionary<Graphics.FontStyle, Bitmap> Bitmaps;
+        /// <summary>
+        /// The fontstyle - bitmap dictionary.
+        /// </summary>
+        public Dictionary<Graphics.FontStyle, Bitmap> Bitmaps;
     }
 }

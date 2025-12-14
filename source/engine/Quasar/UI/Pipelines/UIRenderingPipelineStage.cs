@@ -79,10 +79,10 @@ namespace Quasar.UI.Pipelines
 
             // TODO: remove this
             var textMeshProvider = ServiceProvider.GetRequiredService<TextMeshProvider>();
-            var font = new Font("Conthrax", 10, FontStyle.Regular);
-            var text = "Hello World!";
+            var font = new Font("Conthrax", 12, FontStyle.Regular);
+            var text = "Hello World from Quasar engine!";
             var mesh = textMeshProvider.Get(font, text, 0, text.Length);
-            uiElements.Add(new UIElement(new Vector2(20, 200), Vector2.One, mesh, font.Texture, Color.Black));
+            uiElements.Add(new UIElement(new Vector2(20, 200), Vector2.One, mesh, font.Texture, Color.Blue));
         }
 
         /// <inheritdoc/>

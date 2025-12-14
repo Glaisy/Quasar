@@ -98,7 +98,7 @@ namespace Quasar.Graphics
             Size = size;
 
             // set font parameters
-            characterSpacing = 1.0f; // fontFamily.CharacterSpacing;
+            characterSpacing = fontFamily.CharacterSpacing;
             firstIndex = fontFamily.FirstCharacter;
             lastIndex = firstIndex + fontFamily.CharacterCount - 1;
             fallbackIndex = fontFamily.FallbackCharacter - firstIndex;

@@ -16,7 +16,7 @@
     <EmbeddedResource Remove="UI\VisualElements\**" />
     <None Remove="UI\VisualElements\**" />
   </ItemGroup>
-    
+
   <ItemGroup>
     <Compile Include="..\..\AssemblyInfo.Suppressions.shared.cs" Link="Properties\AssemblyInfo.Suppressions.shared.cs" />
     <Compile Include="..\..\AssemblyInfo.shared.cs" Link="Properties\AssemblyInfo.shared.cs" />
@@ -28,7 +28,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\Cubemaps\Fallback.png" />
-    <EmbeddedResource Include="Resources\FontFamilies\Conthrax.zip" />
+    <EmbeddedResource Include="Resources\FontFamilies\Conthrax.fnt" />
     <EmbeddedResource Include="Resources\Textures\Fallback.png" />
     <EmbeddedResource Include="Resources\Textures\FallbackNormalMap.png" />
   </ItemGroup>

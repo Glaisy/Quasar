@@ -15,10 +15,14 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+using System.IO;
+using System.IO.Compression;
+using System.Text.Json;
 using System.Windows.Forms;
 
 using Quasar.FontGenerator.Extensions;
 using Quasar.FontGenerator.Models;
+using Quasar.Graphics.Internals;
 
 namespace Quasar.FontGenerator.Services
 {
@@ -40,15 +44,22 @@ namespace Quasar.FontGenerator.Services
 
         private static readonly Size proposedCharacterSize = new Size(Int32.MaxValue, Int32.MaxValue);
 
-
         /// <summary>
         /// Exports the font to the specified file.
         /// </summary>
         /// <param name="settings">The settings.</param>
         /// <param name="filePath">The file path.</param>
-        public void ExportFont(FontDataSettings settings, string filePath)
+        public bool ExportFont(
+            IFontDataSettings settings,
+            string filePath)
         {
-            throw new NotImplementedException();
+            var fontData = GenerateFontData(settings);
+            if (fontData == null)
+            {
+                return false;
+            }
+
+            return ExportFontData(fontData.Value, filePath);
         }
 
         /// <summary>
@@ -62,14 +73,14 @@ namespace Quasar.FontGenerator.Services
         /// The generated bitmap.
         /// </returns>
         public Bitmap GeneratePreviewBitmap(
-            FontDataSettings settings,
+            IFontDataSettings settings,
             FontStyle fontStyle,
             in Color foregroundColor,
             in Color backgroundColor)
         {
             using (var font = CreateFont(settings, fontStyle))
             {
-                var fontFamilyData = CreateFontFamilyData(font, settings);
+                var fontFamilyData = CreateFontFamilyData(settings);
                 var fontStyleData = CreateFontStyleData(font, settings, fontFamilyData);
                 return GenerateBitmapInternal(
                     font,
@@ -84,19 +95,71 @@ namespace Quasar.FontGenerator.Services
         }
 
 
-        private static Font CreateFont(FontDataSettings settings, FontStyle fontStyle)
+        private static float ConvertValueToUV(int value, float size)
         {
-            return new Font(settings.FontFamilyName, settings.BaseSize, fontStyle);
+            return value / size;
         }
 
-        private static FontFamilyData CreateFontFamilyData(Font font, FontDataSettings settings)
+        private static Font CreateFont(IFontDataSettings settings, FontStyle fontStyle)
         {
-            var baseSize = (int)MathF.Ceiling(font.Size);
+            return new Font(settings.FontFamilyName, settings.BaseSize, fontStyle, GraphicsUnit.Pixel);
+        }
+
+        private static FontFamilyData CreateFontFamilyData(IFontDataSettings settings)
+        {
             var characterCount = CharactersPerPage * settings.PageCount - settings.FirstCharacter;
-            return new FontFamilyData(baseSize, characterCount);
+            return new FontFamilyData(settings.BaseSize, characterCount);
         }
 
-        private static FontStyleData CreateFontStyleData(Font font, FontDataSettings settings, in FontFamilyData fontFamilyData)
+        private static FontStyleInformation CreateFontStyleInformation(
+            IFontDataSettings settings,
+            FontStyle fontStyle,
+            in FontFamilyData fontFamilyData,
+            in FontStyleData fontStyleData)
+        {
+            // calculate uvs and widths
+            var offsetX = settings.Padding + settings.HorizontalOffset;
+            var offsetY = settings.Padding + settings.VerticalOffset;
+            var sizeX = (float)fontStyleData.TextureSize.Width;
+            var sizeY = (float)fontStyleData.TextureSize.Height;
+            var fontStyleInformation = new FontStyleInformation
+            {
+                Id = fontStyle.ToFontStyle(),
+                Ascent = fontStyleData.Ascent,
+                Descent = fontStyleData.Descent,
+                LineSpacing = fontStyleData.LineSpacing,
+                CharacterWidths = fontStyleData.CharacterWidths,
+                UVs = new List<Vector2>()
+            };
+
+            for (int i = settings.FirstCharacter, j = 0; j < fontFamilyData.CharacterCount; i++, j++)
+            {
+                var columIndex = j % fontStyleData.ColumnCount;
+                var rowIndex = j / fontStyleData.ColumnCount;
+
+                // create uvs
+                var characterWidth = (int)MathF.Ceiling(fontStyleData.CharacterWidths[j]);
+                var x0 = offsetX + columIndex * fontStyleData.CellDistance.Width;
+                var x1 = x0 + characterWidth;
+                var y1 = offsetY + rowIndex * fontStyleData.CellDistance.Height;
+                var y0 = y1 + fontStyleData.CellSize.Height;
+
+                var u0 = ConvertValueToUV(x0, sizeX);
+                var u1 = ConvertValueToUV(x1, sizeX);
+                var v0 = 1.0f - ConvertValueToUV(y0, sizeY);
+                var v1 = 1.0f - ConvertValueToUV(y1, sizeY);
+
+                // add uvs (bottom left, top left, top right, bottom right)
+                fontStyleInformation.UVs.Add(new Vector2(u0, v0));
+                fontStyleInformation.UVs.Add(new Vector2(u0, v1));
+                fontStyleInformation.UVs.Add(new Vector2(u1, v1));
+                fontStyleInformation.UVs.Add(new Vector2(u1, v0));
+            }
+
+            return fontStyleInformation;
+        }
+
+        private static FontStyleData CreateFontStyleData(Font font, IFontDataSettings settings, in FontFamilyData fontFamilyData)
         {
             // calculate font metrics
             var fontFamily = font.FontFamily;
@@ -134,6 +197,49 @@ namespace Quasar.FontGenerator.Services
                 TextureSize = new Graphics.Size(FontTextureWidth, fontTextureHeight),
                 CharacterWidths = fontMeasurementData.Widths
             };
+        }
+
+        private static bool ExportFontData(in FontData fontData, string filePath)
+        {
+            Stream stream = null;
+            try
+            {
+                stream = File.Create(filePath);
+
+                using (var zipArchive = new ZipArchive(stream, ZipArchiveMode.Create))
+                {
+                    var zipEntry = zipArchive.CreateEntry(FontFamilyConstants.ZipEntryName);
+                    using (var zipStream = zipEntry.Open())
+                    {
+                        JsonSerializer.Serialize(zipStream, fontData.FontFamily);
+                    }
+
+                    foreach (var pair in fontData.Bitmaps)
+                    {
+                        var entryName = $"{(int)pair.Key}.png";
+                        zipEntry = zipArchive.CreateEntry(entryName);
+                        using (var zipStream = zipEntry.Open())
+                        {
+                            pair.Value.Save(zipStream, ImageFormat.Png);
+                        }
+                    }
+
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                foreach (var bitmap in fontData.Bitmaps.Values)
+                {
+                    bitmap.Dispose();
+                }
+
+                stream?.Dispose();
+            }
         }
 
         private static unsafe void FilterBitmap(Bitmap bitmap, Color foregroundColor)
@@ -175,7 +281,7 @@ namespace Quasar.FontGenerator.Services
 
         private static unsafe Bitmap GenerateBitmapInternal(
             Font font,
-            FontDataSettings settings,
+            IFontDataSettings settings,
             in FontFamilyData fontFamilyData,
             in FontStyleData fontStyleData,
             in Color foregroundColor,
@@ -281,7 +387,68 @@ namespace Quasar.FontGenerator.Services
             }
         }
 
-        private static FontMeasurementData MeasureFont(Font font, FontDataSettings settings, in FontFamilyData fontFamilyData)
+        private static FontData? GenerateFontData(IFontDataSettings settings)
+        {
+            var fontData = new FontData
+            {
+                Bitmaps = new Dictionary<Quasar.Graphics.FontStyle, Bitmap>(),
+                FontFamily = new Graphics.Internals.FontFamily
+                {
+                    Id = String.IsNullOrEmpty(settings.FontFamilyNameOverride) ?
+                        settings.FontFamilyName :
+                        settings.FontFamilyNameOverride,
+                    CharacterSpacing = settings.CharacterSpacing,
+                    FallbackCharacter = settings.FallbackCharacter,
+                    FirstCharacter = settings.FirstCharacter,
+                }
+            };
+
+            try
+            {
+                var fontFamilyData = CreateFontFamilyData(settings);
+                fontData.FontFamily.BaseSize = fontFamilyData.BaseSize;
+                fontData.FontFamily.CharacterCount = fontFamilyData.CharacterCount;
+
+                var fontStyleInformations = new List<FontStyleInformation>();
+                foreach (var fontStyle in settings.GeneratedStyles)
+                {
+                    using (var styleFont = CreateFont(settings, (FontStyle)fontStyle))
+                    {
+                        var fontStyleData = CreateFontStyleData(styleFont, settings, fontFamilyData);
+
+                        var bitmap = GenerateBitmapInternal(
+                            styleFont,
+                            settings,
+                            fontFamilyData,
+                            fontStyleData,
+                            Color.White,
+                            Color.Transparent,
+                            false,
+                            false);
+                        fontData.Bitmaps.Add(fontStyle, bitmap);
+
+                        // generate font style descriptor
+                        var fontStyleInformation = CreateFontStyleInformation(settings, styleFont.Style, fontFamilyData, fontStyleData);
+                        fontStyleInformations.Add(fontStyleInformation);
+                    }
+                }
+
+                fontData.FontFamily.SetFontStyleInformations(fontStyleInformations);
+
+                return fontData;
+            }
+            catch
+            {
+                foreach (var bitmap in fontData.Bitmaps.Values)
+                {
+                    bitmap?.Dispose();
+                }
+
+                return null;
+            }
+        }
+
+        private static FontMeasurementData MeasureFont(Font font, IFontDataSettings settings, in FontFamilyData fontFamilyData)
         {
             // create character array from used characters
             var characters = new char[fontFamilyData.CharacterCount];

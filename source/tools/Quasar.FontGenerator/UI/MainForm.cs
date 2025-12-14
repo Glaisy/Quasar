@@ -257,7 +257,15 @@ namespace Quasar.UI
 
         private void OnExportClick(object sender, MouseEventArgs e)
         {
-            generatorService.ExportFont(settings.FontDataSettings, settings.ExportFilePath);
+            var successed = generatorService.ExportFont(settings.FontDataSettings, settings.ExportFilePath);
+            if (successed)
+            {
+                MessageBox.Show(this, "The font file is successfully exported.", null, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show(this, "The font file export has failed.", null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void OnExportDirectoryPathClick(object sender, MouseEventArgs e)

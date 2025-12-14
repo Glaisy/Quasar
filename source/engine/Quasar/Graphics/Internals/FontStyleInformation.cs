@@ -71,6 +71,7 @@ namespace Quasar.Graphics.Internals
         /// <summary>
         /// Gets or sets the identifier.
         /// </summary>
+        [JsonPropertyOrder(-1)]
         public FontStyle Id { get; set; }
 
         private float lineSpacing;
