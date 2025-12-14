@@ -1,3 +1,5 @@
+using Quasar.FontGenerator.UI;
+
 namespace Quasar.UI
 {
     partial class MainForm
@@ -35,8 +37,12 @@ namespace Quasar.UI
             clbFontStyles = new System.Windows.Forms.CheckedListBox();
             gbPreview = new System.Windows.Forms.GroupBox();
             sbVertical = new System.Windows.Forms.VScrollBar();
-            pnlPreview = new System.Windows.Forms.Panel();
+            pnlPreview = new PreviewPanel();
             gbFontGenerationSettings = new System.Windows.Forms.GroupBox();
+            lblVerticalOffset = new System.Windows.Forms.Label();
+            lblHorizontalOffset = new System.Windows.Forms.Label();
+            udVerticalOffset = new System.Windows.Forms.NumericUpDown();
+            udHorizontalOffset = new System.Windows.Forms.NumericUpDown();
             lblFontNameOverride = new System.Windows.Forms.Label();
             txtFontFamilyNameOverride = new System.Windows.Forms.TextBox();
             udHorizontalScale = new System.Windows.Forms.NumericUpDown();
@@ -56,10 +62,13 @@ namespace Quasar.UI
             gbExportSettings = new System.Windows.Forms.GroupBox();
             btnExport = new System.Windows.Forms.Button();
             btnExportDirectoryPath = new System.Windows.Forms.Button();
-            txtExportDirectoryPath = new System.Windows.Forms.TextBox();
+            txtExportFilePath = new System.Windows.Forms.TextBox();
+            exportDialog = new System.Windows.Forms.SaveFileDialog();
             gbFontStyleSettings.SuspendLayout();
             gbPreview.SuspendLayout();
             gbFontGenerationSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)udVerticalOffset).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)udHorizontalOffset).BeginInit();
             ((System.ComponentModel.ISupportInitialize)udHorizontalScale).BeginInit();
             ((System.ComponentModel.ISupportInitialize)udCharacterSpacing).BeginInit();
             ((System.ComponentModel.ISupportInitialize)udPadding).BeginInit();
@@ -78,7 +87,7 @@ namespace Quasar.UI
             gbFontStyleSettings.Margin = new System.Windows.Forms.Padding(4);
             gbFontStyleSettings.Name = "gbFontStyleSettings";
             gbFontStyleSettings.Padding = new System.Windows.Forms.Padding(4);
-            gbFontStyleSettings.Size = new System.Drawing.Size(324, 288);
+            gbFontStyleSettings.Size = new System.Drawing.Size(383, 288);
             gbFontStyleSettings.TabIndex = 0;
             gbFontStyleSettings.TabStop = false;
             gbFontStyleSettings.Text = "Font style settings";
@@ -91,7 +100,7 @@ namespace Quasar.UI
             txtPreview.Multiline = true;
             txtPreview.Name = "txtPreview";
             txtPreview.ReadOnly = true;
-            txtPreview.Size = new System.Drawing.Size(307, 208);
+            txtPreview.Size = new System.Drawing.Size(366, 208);
             txtPreview.TabIndex = 2;
             txtPreview.Text = "The quick brown fox jumps over the lazy dog";
             // 
@@ -111,21 +120,22 @@ namespace Quasar.UI
             cbFontFamilies.FormattingEnabled = true;
             cbFontFamilies.Location = new System.Drawing.Point(103, 39);
             cbFontFamilies.Name = "cbFontFamilies";
-            cbFontFamilies.Size = new System.Drawing.Size(214, 28);
+            cbFontFamilies.Size = new System.Drawing.Size(273, 28);
             cbFontFamilies.TabIndex = 1;
             cbFontFamilies.SelectedIndexChanged += OnFontFamiliesSelectedIndexChanged;
             // 
             // clbFontStyles
             // 
-            clbFontStyles.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            clbFontStyles.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             clbFontStyles.CheckOnClick = true;
             clbFontStyles.ColumnWidth = 121;
-            clbFontStyles.Items.AddRange(new object[] { "Regular", "Bold", "Italic", "Strikeout" });
             clbFontStyles.Location = new System.Drawing.Point(170, 31);
             clbFontStyles.Name = "clbFontStyles";
-            clbFontStyles.Size = new System.Drawing.Size(147, 224);
+            clbFontStyles.Size = new System.Drawing.Size(206, 158);
             clbFontStyles.TabIndex = 11;
             clbFontStyles.TabStop = false;
+            clbFontStyles.ItemCheck += OnFontStylesItemCheck;
+            clbFontStyles.SelectedIndexChanged += OnFontStylesSelectedIndexChanged;
             // 
             // gbPreview
             // 
@@ -133,11 +143,11 @@ namespace Quasar.UI
             gbPreview.Controls.Add(sbVertical);
             gbPreview.Controls.Add(pnlPreview);
             gbPreview.Font = new System.Drawing.Font("Segoe UI", 11.25F);
-            gbPreview.Location = new System.Drawing.Point(352, 4);
+            gbPreview.Location = new System.Drawing.Point(403, 4);
             gbPreview.Margin = new System.Windows.Forms.Padding(4);
             gbPreview.Name = "gbPreview";
             gbPreview.Padding = new System.Windows.Forms.Padding(4);
-            gbPreview.Size = new System.Drawing.Size(1055, 744);
+            gbPreview.Size = new System.Drawing.Size(799, 744);
             gbPreview.TabIndex = 1;
             gbPreview.TabStop = false;
             gbPreview.Text = "Preview";
@@ -145,10 +155,12 @@ namespace Quasar.UI
             // sbVertical
             // 
             sbVertical.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            sbVertical.Location = new System.Drawing.Point(1034, 25);
+            sbVertical.LargeChange = 100;
+            sbVertical.Location = new System.Drawing.Point(778, 25);
             sbVertical.Name = "sbVertical";
             sbVertical.Size = new System.Drawing.Size(17, 712);
             sbVertical.TabIndex = 1;
+            sbVertical.ValueChanged += OnVerticalScrollbarValueChanged;
             // 
             // pnlPreview
             // 
@@ -157,13 +169,18 @@ namespace Quasar.UI
             pnlPreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             pnlPreview.Location = new System.Drawing.Point(7, 25);
             pnlPreview.Name = "pnlPreview";
-            pnlPreview.Size = new System.Drawing.Size(1024, 712);
+            pnlPreview.Offset = 0;
+            pnlPreview.PreviewBitmap = null;
+            pnlPreview.Size = new System.Drawing.Size(768, 712);
             pnlPreview.TabIndex = 0;
-            pnlPreview.Paint += OnPaintPreviewPanel;
             // 
             // gbFontGenerationSettings
             // 
             gbFontGenerationSettings.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            gbFontGenerationSettings.Controls.Add(lblVerticalOffset);
+            gbFontGenerationSettings.Controls.Add(lblHorizontalOffset);
+            gbFontGenerationSettings.Controls.Add(udVerticalOffset);
+            gbFontGenerationSettings.Controls.Add(udHorizontalOffset);
             gbFontGenerationSettings.Controls.Add(lblFontNameOverride);
             gbFontGenerationSettings.Controls.Add(txtFontFamilyNameOverride);
             gbFontGenerationSettings.Controls.Add(udHorizontalScale);
@@ -186,10 +203,50 @@ namespace Quasar.UI
             gbFontGenerationSettings.Margin = new System.Windows.Forms.Padding(4);
             gbFontGenerationSettings.Name = "gbFontGenerationSettings";
             gbFontGenerationSettings.Padding = new System.Windows.Forms.Padding(4);
-            gbFontGenerationSettings.Size = new System.Drawing.Size(324, 310);
+            gbFontGenerationSettings.Size = new System.Drawing.Size(383, 310);
             gbFontGenerationSettings.TabIndex = 2;
             gbFontGenerationSettings.TabStop = false;
             gbFontGenerationSettings.Text = "Font generation settings";
+            // 
+            // lblVerticalOffset
+            // 
+            lblVerticalOffset.AutoSize = true;
+            lblVerticalOffset.Location = new System.Drawing.Point(170, 238);
+            lblVerticalOffset.Name = "lblVerticalOffset";
+            lblVerticalOffset.Size = new System.Drawing.Size(103, 20);
+            lblVerticalOffset.TabIndex = 21;
+            lblVerticalOffset.Text = "Vertical offset:";
+            // 
+            // lblHorizontalOffset
+            // 
+            lblHorizontalOffset.AutoSize = true;
+            lblHorizontalOffset.Location = new System.Drawing.Point(170, 204);
+            lblHorizontalOffset.Name = "lblHorizontalOffset";
+            lblHorizontalOffset.Size = new System.Drawing.Size(124, 20);
+            lblHorizontalOffset.TabIndex = 20;
+            lblHorizontalOffset.Text = "Horizontal offset:";
+            // 
+            // udVerticalOffset
+            // 
+            udVerticalOffset.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            udVerticalOffset.Location = new System.Drawing.Point(324, 236);
+            udVerticalOffset.Maximum = new decimal(new int[] { 16, 0, 0, 0 });
+            udVerticalOffset.Minimum = new decimal(new int[] { 16, 0, 0, System.Int32.MinValue });
+            udVerticalOffset.Name = "udVerticalOffset";
+            udVerticalOffset.Size = new System.Drawing.Size(49, 27);
+            udVerticalOffset.TabIndex = 11;
+            udVerticalOffset.ValueChanged += OnVerticalOffsetValueChanged;
+            // 
+            // udHorizontalOffset
+            // 
+            udHorizontalOffset.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            udHorizontalOffset.Location = new System.Drawing.Point(324, 202);
+            udHorizontalOffset.Maximum = new decimal(new int[] { 16, 0, 0, 0 });
+            udHorizontalOffset.Minimum = new decimal(new int[] { 16, 0, 0, System.Int32.MinValue });
+            udHorizontalOffset.Name = "udHorizontalOffset";
+            udHorizontalOffset.Size = new System.Drawing.Size(49, 27);
+            udHorizontalOffset.TabIndex = 10;
+            udHorizontalOffset.ValueChanged += OnHorizontalOffsetValueChanged;
             // 
             // lblFontNameOverride
             // 
@@ -202,16 +259,17 @@ namespace Quasar.UI
             // 
             // txtFontFamilyNameOverride
             // 
+            txtFontFamilyNameOverride.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             txtFontFamilyNameOverride.Location = new System.Drawing.Point(103, 269);
             txtFontFamilyNameOverride.Name = "txtFontFamilyNameOverride";
-            txtFontFamilyNameOverride.Size = new System.Drawing.Size(214, 27);
+            txtFontFamilyNameOverride.Size = new System.Drawing.Size(273, 27);
             txtFontFamilyNameOverride.TabIndex = 12;
             txtFontFamilyNameOverride.TextChanged += OnFontFamilyNameOverrideTextChanged;
             // 
             // udHorizontalScale
             // 
-            udHorizontalScale.DecimalPlaces = 1;
-            udHorizontalScale.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
+            udHorizontalScale.DecimalPlaces = 2;
+            udHorizontalScale.Increment = new decimal(new int[] { 5, 0, 0, 131072 });
             udHorizontalScale.Location = new System.Drawing.Point(106, 236);
             udHorizontalScale.Maximum = new decimal(new int[] { 20, 0, 0, 65536 });
             udHorizontalScale.Minimum = new decimal(new int[] { 5, 0, 0, 65536 });
@@ -223,8 +281,8 @@ namespace Quasar.UI
             // 
             // udCharacterSpacing
             // 
-            udCharacterSpacing.DecimalPlaces = 1;
-            udCharacterSpacing.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
+            udCharacterSpacing.DecimalPlaces = 2;
+            udCharacterSpacing.Increment = new decimal(new int[] { 5, 0, 0, 131072 });
             udCharacterSpacing.Location = new System.Drawing.Point(106, 202);
             udCharacterSpacing.Maximum = new decimal(new int[] { 20, 0, 0, 65536 });
             udCharacterSpacing.Minimum = new decimal(new int[] { 5, 0, 0, 65536 });
@@ -348,24 +406,24 @@ namespace Quasar.UI
             gbExportSettings.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             gbExportSettings.Controls.Add(btnExport);
             gbExportSettings.Controls.Add(btnExportDirectoryPath);
-            gbExportSettings.Controls.Add(txtExportDirectoryPath);
+            gbExportSettings.Controls.Add(txtExportFilePath);
             gbExportSettings.Font = new System.Drawing.Font("Segoe UI", 11.25F);
             gbExportSettings.Location = new System.Drawing.Point(12, 629);
             gbExportSettings.Margin = new System.Windows.Forms.Padding(4);
             gbExportSettings.Name = "gbExportSettings";
             gbExportSettings.Padding = new System.Windows.Forms.Padding(4);
-            gbExportSettings.Size = new System.Drawing.Size(324, 118);
+            gbExportSettings.Size = new System.Drawing.Size(383, 118);
             gbExportSettings.TabIndex = 1;
             gbExportSettings.TabStop = false;
             gbExportSettings.Text = "Export settings";
             // 
             // btnExport
             // 
-            btnExport.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            btnExport.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             btnExport.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold);
             btnExport.Location = new System.Drawing.Point(10, 69);
             btnExport.Name = "btnExport";
-            btnExport.Size = new System.Drawing.Size(307, 32);
+            btnExport.Size = new System.Drawing.Size(366, 32);
             btnExport.TabIndex = 15;
             btnExport.Text = "Export";
             btnExport.UseVisualStyleBackColor = true;
@@ -375,7 +433,7 @@ namespace Quasar.UI
             // 
             btnExportDirectoryPath.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             btnExportDirectoryPath.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold);
-            btnExportDirectoryPath.Location = new System.Drawing.Point(282, 27);
+            btnExportDirectoryPath.Location = new System.Drawing.Point(341, 27);
             btnExportDirectoryPath.Name = "btnExportDirectoryPath";
             btnExportDirectoryPath.Size = new System.Drawing.Size(35, 27);
             btnExportDirectoryPath.TabIndex = 14;
@@ -383,30 +441,35 @@ namespace Quasar.UI
             btnExportDirectoryPath.UseVisualStyleBackColor = true;
             btnExportDirectoryPath.MouseClick += OnExportDirectoryPathClick;
             // 
-            // txtExportDirectoryPath
+            // txtExportFilePath
             // 
-            txtExportDirectoryPath.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            txtExportDirectoryPath.Location = new System.Drawing.Point(10, 27);
-            txtExportDirectoryPath.Name = "txtExportDirectoryPath";
-            txtExportDirectoryPath.ReadOnly = true;
-            txtExportDirectoryPath.Size = new System.Drawing.Size(270, 27);
-            txtExportDirectoryPath.TabIndex = 13;
-            txtExportDirectoryPath.TabStop = false;
+            txtExportFilePath.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            txtExportFilePath.Location = new System.Drawing.Point(10, 27);
+            txtExportFilePath.Name = "txtExportFilePath";
+            txtExportFilePath.ReadOnly = true;
+            txtExportFilePath.Size = new System.Drawing.Size(329, 27);
+            txtExportFilePath.TabIndex = 13;
+            txtExportFilePath.TabStop = false;
+            // 
+            // exportDialog
+            // 
+            exportDialog.Filter = "Font files|*.fnt|All files|*.*";
             // 
             // MainForm
             // 
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             BackColor = System.Drawing.SystemColors.ControlDark;
-            ClientSize = new System.Drawing.Size(1419, 761);
+            ClientSize = new System.Drawing.Size(1214, 761);
             Controls.Add(gbExportSettings);
             Controls.Add(gbFontGenerationSettings);
             Controls.Add(gbPreview);
             Controls.Add(gbFontStyleSettings);
+            DoubleBuffered = true;
             Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             ForeColor = System.Drawing.SystemColors.ControlText;
             MaximizeBox = false;
-            MaximumSize = new System.Drawing.Size(1435, 2000);
-            MinimumSize = new System.Drawing.Size(1435, 600);
+            MaximumSize = new System.Drawing.Size(1230, 800);
+            MinimumSize = new System.Drawing.Size(1230, 600);
             Name = "MainForm";
             ShowIcon = false;
             SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
@@ -417,6 +480,8 @@ namespace Quasar.UI
             gbPreview.ResumeLayout(false);
             gbFontGenerationSettings.ResumeLayout(false);
             gbFontGenerationSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)udVerticalOffset).EndInit();
+            ((System.ComponentModel.ISupportInitialize)udHorizontalOffset).EndInit();
             ((System.ComponentModel.ISupportInitialize)udHorizontalScale).EndInit();
             ((System.ComponentModel.ISupportInitialize)udCharacterSpacing).EndInit();
             ((System.ComponentModel.ISupportInitialize)udPadding).EndInit();
@@ -434,7 +499,7 @@ namespace Quasar.UI
         private System.Windows.Forms.GroupBox gbFontGenerationSettings;
         private System.Windows.Forms.GroupBox gbExportSettings;
         private System.Windows.Forms.VScrollBar sbVertical;
-        private System.Windows.Forms.Panel pnlPreview;
+        private PreviewPanel pnlPreview;
         private System.Windows.Forms.CheckedListBox clbFontStyles;
         private System.Windows.Forms.Label lblFontFamily;
         private System.Windows.Forms.ComboBox cbFontFamilies;
@@ -456,7 +521,12 @@ namespace Quasar.UI
         private System.Windows.Forms.Label lblFontNameOverride;
         private System.Windows.Forms.TextBox txtFontFamilyNameOverride;
         private System.Windows.Forms.Button btnExportDirectoryPath;
-        private System.Windows.Forms.TextBox txtExportDirectoryPath;
+        private System.Windows.Forms.TextBox txtExportFilePath;
         private System.Windows.Forms.Button btnExport;
+        private System.Windows.Forms.NumericUpDown udVerticalOffset;
+        private System.Windows.Forms.NumericUpDown udHorizontalOffset;
+        private System.Windows.Forms.Label lblVerticalOffset;
+        private System.Windows.Forms.Label lblHorizontalOffset;
+        private System.Windows.Forms.SaveFileDialog exportDialog;
     }
 }

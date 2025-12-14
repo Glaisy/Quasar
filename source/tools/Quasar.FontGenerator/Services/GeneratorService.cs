@@ -35,40 +35,59 @@ namespace Quasar.FontGenerator.Services
         /// <summary>
         /// The font texture's width in pixels.
         /// </summary>
-        public const int FontTextureWidth = 1024;
+        public const int FontTextureWidth = 768;
 
 
         private static readonly Size proposedCharacterSize = new Size(Int32.MaxValue, Int32.MaxValue);
 
 
         /// <summary>
+        /// Exports the font to the specified file.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
+        /// <param name="filePath">The file path.</param>
+        public void ExportFont(FontDataSettings settings, string filePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Generates a preview bitmap by the specified settings, font and colors.
         /// </summary>
         /// <param name="settings">The settings.</param>
-        /// <param name="font">The font.</param>
+        /// <param name="fontStyle">The font style.</param>
         /// <param name="foregroundColor">The foreground color.</param>
         /// <param name="backgroundColor">The background color.</param>
-        /// <returns>The generated bitmap.</returns>
+        /// <returns>
+        /// The generated bitmap.
+        /// </returns>
         public Bitmap GeneratePreviewBitmap(
             FontDataSettings settings,
-            Font font,
+            FontStyle fontStyle,
             in Color foregroundColor,
             in Color backgroundColor)
         {
-            // measure font style.
-            var fontFamilyData = CreateFontFamilyData(font, settings);
-            var fontStyleData = CreateFontStyleData(font, settings, fontFamilyData);
-            return GenerateBitmapInternal(
-                font,
-                settings,
-                fontFamilyData,
-                fontStyleData,
-                foregroundColor,
-                backgroundColor,
-                false,
-                false);
+            using (var font = CreateFont(settings, fontStyle))
+            {
+                var fontFamilyData = CreateFontFamilyData(font, settings);
+                var fontStyleData = CreateFontStyleData(font, settings, fontFamilyData);
+                return GenerateBitmapInternal(
+                    font,
+                    settings,
+                    fontFamilyData,
+                    fontStyleData,
+                    foregroundColor,
+                    backgroundColor,
+                    false,
+                    false);
+            }
         }
 
+
+        private static Font CreateFont(FontDataSettings settings, FontStyle fontStyle)
+        {
+            return new Font(settings.FontFamilyName, settings.BaseSize, fontStyle);
+        }
 
         private static FontFamilyData CreateFontFamilyData(Font font, FontDataSettings settings)
         {
@@ -193,8 +212,9 @@ namespace Quasar.FontGenerator.Services
                 brush = new SolidBrush(foregroundColor);
 
                 // iterate characters
-                var offsetX = settings.Padding;
-                var offsetY = settings.Padding;
+                var padding = settings.Padding;
+                var offsetX = settings.HorizontalOffset;
+                var offsetY = settings.VerticalOffset;
                 var characterArray = stackalloc char[1];
                 var characterSpan = new Span<char>(characterArray, 1);
                 for (int i = settings.FirstCharacter, j = 0; j < fontFamilyData.CharacterCount; i++, j++)
@@ -213,8 +233,8 @@ namespace Quasar.FontGenerator.Services
                     var rowIndex = j / fontStyleData.ColumnCount;
 
                     // cell top left
-                    var x = offsetX + columIndex * fontStyleData.CellDistance.Width;
-                    var y = offsetY + rowIndex * fontStyleData.CellDistance.Height;
+                    var x = padding + columIndex * fontStyleData.CellDistance.Width;
+                    var y = padding + rowIndex * fontStyleData.CellDistance.Height;
 
                     // draw cell
                     if (shouldFillCells)
@@ -227,8 +247,8 @@ namespace Quasar.FontGenerator.Services
                         characterSpan,
                         font,
                         brush,
-                        x,
-                        y,
+                        offsetX + x,
+                        offsetY + y,
                         StringFormat.GenericTypographic);
                 }
 

@@ -19,9 +19,9 @@ namespace Quasar.FontGenerator.Models
     internal interface IGeneratorSettings : ISettings
     {
         /// <summary>
-        /// Gets the export folder path.
+        /// Gets the export file path.
         /// </summary>
-        string ExportFolderPath { get; }
+        string ExportFilePath { get; }
 
         /// <summary>
         /// Gets the font data settings.

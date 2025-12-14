@@ -15,6 +15,7 @@ using System.Text.Json.Serialization;
 
 using Quasar.Graphics;
 
+using Space.Core;
 using Space.Core.Settings;
 
 namespace Quasar.FontGenerator.Models
@@ -32,9 +33,15 @@ namespace Quasar.FontGenerator.Models
         public const int MininumBaseSize = 10;
 
         /// <summary>
-        /// The mininum character spacing.
+        /// The offset range.
         /// </summary>
-        public const float MininumCharacterSpacing = 0.5f;
+        public static readonly Range<int> OffsetRange = new Range<int>(-16, 16);
+
+        /// <summary>
+        /// The spacing range.
+        /// </summary>
+        public static readonly Range<float> SpacingRange = new Range<float>(0.5f, 2.0f);
+
 
         /// <summary>
         /// The defaults.
@@ -75,7 +82,7 @@ namespace Quasar.FontGenerator.Models
         public float CharacterSpacing
         {
             get => characterSpacing;
-            set => characterSpacing = MathF.Max(MininumCharacterSpacing, value);
+            set => characterSpacing = SpacingRange.Clamp(value);
         }
 
         /// <summary>
@@ -115,6 +122,16 @@ namespace Quasar.FontGenerator.Models
         /// <inheritdoc/>
         IReadOnlyList<FontStyle> IFontDataSettings.GeneratedStyles => GeneratedStyles;
 
+        private int horizontalOffset;
+        /// <summary>
+        /// Gets or sets the horizontal offset.
+        /// </summary>
+        public int HorizontalOffset
+        {
+            get => horizontalOffset;
+            set => horizontalOffset = OffsetRange.Clamp(value);
+        }
+
         private float horizontalScale;
         /// <summary>
         /// Gets or sets the horizontal scale.
@@ -123,15 +140,7 @@ namespace Quasar.FontGenerator.Models
         public float HorizontalScale
         {
             get => horizontalScale;
-            set
-            {
-                if (value <= 0.0f)
-                {
-                    value = 1.0f;
-                }
-
-                horizontalScale = value;
-            }
+            set => horizontalScale = SpacingRange.Clamp(value);
         }
 
         private int padding;
@@ -156,6 +165,16 @@ namespace Quasar.FontGenerator.Models
             set => pageCount = Math.Max(1, value);
         }
 
+        private int verticalOffset;
+        /// <summary>
+        /// Gets or sets the vertical offset.
+        /// </summary>
+        public int VerticalOffset
+        {
+            get => verticalOffset;
+            set => verticalOffset = OffsetRange.Clamp(value);
+        }
+
 
         /// <inheritdoc/>
         public override void SetDefaults()
@@ -173,9 +192,11 @@ namespace Quasar.FontGenerator.Models
             FirstCharacter = source.FirstCharacter;
             FontFamilyName = source.FontFamilyName;
             FontFamilyNameOverride = source.FontFamilyNameOverride;
+            HorizontalOffset = source.HorizontalOffset;
             HorizontalScale = source.HorizontalScale;
             Padding = source.Padding;
             PageCount = source.PageCount;
+            VerticalOffset = source.VerticalOffset;
 
             var sourceGeneratedStyles = source.GeneratedStyles ?? Defaults.GeneratedStyles;
             if (GeneratedStyles == null)

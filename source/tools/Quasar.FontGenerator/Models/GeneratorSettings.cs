@@ -40,9 +40,9 @@ namespace Quasar.FontGenerator.Models
 
 
         /// <summary>
-        /// Gets or sets the export folder path.
+        /// Gets or sets the export file path.
         /// </summary>
-        public string ExportFolderPath { get; set; }
+        public string ExportFilePath { get; set; }
 
         private FontDataSettings fontDataSettings;
         /// <summary>
@@ -77,7 +77,7 @@ namespace Quasar.FontGenerator.Models
         /// <inheritdoc/>
         protected override void CopyProperties(IGeneratorSettings source)
         {
-            ExportFolderPath = source.ExportFolderPath;
+            ExportFilePath = source.ExportFilePath;
 
             if (source.FontDataSettings == null)
             {

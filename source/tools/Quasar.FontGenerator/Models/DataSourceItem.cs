@@ -37,5 +37,12 @@ namespace Quasar.FontGenerator.Models
         /// Gets the value.
         /// </summary>
         public T Value { get; }
+
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return DisplayValue;
+        }
     }
 }

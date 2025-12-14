@@ -40,6 +40,7 @@ namespace Quasar.UI
         private List<DataSourceItem<FontFamily>> fontFamilyDataSource;
         private GeneratorSettings settings;
         private bool isRefreshEnabled;
+        private FontStyle previewFontStyle;
         private Bitmap previewBitmap;
 
 
@@ -60,6 +61,7 @@ namespace Quasar.UI
             base.OnLoad(e);
 
             PopulateFontFamilies();
+            PopulateFontStyles();
             LoadGeneratorSettings();
             ApplyGeneratorSettings();
             RefreshPreview();
@@ -80,9 +82,6 @@ namespace Quasar.UI
             isRefreshEnabled = false;
 
             var fontDataSettings = settings.FontDataSettings;
-            var fontFamilyName = fontDataSettings.FontFamilyName ?? txtPreview.Font.Name;
-            cbFontFamilies.SelectedItem = fontFamilyDataSource
-                .FirstOrDefault(x => x.DisplayValue == fontFamilyName);
 
             udBaseSize.Value = fontDataSettings.BaseSize;
             txtFirstCharacter.Text = new string(fontDataSettings.FirstCharacter, 1);
@@ -90,8 +89,64 @@ namespace Quasar.UI
             udPageCount.Value = fontDataSettings.PageCount;
             udPadding.Value = fontDataSettings.Padding;
             udCharacterSpacing.Value = (decimal)fontDataSettings.CharacterSpacing;
+            udHorizontalOffset.Value = (decimal)fontDataSettings.HorizontalOffset;
             udHorizontalScale.Value = (decimal)fontDataSettings.HorizontalScale;
             txtFontFamilyNameOverride.Text = fontDataSettings.FontFamilyNameOverride;
+            udVerticalOffset.Value = (decimal)fontDataSettings.VerticalOffset;
+
+            var fontFamilyName = fontDataSettings.FontFamilyName ?? txtPreview.Font.Name;
+            cbFontFamilies.SelectedItem = fontFamilyDataSource
+                .FirstOrDefault(x => x.DisplayValue == fontFamilyName);
+
+            if (fontDataSettings.GeneratedStyles.Count == 0)
+            {
+                clbFontStyles.SetItemChecked(0, true);
+            }
+            else
+            {
+                clbFontStyles.SetItemChecked(0, true);
+                foreach (var fontStyle in fontDataSettings.GeneratedStyles)
+                {
+                    clbFontStyles.SetItemChecked((int)fontStyle, true);
+                }
+            }
+
+            string exportDirectoryPath;
+            string exportFileName;
+            if (String.IsNullOrEmpty(settings.ExportFilePath))
+            {
+                exportDirectoryPath = AppDomain.CurrentDomain.BaseDirectory;
+                exportFileName = null;
+            }
+            else
+            {
+                exportDirectoryPath = Path.GetDirectoryName(settings.ExportFilePath);
+                exportFileName = Path.GetFileName(settings.ExportFilePath);
+                if (!Path.IsPathRooted(exportDirectoryPath))
+                {
+                    exportDirectoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, exportDirectoryPath);
+                }
+
+                if (!Directory.Exists(exportDirectoryPath))
+                {
+                    Directory.CreateDirectory(exportDirectoryPath);
+                }
+            }
+
+            exportDialog.InitialDirectory = exportDirectoryPath;
+            if (!String.IsNullOrEmpty(exportFileName))
+            {
+                txtExportFilePath.Text = Path.Combine(exportDirectoryPath, exportFileName);
+                txtExportFilePath.SelectionStart = txtExportFilePath.Text.Length;
+                txtExportFilePath.SelectionLength = 0;
+                txtExportFilePath.ScrollToCaret();
+                btnExport.Enabled = true;
+            }
+            else
+            {
+                txtExportFilePath.Text = null;
+                btnExport.Enabled = false;
+            }
 
             isRefreshEnabled = true;
         }
@@ -130,6 +185,17 @@ namespace Quasar.UI
             cbFontFamilies.DataSource = fontFamilyDataSource;
         }
 
+        private void PopulateFontStyles()
+        {
+            var fontStylesCount = (int)(FontStyle.Regular | FontStyle.Bold | FontStyle.Italic) + 1;
+            for (var i = 0; i < fontStylesCount; i++)
+            {
+                var fontStyle = (FontStyle)i;
+                var item = new DataSourceItem<FontStyle>(fontStyle.ToString(), fontStyle);
+                clbFontStyles.Items.Add(item, false);
+            }
+        }
+
         private void RefreshPreview()
         {
             if (!isRefreshEnabled)
@@ -137,14 +203,27 @@ namespace Quasar.UI
                 return;
             }
 
-            var fontDataSettings = settings.FontDataSettings;
-            var font = new Font(
-                fontDataSettings.FontFamilyName,
-                fontDataSettings.BaseSize,
-                FontStyle.Regular,
-                GraphicsUnit.Pixel);
-            previewBitmap = generatorService.GeneratePreviewBitmap(settings.FontDataSettings, font, Color.White, Color.Black);
-            pnlPreview.Invalidate();
+            previewBitmap = generatorService.GeneratePreviewBitmap(settings.FontDataSettings, previewFontStyle, Color.White, Color.Black);
+
+            UpdateScrollBarLimits();
+            pnlPreview.PreviewBitmap = previewBitmap;
+        }
+
+        private void UpdateScrollBarLimits()
+        {
+            isRefreshEnabled = false;
+
+            var maximum = 0;
+            if (previewBitmap != null)
+            {
+                maximum = Math.Max(0, previewBitmap.Height - pnlPreview.ClientSize.Height + sbVertical.LargeChange);
+            }
+
+            sbVertical.Value = Math.Min(maximum, sbVertical.Value);
+            sbVertical.Maximum = maximum;
+            pnlPreview.Offset = sbVertical.Value;
+
+            isRefreshEnabled = true;
         }
 
         private void SaveGeneratorSettings()
@@ -178,12 +257,22 @@ namespace Quasar.UI
 
         private void OnExportClick(object sender, MouseEventArgs e)
         {
-            throw new NotImplementedException();
+            generatorService.ExportFont(settings.FontDataSettings, settings.ExportFilePath);
         }
 
         private void OnExportDirectoryPathClick(object sender, MouseEventArgs e)
         {
-            throw new NotImplementedException();
+            if (exportDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            settings.ExportFilePath = exportDialog.FileName;
+            txtExportFilePath.Text = exportDialog.FileName;
+            txtExportFilePath.SelectionStart = txtExportFilePath.Text.Length;
+            txtExportFilePath.SelectionLength = 0;
+            txtExportFilePath.ScrollToCaret();
+            btnExport.Enabled = true;
         }
 
         private void OnFallbackCharacterTextChanged(object sender, EventArgs e)
@@ -222,9 +311,61 @@ namespace Quasar.UI
             RefreshPreview();
         }
 
+        private void OnFontStylesSelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (clbFontStyles.SelectedItem is not DataSourceItem<FontStyle> selectedItem ||
+                selectedItem.Value == previewFontStyle)
+            {
+                return;
+            }
+
+            previewFontStyle = selectedItem.Value;
+            RefreshPreview();
+        }
+
+        private void OnFontStylesItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (!isRefreshEnabled)
+            {
+                return;
+            }
+
+            if (e.Index == 0 && e.NewValue != CheckState.Checked)
+            {
+                e.NewValue = CheckState.Checked;
+                return;
+            }
+
+            var generatedStyles = settings.FontDataSettings.GeneratedStyles;
+            generatedStyles.Clear();
+            for (var i = 0; i < clbFontStyles.Items.Count; i++)
+            {
+                if (i == e.Index)
+                {
+                    if (e.NewValue == CheckState.Checked)
+                    {
+                        generatedStyles.Add((Graphics.FontStyle)i);
+                        continue;
+                    }
+                }
+
+                if (clbFontStyles.GetItemChecked(i))
+                {
+                    generatedStyles.Add((Graphics.FontStyle)i);
+                }
+            }
+        }
+
+        private void OnHorizontalOffsetValueChanged(object sender, EventArgs e)
+        {
+            settings.FontDataSettings.HorizontalOffset = (int)udHorizontalOffset.Value;
+            RefreshPreview();
+        }
+
         private void OnHorizontalScaleValueChanged(object sender, EventArgs e)
         {
             settings.FontDataSettings.HorizontalScale = (float)udHorizontalScale.Value;
+            RefreshPreview();
         }
 
         private void OnPaddingValueChanged(object sender, EventArgs e)
@@ -250,14 +391,25 @@ namespace Quasar.UI
             RefreshPreview();
         }
 
-        private void OnPaintPreviewPanel(object sender, PaintEventArgs e)
+        private void OnPreviewSizeChanged(object sender, EventArgs e)
         {
-            if (previewBitmap == null)
+            UpdateScrollBarLimits();
+        }
+
+        private void OnVerticalOffsetValueChanged(object sender, EventArgs e)
+        {
+            settings.FontDataSettings.VerticalOffset = (int)udVerticalOffset.Value;
+            RefreshPreview();
+        }
+
+        private void OnVerticalScrollbarValueChanged(object sender, EventArgs e)
+        {
+            if (!isRefreshEnabled)
             {
                 return;
             }
 
-            e.Graphics.DrawImage(previewBitmap, Point.Empty);
+            pnlPreview.Offset = sbVertical.Value;
         }
         #endregion
     }

@@ -63,6 +63,11 @@ namespace Quasar.FontGenerator.Models
         float HorizontalScale { get; }
 
         /// <summary>
+        /// Gets the horizontal offset.
+        /// </summary>
+        int HorizontalOffset { get; }
+
+        /// <summary>
         /// Gets the padding.
         /// </summary>
         int Padding { get; }
@@ -71,5 +76,10 @@ namespace Quasar.FontGenerator.Models
         /// Gets the number of character pages.
         /// </summary>
         int PageCount { get; }
+
+        /// <summary>
+        /// Gets the vertical offset.
+        /// </summary>
+        int VerticalOffset { get; }
     }
 }

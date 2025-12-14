@@ -34,21 +34,6 @@ namespace Quasar.Graphics
         /// <summary>
         /// Italic text.
         /// </summary>
-        Italic = 2,
-
-        /// <summary>
-        /// Underlined text.
-        /// </summary>
-        Underline = 4,
-
-        /// <summary>
-        /// Text with a line through the middle.
-        /// </summary>
-        Strikeout = 8,
-
-        /// <summary>
-        /// All text styles.
-        /// </summary>
-        All = Regular | Bold | Italic | Underline | Strikeout
+        Italic = 2
     }
 }
