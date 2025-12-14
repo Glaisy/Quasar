@@ -24,9 +24,8 @@ namespace Quasar.Graphics
     /// <summary>
     /// Quasar Font implementation.
     /// </summary>
-    /// <seealso cref="DisposableBase" />
     /// <seealso cref="IIdentifierProvider{Int32}" />
-    public sealed class Font : DisposableBase, IIdentifierProvider<long>
+    public sealed class Font : IIdentifierProvider<long>
     {
         private const int FamilyShift = 32;
         private const int StyleMask = 0xFF;
@@ -106,13 +105,6 @@ namespace Quasar.Graphics
             scaledLineHeight = scale * fontStyleInformation.LineSpacing;
             characterWidths = fontStyleInformation.CharacterWidths;
             uvs = fontStyleInformation.UVs;
-        }
-
-
-        /// <inheritdoc/>
-        protected override void Dispose(bool disposing)
-        {
-            Texture = null;
         }
 
 
