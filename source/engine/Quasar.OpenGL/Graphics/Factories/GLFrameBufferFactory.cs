@@ -11,8 +11,6 @@
 
 using System;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
 using Quasar.Graphics.Internals.Factories;
@@ -23,26 +21,13 @@ using Space.Core.DependencyInjection;
 namespace Quasar.OpenGL.Graphics.Factories
 {
     /// <summary>
-    /// OpenGL framebuffer factory implementation.
+    /// OpenGL frame buffer factory implementation.
     /// </summary>
-    [Export(typeof(IFrameBufferFactory), nameof(GraphicsPlatform.OpenGL))]
+    [Export]
     [Singleton]
     internal sealed class GLFrameBufferFactory : IFrameBufferFactory
     {
-        private readonly GraphicsResourceDescriptor frameBufferResourceDescriptor;
-
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GLFrameBufferFactory" /> class.
-        /// </summary>
-        /// <param name="graphicsContext">The graphics context.</param>
-        public GLFrameBufferFactory(
-            [FromKeyedServices(GraphicsPlatform.OpenGL)] IGraphicsDeviceContext graphicsContext)
-        {
-            frameBufferResourceDescriptor = new GraphicsResourceDescriptor(
-                graphicsContext.Device,
-                GraphicsResourceUsage.Default);
-        }
+        private GraphicsResourceDescriptor defaultResourceDescriptor;
 
 
         /// <inheritdoc/>
@@ -51,7 +36,7 @@ namespace Quasar.OpenGL.Graphics.Factories
             ArgumentOutOfRangeException.ThrowIfNegative(size.Width, nameof(size.Width));
             ArgumentOutOfRangeException.ThrowIfNegative(size.Height, nameof(size.Height));
 
-            return new GLFrameBuffer(key, size, colorTarget, depthTarget, frameBufferResourceDescriptor);
+            return new GLFrameBuffer(key, size, colorTarget, depthTarget, defaultResourceDescriptor);
         }
 
         /// <inheritdoc/>
@@ -59,7 +44,17 @@ namespace Quasar.OpenGL.Graphics.Factories
         {
             ArgumentNullException.ThrowIfNull(nativeWindow, nameof(nativeWindow));
 
-            return new GLPrimaryFrameBuffer(nativeWindow, frameBufferResourceDescriptor);
+            return new GLPrimaryFrameBuffer(nativeWindow, defaultResourceDescriptor);
+        }
+
+
+        /// <summary>
+        /// Executes the frame buffer initialization.
+        /// </summary>
+        /// <param name="graphicsContext">The graphics context.</param>
+        public void Initialize(IGraphicsContext graphicsContext)
+        {
+            defaultResourceDescriptor = new GraphicsResourceDescriptor(graphicsContext.Device, GraphicsResourceUsage.Default);
         }
     }
 }

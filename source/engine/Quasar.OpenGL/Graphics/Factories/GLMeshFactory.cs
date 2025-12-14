@@ -11,8 +11,6 @@
 
 using System;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using Quasar.Graphics;
 
 using Space.Core.DependencyInjection;
@@ -23,31 +21,34 @@ namespace Quasar.OpenGL.Graphics.Factories
     /// OpenGL mesh factory component implementation.
     /// </summary>
     /// <seealso cref="IMeshFactory" />
-    [Export(typeof(IMeshFactory), GraphicsPlatform.OpenGL)]
+    [Export]
     [Singleton]
     internal sealed class GLMeshFactory : IMeshFactory
     {
-        private readonly IGraphicsDevice graphicsDevice;
-
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GLMeshFactory"/> class.
-        /// </summary>
-        /// <param name="graphicsDeviceContext">The graphics device context.</param>
-        public GLMeshFactory(
-            [FromKeyedServices(GraphicsPlatform.OpenGL)] IGraphicsDeviceContext graphicsDeviceContext)
-        {
-            graphicsDevice = graphicsDeviceContext.Device;
-        }
+        private IGraphicsContext graphicsContext;
 
 
         /// <inheritdoc/>
-        public IMesh Create(PrimitiveType primitiveType, VertexLayout vertexLayout, bool isIndexed, string name = null, GraphicsResourceUsage usage = GraphicsResourceUsage.Immutable)
+        public IMesh Create(
+            PrimitiveType primitiveType,
+            VertexLayout vertexLayout,
+            bool isIndexed,
+            string name = null,
+            GraphicsResourceUsage usage = GraphicsResourceUsage.Immutable)
         {
             ArgumentNullException.ThrowIfNull(vertexLayout, nameof(vertexLayout));
 
-            var graphicsResourceDescriptor = new GraphicsResourceDescriptor(graphicsDevice, usage);
-            return new GLMesh(primitiveType, vertexLayout, isIndexed, name, graphicsResourceDescriptor);
+            var resourceDescriptor = new GraphicsResourceDescriptor(graphicsContext.Device, usage);
+            return new GLMesh(primitiveType, vertexLayout, isIndexed, name, resourceDescriptor);
+        }
+
+        /// <summary>
+        /// Executes the mesh factory initialization.
+        /// </summary>
+        /// <param name="graphicsContext">The graphics context.</param>
+        public void Initialize(IGraphicsContext graphicsContext)
+        {
+            this.graphicsContext = graphicsContext;
         }
     }
 }

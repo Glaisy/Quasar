@@ -54,6 +54,9 @@ namespace Quasar.Windows.OpenGL
                 case "CreateContext":
                     functionName = "wglCreateContext";
                     break;
+                case "DeleteContext":
+                    functionName = "wglDeleteContext";
+                    break;
                 case "glSwapIntervalEXT":
                     functionName = "wglSwapIntervalEXT";
                     break;

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="GraphicsDeviceContextFactory.cs" company="Space Development">
+// <copyright file="GraphicsContextFactory.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -15,57 +15,55 @@ using System.Reflection;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Quasar.UI;
+
+using Space.Core;
 using Space.Core.DependencyInjection;
 
 namespace Quasar.Graphics.Internals.Factories
 {
     /// <summary>
-    /// Graphics device context factory implementation.
+    /// Internal graphics context factory component.
     /// </summary>
-    /// <seealso cref="IGraphicsDeviceContextFactory" />
-    [Export(typeof(IGraphicsDeviceContextFactory))]
+    [Export]
     [Singleton]
-    internal sealed class GraphicsDeviceContextFactory : IGraphicsDeviceContextFactory
+    internal sealed class GraphicsContextFactory
     {
         private const string PlatformSpecificAssemblyNameFormatStringP1 = $"{nameof(Quasar)}.{{0}}.dll";
 
 
         private readonly IServiceProvider serviceProvider;
         private readonly IServiceLoader serviceLoader;
-        private readonly IGraphicsDeviceContext[] graphicsDeviceContexts;
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GraphicsDeviceContextFactory" /> class.
+        /// Initializes a new instance of the <see cref="GraphicsContextFactory" /> class.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
         /// <param name="serviceLoader">The service loader.</param>
-        public GraphicsDeviceContextFactory(
+        public GraphicsContextFactory(
             IServiceProvider serviceProvider,
             IServiceLoader serviceLoader)
         {
             this.serviceProvider = serviceProvider;
             this.serviceLoader = serviceLoader;
-
-            var numberOfGraphicsPlatforms = Enum.GetValues<GraphicsPlatform>().Length;
-            graphicsDeviceContexts = new IGraphicsDeviceContext[numberOfGraphicsPlatforms];
         }
 
 
-        /// <inheritdoc/>
-        public IGraphicsDeviceContext Create(GraphicsPlatform graphicsPlatform)
+        /// <summary>
+        /// Creates the graphics context by the specified platform and native window.
+        /// </summary>
+        /// <param name="graphicsPlatform">The graphics platform.</param>
+        /// <param name="nativeWindow">The native window.</param>
+        public IGraphicsContext Create(GraphicsPlatform graphicsPlatform, INativeWindow nativeWindow)
         {
-            ArgumentOutOfRangeException.ThrowIfEqual(graphicsPlatform == GraphicsPlatform.Unknown, true, nameof(graphicsPlatform));
+            Assertion.ThrowIfEqual(graphicsPlatform == GraphicsPlatform.Unknown, true, nameof(graphicsPlatform));
+            Assertion.ThrowIfNull(nativeWindow, nameof(nativeWindow));
 
-            var graphicsDeviceContextIndex = (int)graphicsPlatform;
-            var graphicsDeviceContext = graphicsDeviceContexts[graphicsDeviceContextIndex];
-            if (graphicsDeviceContext == null)
-            {
-                graphicsDeviceContext = CreateGraphicsDeviceContext(graphicsPlatform);
-                graphicsDeviceContexts[graphicsDeviceContextIndex] = graphicsDeviceContext;
-            }
+            var graphicsContext = CreateGraphicsDeviceContext(graphicsPlatform);
+            graphicsContext.Initialize(nativeWindow);
 
-            return graphicsDeviceContext;
+            return graphicsContext;
         }
 
 
@@ -82,11 +80,11 @@ namespace Quasar.Graphics.Internals.Factories
             serviceLoader.AddExportedServices(platformSpecificAssembly);
         }
 
-        private IGraphicsDeviceContext CreateGraphicsDeviceContext(GraphicsPlatform graphicsPlatform)
+        private GraphicsContextBase CreateGraphicsDeviceContext(GraphicsPlatform graphicsPlatform)
         {
             AddPlatformSpecificServices(graphicsPlatform);
 
-            var graphicsDeviceContext = serviceProvider.GetRequiredKeyedService<IGraphicsDeviceContext>(graphicsPlatform);
+            var graphicsDeviceContext = serviceProvider.GetRequiredKeyedService<GraphicsContextBase>(graphicsPlatform);
             if (graphicsDeviceContext == null)
             {
                 throw new GraphicsException($"Graphics device context is not registered for graphics platform: {graphicsPlatform}");

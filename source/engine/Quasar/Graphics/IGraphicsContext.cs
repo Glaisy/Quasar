@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="IGraphicsDeviceContext.cs" company="Space Development">
+// <copyright file="IGraphicsContext.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -11,14 +11,12 @@
 
 using System;
 
-using Quasar.UI;
-
 namespace Quasar.Graphics
 {
     /// <summary>
-    /// Represents the context information for a graphics device.
+    /// Represents the context information for a graphics environment.
     /// </summary>
-    public interface IGraphicsDeviceContext
+    public interface IGraphicsContext
     {
         /// <summary>
         /// Gets the command processor.
@@ -44,12 +42,5 @@ namespace Quasar.Graphics
         /// Gets the graphics platform version.
         /// </summary>
         Version Version { get; }
-
-
-        /// <summary>
-        /// Initializes the context by the specified native window.
-        /// </summary>
-        /// <param name="nativeWindow">The native window.</param>
-        internal void Initialize(INativeWindow nativeWindow);
     }
 }

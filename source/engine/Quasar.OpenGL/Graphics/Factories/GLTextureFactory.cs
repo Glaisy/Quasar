@@ -11,8 +11,6 @@
 
 using System;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
 using Quasar.Graphics.Internals.Factories;
@@ -27,26 +25,20 @@ namespace Quasar.OpenGL.Graphics.Factories
     /// OpenGL texture factory implementation.
     /// </summary>
     /// <seealso cref="ITextureFactory" />
-    [Export(typeof(ITextureFactory), GraphicsPlatform.OpenGL)]
+    [Export]
     [Singleton]
     internal sealed class GLTextureFactory : ITextureFactory
     {
         private const float MipmappingLOD = -1.0f;
-        private readonly GraphicsResourceDescriptor textureResourceDescriptor;
         private readonly float maxAnisotropy;
+        private GraphicsResourceDescriptor defaultResourceDescriptor;
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GLTextureFactory"/> class.
+        /// Initializes a new instance of the <see cref="GLTextureFactory" /> class.
         /// </summary>
-        /// <param name="graphicsDeviceContext">The graphics device context.</param>
-        public unsafe GLTextureFactory(
-            [FromKeyedServices(GraphicsPlatform.OpenGL)] IGraphicsDeviceContext graphicsDeviceContext)
+        public unsafe GLTextureFactory()
         {
-            textureResourceDescriptor = new GraphicsResourceDescriptor(
-                graphicsDeviceContext.Device,
-                GraphicsResourceUsage.Default);
-
             // get max level of anisotropic filtering
             fixed (float* ptrMaxAnisotropy = &maxAnisotropy)
             {
@@ -120,7 +112,7 @@ namespace Quasar.OpenGL.Graphics.Factories
                     (int)TextureMagFilter.Linear);
 
                 // create texture wrapper object.
-                return new GLTexture(id, key, imageData.Size, textureDescriptor, tag, textureResourceDescriptor);
+                return new GLTexture(id, key, imageData.Size, textureDescriptor, tag, defaultResourceDescriptor);
             }
             catch
             {
@@ -136,6 +128,15 @@ namespace Quasar.OpenGL.Graphics.Factories
             {
                 GL.BindTexture(TextureTarget.Texture2D, 0);
             }
+        }
+
+        /// <summary>
+        /// Executes the texture factory initialization.
+        /// </summary>
+        /// <param name="graphicsContext">The graphics context.</param>
+        public void Initialize(IGraphicsContext graphicsContext)
+        {
+            defaultResourceDescriptor = new GraphicsResourceDescriptor(graphicsContext.Device, GraphicsResourceUsage.Default);
         }
     }
 }

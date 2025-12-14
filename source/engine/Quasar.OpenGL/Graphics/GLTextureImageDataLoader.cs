@@ -22,7 +22,7 @@ namespace Quasar.OpenGL.Graphics
     /// OpenGL texture image data loader implementation.
     /// </summary>
     /// <seealso cref="ITextureImageDataLoader" />
-    [Export(typeof(ITextureImageDataLoader), GraphicsPlatform.OpenGL)]
+    [Export]
     [Singleton]
     internal sealed class GLTextureImageDataLoader : ITextureImageDataLoader
     {

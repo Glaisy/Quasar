@@ -24,7 +24,7 @@ namespace Quasar.OpenGL.Graphics.Factories
     /// The matrix representation could be either row or column major representation depending on the graphics platform.
     /// </summary>
     /// <seealso cref="IMatrixFactory" />
-    [Export(typeof(IMatrixFactory), GraphicsPlatform.OpenGL)]
+    [Export]
     [Singleton]
     internal sealed class GLMatrixFactory : IMatrixFactory
     {

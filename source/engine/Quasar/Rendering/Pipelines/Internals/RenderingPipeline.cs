@@ -28,8 +28,8 @@ namespace Quasar.Rendering.Pipelines.Internals
     [Singleton]
     internal sealed class RenderingPipeline : PipelineBase<RenderingPipelineStageBase, IRenderingContext>
     {
+        private readonly GraphicsContextFactory graphicsContextFactory;
         private readonly IApplicationWindow applicationWindow;
-        private readonly IGraphicsDeviceContextFactory graphicsDeviceContextFactory;
         private readonly IServiceLoader serviceLoader;
         private readonly ActionBasedObserver<IRenderingSettings> settingsObserver;
         private IDisposable settingsSubscription;
@@ -38,22 +38,22 @@ namespace Quasar.Rendering.Pipelines.Internals
         /// <summary>
         /// Initializes a new instance of the <see cref="RenderingPipeline" /> class.
         /// </summary>
+        /// <param name="graphicsContextFactory">The graphics context factory.</param>
         /// <param name="applicationWindow">The application window.</param>
-        /// <param name="graphicsDeviceContextFactory">The graphics device context factory.</param>
         /// <param name="renderingContext">The rendering context.</param>
         /// <param name="serviceLoader">The service loader.</param>
         /// <param name="serviceProvider">The service provider.</param>
         public RenderingPipeline(
             IApplicationWindow applicationWindow,
-            IGraphicsDeviceContextFactory graphicsDeviceContextFactory,
             IRenderingContext renderingContext,
             IServiceLoader serviceLoader,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            GraphicsContextFactory graphicsContextFactory)
             : base(serviceProvider)
         {
             this.applicationWindow = applicationWindow;
-            this.graphicsDeviceContextFactory = graphicsDeviceContextFactory;
             this.serviceLoader = serviceLoader;
+            this.graphicsContextFactory = graphicsContextFactory;
 
             Context = renderingContext;
 
@@ -91,10 +91,9 @@ namespace Quasar.Rendering.Pipelines.Internals
 
         private void InitializeRenderingContext(IRenderingSettings renderingSettings)
         {
-            var graphicsDeviceContext = graphicsDeviceContextFactory.Create(renderingSettings.Platform);
+            var graphicsDeviceContext = graphicsContextFactory.Create(renderingSettings.Platform, applicationWindow);
             serviceLoader.AddSingleton(graphicsDeviceContext);
 
-            graphicsDeviceContext.Initialize(applicationWindow);
             Context.Initialize(graphicsDeviceContext);
         }
 

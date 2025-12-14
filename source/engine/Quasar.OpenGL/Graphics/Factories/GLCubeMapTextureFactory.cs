@@ -9,8 +9,6 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using Microsoft.Extensions.DependencyInjection;
-
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
 using Quasar.Graphics.Internals.Factories;
@@ -24,31 +22,18 @@ namespace Quasar.OpenGL.Graphics.Factories
     /// OpenGL cubemap texture factory implementation.
     /// </summary>
     /// <seealso cref="ICubeMapTextureFactory" />
-    [Export(typeof(ICubeMapTextureFactory), nameof(GraphicsPlatform.OpenGL))]
+    [Export]
     [Singleton]
     internal sealed class GLCubeMapTextureFactory : ICubeMapTextureFactory
     {
-        private readonly GraphicsResourceDescriptor textureResourceDescriptor;
-
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GLCubeMapTextureFactory"/> class.
-        /// </summary>
-        /// <param name="graphicsDeviceContext">The graphics device context.</param>
-        public GLCubeMapTextureFactory(
-            [FromKeyedServices(GraphicsPlatform.OpenGL)] IGraphicsDeviceContext graphicsDeviceContext)
-        {
-            textureResourceDescriptor = new GraphicsResourceDescriptor(
-                graphicsDeviceContext.Device,
-                GraphicsResourceUsage.Default);
-        }
+        private GraphicsResourceDescriptor defaultResourceDescriptor;
 
 
         /// <inheritdoc/>
         public CubeMapTextureBase Create(string key, IImageData imageData, string tag)
         {
             // create cubemap texture
-            var texture = new GLCubeMapTexture(key, Size.Empty, tag, textureResourceDescriptor);
+            var texture = new GLCubeMapTexture(key, Size.Empty, tag, defaultResourceDescriptor);
             texture.Activate();
 
             // set texture parameters
@@ -62,6 +47,16 @@ namespace Quasar.OpenGL.Graphics.Factories
             texture.Deactivate();
 
             return texture;
+        }
+
+
+        /// <summary>
+        /// Executes the cube map texture factory initialization.
+        /// </summary>
+        /// <param name="graphicsContext">The graphics context.</param>
+        public void Initialize(IGraphicsContext graphicsContext)
+        {
+            defaultResourceDescriptor = new GraphicsResourceDescriptor(graphicsContext.Device, GraphicsResourceUsage.Default);
         }
     }
 }

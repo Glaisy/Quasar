@@ -31,7 +31,7 @@ namespace Quasar.Rendering.Pipelines.Internals
 
 
         /// <inheritdoc/>
-        public void Initialize(IGraphicsDeviceContext graphicsDeviceContext)
+        public void Initialize(IGraphicsContext graphicsDeviceContext)
         {
             Assertion.ThrowIfNull(graphicsDeviceContext, nameof(graphicsDeviceContext));
 

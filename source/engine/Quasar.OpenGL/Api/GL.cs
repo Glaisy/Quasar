@@ -46,6 +46,7 @@ namespace Quasar.OpenGL.Api
         private static glTexParameterfv texParameterVector4;
 
 
+        public static DeleteContext DestroyContext;
         public static glAttachShader AttachShader;
         public static glActiveTexture ActiveTexture;
         public static glBindBuffer BindBuffer;
@@ -128,6 +129,7 @@ namespace Quasar.OpenGL.Api
             // initialize basic OpenGL functions
             createContext = interopFunctionProvider.GetFunction<CreateContext>();
             makeCurrent = interopFunctionProvider.GetFunction<MakeCurrent>();
+            DestroyContext = interopFunctionProvider.GetFunction<DeleteContext>();
 
             // initialize render context
             var renderContext = createContext(deviceContext);

@@ -33,6 +33,6 @@ namespace Quasar.Rendering
         /// Initializes the context by the specified graphics device context.
         /// </summary>
         /// <param name="graphicsDeviceContext">The graphics device context.</param>
-        internal void Initialize(IGraphicsDeviceContext graphicsDeviceContext);
+        internal void Initialize(IGraphicsContext graphicsDeviceContext);
     }
 }

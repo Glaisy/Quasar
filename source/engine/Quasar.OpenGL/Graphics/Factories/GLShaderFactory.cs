@@ -15,8 +15,6 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
 using Quasar.Graphics.Internals.Factories;
@@ -31,7 +29,7 @@ namespace Quasar.OpenGL.Graphics.Factories
     /// <summary>
     /// OpenGL shader program implementation.
     /// </summary>
-    [Export(typeof(IShaderFactory), nameof(GraphicsPlatform.OpenGL))]
+    [Export]
     [Singleton]
     internal sealed class GLShaderFactory : IShaderFactory
     {
@@ -53,26 +51,21 @@ namespace Quasar.OpenGL.Graphics.Factories
         };
 
 
-        private readonly GraphicsResourceDescriptor shaderResourceDescriptor;
         private readonly IResourceProvider builtInShaderResourceProvider;
         private readonly ILogger logger;
         private readonly Dictionary<string, string> includes = new Dictionary<string, string>();
+        private GraphicsResourceDescriptor defaultResourceDescriptor;
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GLShaderFactory" /> class.
         /// </summary>
-        /// <param name="graphicsDeviceContext">The graphics device context.</param>
         /// <param name="resourceProviderFactory">The resource provider factory.</param>
         /// <param name="loggerFactory">The logger factory.</param>
         public GLShaderFactory(
-            [FromKeyedServices(GraphicsPlatform.OpenGL)] IGraphicsDeviceContext graphicsDeviceContext,
             IResourceProviderFactory resourceProviderFactory,
             ILoggerFactory loggerFactory)
         {
-            shaderResourceDescriptor = new GraphicsResourceDescriptor(
-                graphicsDeviceContext.Device,
-                GraphicsResourceUsage.Immutable);
             builtInShaderResourceProvider = resourceProviderFactory
                 .Create(Assembly.GetExecutingAssembly(), BuiltInShaderResourcePath);
 
@@ -99,7 +92,7 @@ namespace Quasar.OpenGL.Graphics.Factories
                 GL.DetachShader(shaderHandle, computeProgramId);
 
                 // create shader instance.
-                return new GLComputeShader(shaderHandle, id, tag, shaderResourceDescriptor);
+                return new GLComputeShader(shaderHandle, id, tag, defaultResourceDescriptor);
             }
             catch
             {
@@ -157,7 +150,7 @@ namespace Quasar.OpenGL.Graphics.Factories
                 }
 
                 // create shader instance.
-                var shader = new GLShader(shaderHandle, id, tag, shaderResourceDescriptor);
+                var shader = new GLShader(shaderHandle, id, tag, defaultResourceDescriptor);
                 shader.Initialize();
                 return shader;
             }
@@ -187,6 +180,15 @@ namespace Quasar.OpenGL.Graphics.Factories
                     GL.DeleteShader(geometryProgramId);
                 }
             }
+        }
+
+        /// <summary>
+        /// Executes the shader factory initialization.
+        /// </summary>
+        /// <param name="graphicsContext">The graphics context.</param>
+        public void Initialize(IGraphicsContext graphicsContext)
+        {
+            defaultResourceDescriptor = new GraphicsResourceDescriptor(graphicsContext.Device, GraphicsResourceUsage.Immutable);
         }
 
         /// <inheritdoc/>

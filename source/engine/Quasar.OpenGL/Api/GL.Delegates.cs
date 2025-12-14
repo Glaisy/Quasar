@@ -50,6 +50,8 @@ namespace Quasar.OpenGL.Api
         private delegate void glGetUniformfv(int programId, int location, float* value);
         private delegate void glShaderSource(int shaderId, int count, string[] sources, int* lengths);
 
+        public delegate IntPtr DeleteContext(IntPtr deviceContext);
+
         public delegate void glActiveTexture(TextureUnit textureUnit);
         public delegate void glAttachShader(int programId, int shaderId);
         public delegate void glBindBuffer(BufferTarget bufferTarget, int id);
