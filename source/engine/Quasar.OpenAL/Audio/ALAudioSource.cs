@@ -30,7 +30,7 @@ namespace Quasar.OpenAL.Internals.Audio
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="audioDevice">The audio device.</param>
-        public ALAudioSource(string id, IAudioDevice audioDevice)
+        public ALAudioSource(string id, IAudioOutputDevice audioDevice)
             : base(id, audioDevice)
         {
             handle = AL.GenSource();

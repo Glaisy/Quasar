@@ -47,7 +47,6 @@ namespace Quasar.Audio.Internals.Pipeline
         protected override void OnStart()
         {
             audioDeviceContext = audioDeviceContextFactory.Create(AudioPlatform.OpenAL);
-            audioDeviceContext.Initialize();
         }
     }
 }

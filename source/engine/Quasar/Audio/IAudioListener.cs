@@ -12,7 +12,9 @@
 namespace Quasar.Audio
 {
     /// <summary>
-    /// Represents the audio listener.
+    /// Represents the audio listener object.
+    /// Defines the position and orientation of the
+    /// entity which listens to the played music and sound effects.
     /// </summary>
     /// <seealso cref="IAudioResource" />
     public interface IAudioListener : IAudioResource

@@ -17,6 +17,8 @@ using Quasar.Audio;
 using Quasar.Audio.Internals;
 using Quasar.Audio.Internals.Factories;
 using Quasar.OpenAL.Api;
+using Quasar.OpenAL.Audio.Factories;
+using Quasar.OpenAL.Internals.Audio.Factories;
 using Quasar.Utilities;
 
 using Space.Core;
@@ -25,36 +27,32 @@ using Space.Core.DependencyInjection;
 namespace Quasar.OpenAL.Audio
 {
     /// <summary>
-    /// OpenAL graphics context implementation.
+    /// OpenAL audio device context implementation.
     /// </summary>
     /// <seealso cref="DisposableBase" />
     /// <seealso cref="IAudioDeviceContext" />
-    [Export(typeof(IAudioDeviceContext), AudioPlatform.OpenAL)]
+    [Export(typeof(AudioDeviceContextBase), AudioPlatform.OpenAL)]
     [Singleton]
-    internal sealed class ALAudioDeviceContext : DisposableBase, IAudioDeviceContext
+    internal sealed class ALAudioDeviceContext : AudioDeviceContextBase, IAudioDeviceContext
     {
-        private readonly IAudioDeviceProvider audioDeviceProvider;
         private readonly IInteropFunctionProvider interopFunctionProvider;
         private readonly IServiceProvider serviceProvider;
         private readonly IServiceLoader serviceLoader;
-        private IntPtr deviceId;
-        private IntPtr deviceContext;
+        private IntPtr outputDeviceId;
+        private IntPtr outputDeviceContext;
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ALAudioDeviceContext" /> class.
         /// </summary>
-        /// <param name="audioDeviceProvider">The audio device provider.</param>
         /// <param name="interopFunctionProvider">The interop function provider.</param>
         /// <param name="serviceProvider">The service provider.</param>
         /// <param name="serviceLoader">The service loader.</param>
         public ALAudioDeviceContext(
-            [FromKeyedServices(AudioPlatform.OpenAL)] IAudioDeviceProvider audioDeviceProvider,
             [FromKeyedServices(AudioPlatform.OpenAL)] IInteropFunctionProvider interopFunctionProvider,
             IServiceProvider serviceProvider,
             IServiceLoader serviceLoader)
         {
-            this.audioDeviceProvider = audioDeviceProvider;
             this.interopFunctionProvider = interopFunctionProvider;
             this.serviceProvider = serviceProvider;
             this.serviceLoader = serviceLoader;
@@ -63,71 +61,86 @@ namespace Quasar.OpenAL.Audio
         /// <inheritdoc/>
         protected override void Dispose(bool disposing)
         {
-            if (deviceContext != IntPtr.Zero)
+            if (outputDeviceContext != IntPtr.Zero)
             {
-                AL.DestroyContext(deviceContext);
-                deviceContext = IntPtr.Zero;
+                AL.DestroyContext(outputDeviceContext);
+                outputDeviceContext = IntPtr.Zero;
             }
 
-            if (deviceId == IntPtr.Zero)
+            if (outputDeviceId == IntPtr.Zero)
             {
-                AL.CloseDevice(deviceId);
-                deviceId = IntPtr.Zero;
+                AL.CloseDevice(outputDeviceId);
+                outputDeviceId = IntPtr.Zero;
             }
 
-            OutputDevice = null;
-            Version = null;
+            outputDevice = null;
+            inputDevice = null;
+            version = null;
         }
 
 
+        private IAudioInputDevice inputDevice;
         /// <inheritdoc/>
-        public IAudioDevice OutputDevice { get; private set; }
+        public override IAudioInputDevice InputDevice => inputDevice;
+
+        private IAudioOutputDevice outputDevice;
+        /// <inheritdoc/>
+        public override IAudioOutputDevice OutputDevice => outputDevice;
 
         /// <inheritdoc/>
-        public AudioPlatform Platform => AudioPlatform.OpenAL;
+        public override AudioPlatform Platform => AudioPlatform.OpenAL;
+
+        private Version version;
+        /// <inheritdoc/>
+        public override Version Version => version;
+
 
         /// <inheritdoc/>
-        public Version Version { get; private set; }
-
-
-        /// <inheritdoc/>
-        public void Initialize()
+        public override void Initialize()
         {
             AL.Initialize(interopFunctionProvider);
+
+            // initialize audio device provider
+            var audioDeviceProvider = AddOpenALServiceImplementation<IAudioDeviceProvider, ALAudioDeviceProvider>();
             audioDeviceProvider.Initialize();
 
             // initialize active output device and version
-            OutputDevice = audioDeviceProvider.GetActiveOutputDevice();
-            deviceId = AL.OpenDevice(OutputDevice.Name);
-            if (deviceId == IntPtr.Zero)
+            outputDevice = audioDeviceProvider.DefaultOutputDevice;
+            outputDeviceId = AL.OpenDevice(OutputDevice.Name);
+            if (outputDeviceId == IntPtr.Zero)
             {
                 throw new OpenALException("Unable to open audio output device.");
             }
 
-            // initialize device context
-            deviceContext = AL.CreateContext(deviceId, IntPtr.Zero);
-            if (deviceContext == IntPtr.Zero)
+            // initialize output device context
+            outputDeviceContext = AL.CreateContext(outputDeviceId, IntPtr.Zero);
+            if (outputDeviceContext == IntPtr.Zero)
             {
-                throw new OpenALException("Unable to create audio device context.");
+                throw new OpenALException("Unable to create audio output device context.");
             }
 
-            AL.MakeContextCurrent(deviceContext);
+            AL.MakeContextCurrent(outputDeviceContext);
 
             // initialize version
-            var version = AL.GetString(StringType.Version);
-            Version = new Version(version);
+            var versionString = AL.GetString(StringType.Version);
+            version = new Version(versionString);
 
-            // initialize internal components
-            AddOpenALServiceImplementation<IAudioDeviceProvider>();
-            AddOpenALServiceImplementation<IAudioListenerProvider>();
-            AddOpenALServiceImplementation<IAudioSourceFactory>();
-            AddOpenALServiceImplementation<ISoundEffectFactory>();
+            // initialize internal output components
+            var audioListenerFactory = AddOpenALServiceImplementation<IAudioListenerFactory, ALAudioListenerFactory>();
+            audioListenerFactory.Initialize(this);
+
+            var audionSourceFactory = AddOpenALServiceImplementation<IAudioSourceFactory, ALAudioSourceFactory>();
+            audionSourceFactory.Initialize(this);
+
+            var soundEffectFactory = AddOpenALServiceImplementation<ISoundEffectFactory, ALSoundEffectFactory>();
+            soundEffectFactory.Initialize(this);
         }
 
 
-        private T AddOpenALServiceImplementation<T>()
+        private TImpl AddOpenALServiceImplementation<T, TImpl>()
+            where TImpl : T
         {
-            var service = serviceProvider.GetRequiredKeyedService<T>(AudioPlatform.OpenAL);
+            var service = serviceProvider.GetRequiredService<TImpl>();
             serviceLoader.AddSingleton(service);
 
             return service;

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="ALAudioSourceFactory.cs" company="Space Development">
+// <copyright file="ALAudioListenerFactory.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,35 +9,38 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System;
+using System.Threading;
 
 using Quasar.Audio;
+using Quasar.Audio.Internals;
+using Quasar.Audio.Internals.Factories;
+using Quasar.OpenAL.Internals.Audio;
 
 using Space.Core.DependencyInjection;
 
-namespace Quasar.OpenAL.Internals.Audio.Factories
+namespace Quasar.OpenAL.Audio.Factories
 {
     /// <summary>
-    /// OpenAL audio source factory implementation.
+    /// OpenAL audio listener factory implementation.
     /// </summary>
-    /// <seealso cref="IAudioSourceFactory" />
+    /// <seealso cref="IAudioListenerFactory" />
     [Export]
     [Singleton]
-    internal sealed class ALAudioSourceFactory : IAudioSourceFactory
+    internal sealed class ALAudioListenerFactory : IAudioListenerFactory
     {
         private IAudioDeviceContext audioDeviceContext;
+        private int currentHandle = 0;
 
 
         /// <inheritdoc/>
-        public IAudioSource Create(string id)
+        public AudioListenerBase Create()
         {
-            ArgumentException.ThrowIfNullOrEmpty(id, nameof(id));
-
-            return new ALAudioSource(id, audioDeviceContext.OutputDevice);
+            var handle = Interlocked.Increment(ref currentHandle);
+            return new ALAudioListener(handle, audioDeviceContext.OutputDevice);
         }
 
         /// <summary>
-        /// Executes the audio source factory initialization.
+        /// Executes the audio listener initialization.
         /// </summary>
         /// <param name="audioDeviceContext">The audio device context.</param>
         public void Initialize(IAudioDeviceContext audioDeviceContext)

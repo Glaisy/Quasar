@@ -19,9 +19,15 @@ namespace Quasar.Audio
     public interface IAudioDeviceContext
     {
         /// <summary>
+        /// Gets the input device.
+        /// </summary>
+        IAudioInputDevice InputDevice { get; }
+
+        /// <summary>
         /// Gets the audio output device.
         /// </summary>
-        IAudioDevice OutputDevice { get; }
+        IAudioOutputDevice OutputDevice { get; }
+
 
         /// <summary>
         /// Gets the audio platform.
@@ -32,11 +38,5 @@ namespace Quasar.Audio
         /// Gets the audio platform version.
         /// </summary>
         Version Version { get; }
-
-
-        /// <summary>
-        /// Initializes tha context.
-        /// </summary>
-        internal void Initialize();
     }
 }

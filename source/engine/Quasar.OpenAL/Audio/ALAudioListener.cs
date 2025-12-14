@@ -24,16 +24,16 @@ namespace Quasar.OpenAL.Internals.Audio
     /// <seealso cref="AudioListenerBase" />
     internal sealed class ALAudioListener : AudioListenerBase
     {
-        private const int DefaultHandle = 1;
-
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ALAudioListener" /> class.
         /// </summary>
+        /// <param name="handle">The handle.</param>
         /// <param name="audioDevice">The audio device.</param>
-        public ALAudioListener(IAudioDevice audioDevice)
+        public ALAudioListener(int handle, IAudioOutputDevice audioDevice)
             : base(audioDevice)
         {
+            this.handle = handle;
+
             AttenuationType = AttenuationType.Exponential;
             SetOrientation();
         }
@@ -43,6 +43,7 @@ namespace Quasar.OpenAL.Internals.Audio
         {
             base.Dispose(disposing);
 
+            handle = 0;
             attenuationType = AttenuationType.None;
             forward = right = up = position = velocity = Vector3.Zero;
             volume = 0.0f;
@@ -83,8 +84,9 @@ namespace Quasar.OpenAL.Internals.Audio
             }
         }
 
+        private int handle;
         /// <inheritdoc/>
-        public override int Handle => DefaultHandle;
+        public override int Handle => handle;
 
         private Vector3 position;
         /// <inheritdoc/>

@@ -27,9 +27,9 @@ namespace Quasar.OpenAL.Internals.Audio
         /// Initializes a new instance of the <see cref="ALSoundEffect" /> class.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        /// <param name="audioDevice">The audio device.</param>
-        public ALSoundEffect(string id, IAudioDevice audioDevice)
-            : base(id, audioDevice)
+        /// <param name="audioOutputDevice">The audio output device.</param>
+        public ALSoundEffect(string id, IAudioOutputDevice audioOutputDevice)
+            : base(id, audioOutputDevice)
         {
             handle = AL.GenBuffer();
         }

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="AudioDevice.cs" company="Space Development">
+// <copyright file="AudioDeviceBase.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -12,17 +12,17 @@
 namespace Quasar.Audio.Internals
 {
     /// <summary>
-    /// Represents a generic audio device.
+    /// Abstract base class for audio device implementations.
     /// </summary>
     /// <seealso cref="IAudioDevice" />
-    internal sealed class AudioDevice : IAudioDevice
+    internal abstract class AudioDeviceBase : IAudioDevice
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AudioDevice" /> class.
+        /// Initializes a new instance of the <see cref="AudioDeviceBase" /> class.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="vendor">The vendor.</param>
-        public AudioDevice(
+        protected AudioDeviceBase(
             string name,
             string vendor)
         {

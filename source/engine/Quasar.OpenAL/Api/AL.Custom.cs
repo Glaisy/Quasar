@@ -14,6 +14,8 @@ using System.Collections.Generic;
 
 using Quasar.Utilities;
 
+using Space.Core;
+
 namespace Quasar.OpenAL.Api
 {
     /// <summary>
@@ -136,26 +138,24 @@ namespace Quasar.OpenAL.Api
         }
 
         /// <summary>
-        /// Gets the list of strings by the specified device identifier and type.
+        /// Gets the list of strings by the specified device identifier and type
+        /// and adds them to the input string list.
         /// </summary>
         /// <param name="deviceId">The device identifier.</param>
         /// <param name="stringType">The string type enumeration value.</param>
-        /// <returns>
-        /// The string value.
-        /// </returns>
-        public static List<string> GetStrings(IntPtr deviceId, StringTypeExt stringType)
+        /// <param name="strings">The strings.</param>
+        public static void GetStrings(IntPtr deviceId, StringTypeExt stringType, in List<string> strings)
         {
+            Assertion.ThrowIfNull(strings, nameof(strings));
+
             var bytes = getStringExt(deviceId, stringType);
-            var list = new List<string>();
             while (*bytes != 0)
             {
                 var str = UnsafeUtility.GetString(bytes);
-                list.Add(str);
+                strings.Add(str);
 
                 bytes += str.Length + 1;
             }
-
-            return list;
         }
 
         /// <summary>

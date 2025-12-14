@@ -22,7 +22,7 @@ namespace Quasar.Audio.Internals
         /// Initializes a new instance of the <see cref="AudioListenerBase"/> class.
         /// </summary>
         /// <param name="audioDevice">The audio device.</param>
-        protected AudioListenerBase(IAudioDevice audioDevice)
+        protected AudioListenerBase(IAudioOutputDevice audioDevice)
             : base(audioDevice)
         {
         }

@@ -34,7 +34,7 @@ namespace Quasar.Audio.Internals
 
         private readonly IServiceProvider serviceProvider;
         private readonly IServiceLoader serviceLoader;
-        private readonly IAudioDeviceContext[] audioDeviceContexts;
+        private readonly AudioDeviceContextBase[] audioDeviceContexts;
 
 
         /// <summary>
@@ -50,12 +50,12 @@ namespace Quasar.Audio.Internals
             this.serviceLoader = serviceLoader;
 
             var numberOfAudioPlatforms = Enum.GetValues<AudioPlatform>().Length;
-            audioDeviceContexts = new IAudioDeviceContext[numberOfAudioPlatforms];
+            audioDeviceContexts = new AudioDeviceContextBase[numberOfAudioPlatforms];
         }
 
 
         /// <inheritdoc/>
-        public IAudioDeviceContext Create(AudioPlatform audioPlatform)
+        public AudioDeviceContextBase Create(AudioPlatform audioPlatform)
         {
             ArgumentOutOfRangeException.ThrowIfEqual(audioPlatform == AudioPlatform.Unknown, true, nameof(audioPlatform));
 
@@ -84,17 +84,28 @@ namespace Quasar.Audio.Internals
             serviceLoader.AddExportedServices(platformSpecificAssembly);
         }
 
-        private IAudioDeviceContext CreateAudioDeviceContext(AudioPlatform audioPlatform)
+        private AudioDeviceContextBase CreateAudioDeviceContext(AudioPlatform audioPlatform)
         {
-            AddPlatformSpecificServices(audioPlatform);
-
-            var audioDeviceContext = serviceProvider.GetRequiredKeyedService<IAudioDeviceContext>(audioPlatform);
-            if (audioDeviceContext == null)
+            AudioDeviceContextBase audioDeviceContextBase = null;
+            try
             {
-                throw new AudioException($"Audio device context is not registered for graphics platform: {audioPlatform}");
-            }
+                AddPlatformSpecificServices(audioPlatform);
 
-            return audioDeviceContext;
+                var audioDeviceContext = serviceProvider.GetRequiredKeyedService<AudioDeviceContextBase>(audioPlatform);
+                if (audioDeviceContext == null)
+                {
+                    throw new AudioException($"Audio device context is not registered for graphics platform: {audioPlatform}");
+                }
+
+                audioDeviceContext.Initialize();
+                return audioDeviceContext;
+            }
+            catch
+            {
+                audioDeviceContextBase?.Dispose();
+
+                throw;
+            }
         }
     }
 }

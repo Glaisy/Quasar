@@ -23,21 +23,11 @@ namespace Quasar.OpenAL.Internals.Audio.Factories
     /// OpenAL sound effect factory implementation.
     /// </summary>
     /// <seealso cref="ISoundEffectFactory" />
-    [Export(typeof(ISoundEffectFactory), AudioPlatform.OpenAL)]
+    [Export]
     [Singleton]
     internal sealed unsafe class ALSoundEffectFactory : ISoundEffectFactory
     {
-        private readonly IAudioDevice outputDevice;
-
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ALSoundEffectFactory"/> class.
-        /// </summary>
-        /// <param name="audioDeviceProvider">The audio device provider.</param>
-        public ALSoundEffectFactory(IAudioDeviceProvider audioDeviceProvider)
-        {
-            outputDevice = audioDeviceProvider.GetActiveOutputDevice();
-        }
+        private IAudioDeviceContext audioDeviceContext;
 
 
         /// <inheritdoc/>
@@ -46,7 +36,7 @@ namespace Quasar.OpenAL.Internals.Audio.Factories
             ALSoundEffect soundEffect = null;
             try
             {
-                soundEffect = new ALSoundEffect(id, outputDevice);
+                soundEffect = new ALSoundEffect(id, audioDeviceContext.OutputDevice);
 
                 fixed (byte* data = pcmData)
                 {
@@ -61,6 +51,15 @@ namespace Quasar.OpenAL.Internals.Audio.Factories
 
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Executes the sound effect factory initialization.
+        /// </summary>
+        /// <param name="audioDeviceContext">The audio device context.</param>
+        public void Initialize(IAudioDeviceContext audioDeviceContext)
+        {
+            this.audioDeviceContext = audioDeviceContext;
         }
     }
 }

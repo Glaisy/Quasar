@@ -19,19 +19,23 @@ namespace Quasar.Audio
     public interface IAudioDeviceProvider
     {
         /// <summary>
-        /// Gets all available output devices in the system.
+        /// Gets the default audio input device.
         /// </summary>
-        IReadOnlyList<IAudioDevice> GetOutputDevices();
+        IAudioInputDevice DefaultInputDevice { get; }
 
         /// <summary>
-        /// Gets the active output device.
+        /// Gets the default audio output device.
         /// </summary>
-        IAudioDevice GetActiveOutputDevice();
-
+        IAudioOutputDevice DefaultOutputDevice { get; }
 
         /// <summary>
-        /// Initializes tha audio device provider.
+        /// Gets the list of available audio input devices.
         /// </summary>
-        internal void Initialize();
+        IReadOnlyList<IAudioInputDevice> InputDevices { get; }
+
+        /// <summary>
+        /// Gets the list of available audio output devices.
+        /// </summary>
+        IReadOnlyList<IAudioOutputDevice> OutputDevices { get; }
     }
 }

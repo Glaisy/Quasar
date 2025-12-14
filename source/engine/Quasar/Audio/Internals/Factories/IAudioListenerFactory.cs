@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="ISoundEffectFactory.cs" company="Space Development">
+// <copyright file="IAudioListenerFactory.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -12,19 +12,16 @@
 namespace Quasar.Audio.Internals.Factories
 {
     /// <summary>
-    /// Sound effect factory implementation.
+    /// Represents the internal audio listener factory component.
     /// </summary>
-    internal interface ISoundEffectFactory
+    internal interface IAudioListenerFactory
     {
         /// <summary>
-        /// Creates a new sound effect.
+        /// Creates a new the audio listener instance.
         /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <param name="format">The format.</param>
-        /// <param name="pcmData">The PCM data.</param>
         /// <returns>
-        /// The sound effect.
+        /// The created audio listener instance.
         /// </returns>
-        SoundEffectBase Create(string id, in AudioFormat format, byte[] pcmData);
+        AudioListenerBase Create();
     }
 }
