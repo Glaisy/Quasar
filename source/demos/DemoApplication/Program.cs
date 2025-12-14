@@ -48,7 +48,7 @@ namespace DemoApplication
 
             builder.ConfigureApplicationWindow(configuration =>
             {
-                configuration.Type = ApplicationWindowType.Resizable;
+                configuration.Type = ApplicationWindowType.Default;
                 configuration.ScreenRatio = 0.75f;
             });
 
