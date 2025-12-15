@@ -9,7 +9,6 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Reflection;
 
 using Space.Core.Settings;
@@ -17,17 +16,11 @@ using Space.Core.Settings;
 namespace Quasar.Settings
 {
     /// <summary>
-    /// Settings service interface definition.
+    /// Represents the settings service which provides functionality to manipulate registered settings objects.
     /// </summary>
-    public interface ISettingsService
+    /// <seealso cref="ISettingsProvider" />
+    public interface ISettingsService : ISettingsProvider
     {
-        /// <summary>
-        /// Gets the current value for the specified type.
-        /// </summary>
-        /// <typeparam name="T">The settings type.</typeparam>
-        T Get<T>()
-            where T : ISettings;
-
         /// <summary>
         /// Loads the latest settings from the permanent storage.
         /// </summary>
@@ -55,14 +48,6 @@ namespace Quasar.Settings
         /// </summary>
         /// <typeparam name="T">The settings type.</typeparam>
         void SetDefaults<T>()
-            where T : ISettings;
-
-        /// <summary>
-        /// Subscribes the observer to the changes of the settings by the specified type.
-        /// </summary>
-        /// <param name="observer">The observer.</param>
-        /// <typeparam name="T">The settings type.</typeparam>
-        IDisposable Subscribe<T>(IObserver<T> observer)
             where T : ISettings;
 
         /// <summary>

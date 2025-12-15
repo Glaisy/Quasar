@@ -39,7 +39,7 @@ namespace Quasar.Diagnostics.Pipeline.Internals
         private static readonly Vector2 Margin = new Vector2(32.0f, 20.0f);
 
 
-        private readonly ISettingsService settingsService;
+        private readonly ISettingsProvider settingsProvider;
         private readonly ITimeProvider timeProvider;
         private readonly TextMeshProvider textMeshProvider;
         private readonly IPool<DebugTextEntry> debugTextEntryPool;
@@ -53,16 +53,16 @@ namespace Quasar.Diagnostics.Pipeline.Internals
         /// Initializes a new instance of the <see cref="DebugTextService" /> class.
         /// </summary>
         /// <param name="textMeshProvider">The text mesh provider.</param>
-        /// <param name="settingsService">The settings service.</param>
+        /// <param name="settingsProvider">The settings provider.</param>
         /// <param name="timeProvider">The time provider.</param>
         /// <param name="poolFactory">The pool factory.</param>
         public DebugTextService(
             TextMeshProvider textMeshProvider,
-            ISettingsService settingsService,
+            ISettingsProvider settingsProvider,
             ITimeProvider timeProvider,
             IPoolFactory poolFactory)
         {
-            this.settingsService = settingsService;
+            this.settingsProvider = settingsProvider;
             this.timeProvider = timeProvider;
             this.textMeshProvider = textMeshProvider;
 
@@ -172,7 +172,7 @@ namespace Quasar.Diagnostics.Pipeline.Internals
         public void Initialize()
         {
             font = new Font(FontFamilyConstants.DefaultName, FontSize);
-            settings = settingsService.Get<IDebugSettings>();
+            settings = settingsProvider.Get<IDebugSettings>();
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Quasar.Pipelines.Internals
     [Singleton]
     internal sealed class TimeService : ITimeProvider
     {
-        private DateTime fixedFrameStart;
+        private DateTime phyisicsFrameStart;
         private DateTime frameStart;
 
 
@@ -33,7 +33,7 @@ namespace Quasar.Pipelines.Internals
         public float DeltaTime { get; private set; }
 
         /// <inheritdoc/>
-        public float FixedDeltaTime { get; private set; }
+        public float PhysicsDeltaTime { get; private set; }
 
         /// <inheritdoc/>
         public float Time { get; private set; }
@@ -44,27 +44,27 @@ namespace Quasar.Pipelines.Internals
         /// </summary>
         public void Initialize()
         {
-            fixedFrameStart = frameStart = DateTime.UtcNow;
-            DeltaTime = FixedDeltaTime = Time = 0.0f;
+            phyisicsFrameStart = frameStart = DateTime.UtcNow;
+            DeltaTime = PhysicsDeltaTime = Time = 0.0f;
         }
 
         /// <summary>
-        /// Updates the fixed time (physics pipeline).
+        /// Updates the delta time for the physics pipeline.
         /// </summary>
-        public void UpdateFixedTime()
+        public void UpdatePhysicsDeltaTime()
         {
-            var fixedFrameEnd = DateTime.UtcNow;
-            var fixedDeltaTime = (float)(fixedFrameEnd - fixedFrameStart).TotalSeconds;
-            Assertion.ThrowIfNegativeOrZero(fixedDeltaTime, nameof(fixedDeltaTime));
+            var physicsFrameStart = DateTime.UtcNow;
+            var physicsDeltaTime = (float)(physicsFrameStart - phyisicsFrameStart).TotalSeconds;
+            Assertion.ThrowIfNegativeOrZero(physicsDeltaTime, nameof(physicsDeltaTime));
 
-            FixedDeltaTime = fixedDeltaTime;
-            fixedFrameStart = fixedFrameEnd;
+            PhysicsDeltaTime = physicsDeltaTime;
+            phyisicsFrameStart = physicsFrameStart;
         }
 
         /// <summary>
-        /// Updates the time (update and rendering pipeline).
+        /// Updates the delta time for the update and rendering pipeline.
         /// </summary>
-        public void UpdateTime()
+        public void UpdateDeltaTime()
         {
             var frameEnd = DateTime.UtcNow;
             var deltaTime = (float)(frameEnd - frameStart).TotalSeconds;

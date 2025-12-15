@@ -96,9 +96,9 @@ namespace Quasar.Internals
                 timeService.Initialize();
                 while (ApplicationWindow.Visible)
                 {
+                    timeService.UpdateDeltaTime();
                     updatePipeline.Execute();
                     renderingPipeline.Execute();
-                    timeService.UpdateTime();
                 }
             }
             catch (Exception exception)

@@ -75,7 +75,7 @@ namespace DemoApplication.Tutorial01
             if (lastSecond != second)
             {
                 var fps = timeProvider.DeltaTime > 0 ? 1.0f / timeProvider.DeltaTime : 0.0f;
-                Debug.Info($"FPS: {fps:0}, Time:{timeProvider.Time:0.0}s");
+                Debug.Info($"FPS: {fps:0}, Time:{timeProvider.Time:0.0}s, Delta: {timeProvider.DeltaTime * 1000:0.0}ms,  Physics delta: {timeProvider.PhysicsDeltaTime * 1000:0.0}ms");
 
                 lastSecond = second;
             }

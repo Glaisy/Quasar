@@ -45,7 +45,7 @@ namespace Quasar.Pipelines.Internals
 
             Name = GetType().Name;
 
-            SettingsService = serviceProvider.GetRequiredService<ISettingsService>();
+            SettingsProvider = serviceProvider.GetRequiredService<ISettingsProvider>();
 
             var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
             Logger = loggerFactory.Create(Name);
@@ -121,9 +121,9 @@ namespace Quasar.Pipelines.Internals
         protected ILogger Logger { get; }
 
         /// <summary>
-        /// Gets the settings service.
+        /// Gets the settings provider.
         /// </summary>
-        protected ISettingsService SettingsService { get; }
+        protected ISettingsProvider SettingsProvider { get; }
 
         /// <summary>
         /// Gets the stages.

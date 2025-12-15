@@ -22,9 +22,9 @@ namespace Quasar.Pipelines
         float DeltaTime { get; }
 
         /// <summary>
-        /// Gets the delta time since last fixed update [s].
+        /// Gets the delta time since last physics update [s].
         /// </summary>
-        float FixedDeltaTime { get; }
+        float PhysicsDeltaTime { get; }
 
         /// <summary>
         /// Gets the time since application start [s].

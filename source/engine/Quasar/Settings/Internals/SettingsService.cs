@@ -33,6 +33,7 @@ namespace Quasar.Settings.Internals
     /// </summary>
     /// <seealso cref="ISettingsService" />
     [Export(typeof(ISettingsService))]
+    [Export(typeof(ISettingsProvider))]
     [Singleton]
     internal sealed class SettingsService : ISettingsService
     {

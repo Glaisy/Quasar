@@ -9,6 +9,8 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System.Runtime.CompilerServices;
+
 using Quasar.Pipelines;
 
 namespace Quasar.Physics.Pipelines
@@ -19,5 +21,23 @@ namespace Quasar.Physics.Pipelines
     /// <seealso cref="PipelineStageBase{IPhysicsContext}" />
     public abstract class PhysicsPipelineStageBase : PipelineStageBase<IPhysicsContext>
     {
+        /// <summary>
+        /// Applies the physics settings for the current stage.
+        /// </summary>
+        /// <param name="physicsSettings">The physics settings.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ApplySettings(IPhysicsSettings physicsSettings)
+        {
+            OnApplySettings(physicsSettings);
+        }
+
+
+        /// <summary>
+        /// Apply physics settings event handler.
+        /// </summary>
+        /// <param name="physicsSettings">The physics settings.</param>
+        protected virtual void OnApplySettings(IPhysicsSettings physicsSettings)
+        {
+        }
     }
 }

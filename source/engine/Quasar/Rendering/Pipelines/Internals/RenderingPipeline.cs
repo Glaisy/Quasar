@@ -43,7 +43,7 @@ namespace Quasar.Rendering.Pipelines.Internals
         /// <param name="renderingContext">The rendering context.</param>
         /// <param name="serviceLoader">The service loader.</param>
         /// <param name="serviceProvider">The service provider.</param>
-        public RenderingPipeline(
+        internal RenderingPipeline(
             IApplicationWindow applicationWindow,
             IRenderingContext renderingContext,
             IServiceLoader serviceLoader,
@@ -69,14 +69,14 @@ namespace Quasar.Rendering.Pipelines.Internals
         protected override void OnStart()
         {
             // initialize rendering context by the actual settings
-            var renderingSettings = SettingsService.Get<IRenderingSettings>();
+            var renderingSettings = SettingsProvider.Get<IRenderingSettings>();
             InitializeRenderingContext(renderingSettings);
 
-            // collect rendering stages
+            // collect pipeline stages
             base.OnStart();
 
             // subscribe for settings changes and auto apply settings
-            settingsSubscription = SettingsService.Subscribe(settingsObserver);
+            settingsSubscription = SettingsProvider.Subscribe(settingsObserver);
             OnSettingsChanged(renderingSettings);
         }
 

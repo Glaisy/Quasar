@@ -27,7 +27,7 @@ namespace Quasar.Pipelines.Internals
         /// Initializes a new instance of the <see cref="UpdatePipeline" /> class.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
-        public UpdatePipeline(IServiceProvider serviceProvider)
+        internal UpdatePipeline(IServiceProvider serviceProvider)
             : base(serviceProvider)
         {
         }
