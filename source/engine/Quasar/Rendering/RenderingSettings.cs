@@ -31,7 +31,8 @@ namespace Quasar.Rendering
         /// </summary>
         public static readonly IRenderingSettings Defaults = new RenderingSettings
         {
-            Platform = GraphicsPlatform.OpenGL
+            Platform = GraphicsPlatform.OpenGL,
+            VSyncMode = VSyncMode.On
         };
 
 

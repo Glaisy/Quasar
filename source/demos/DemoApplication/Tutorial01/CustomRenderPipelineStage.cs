@@ -69,7 +69,7 @@ namespace DemoApplication.Tutorial01
         protected override void OnStart()
         {
             shader = shaderRepository.GetShader("Test");
-            proceduralMeshGenerator.GenerateEllipsoid(ref mesh, 3, 3, Vector3.One);
+            proceduralMeshGenerator.GenerateEllipsoid(ref mesh, 4, 5, Vector3.One);
         }
     }
 }
