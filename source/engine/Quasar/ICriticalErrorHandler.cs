@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="IQuasarApplication.cs" company="Space Development">
+// <copyright file="ICriticalErrorHandler.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -11,29 +11,20 @@
 
 using System;
 
-using Quasar.UI;
-
 namespace Quasar
 {
     /// <summary>
-    /// Represents a Quasar application.
+    /// Represents a critical error handler.
+    /// This kind of errors can happen during application startup/shutdown process or
+    /// by catching unhandled exceptions.
     /// </summary>
-    public interface IQuasarApplication
+    public interface ICriticalErrorHandler
     {
         /// <summary>
-        /// Gets the application window.
+        /// Handles the exception.
         /// </summary>
-        IApplicationWindow ApplicationWindow { get; }
-
-        /// <summary>
-        /// Gets the service provider.
-        /// </summary>
-        IServiceProvider ServiceProvider { get; }
-
-
-        /// <summary>
-        /// Runs the execution loop.
-        /// </summary>
-        void Run();
+        /// <param name="title">The title.</param>
+        /// <param name="exception">The exception.</param>
+        void Handle(string title, Exception exception);
     }
 }

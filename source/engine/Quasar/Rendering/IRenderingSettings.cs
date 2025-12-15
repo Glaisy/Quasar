@@ -27,6 +27,11 @@ namespace Quasar.Rendering
         string DisplayMode { get; }
 
         /// <summary>
+        /// Gets the FPS limit [1/s].
+        /// </summary>
+        int FPSLimit { get; }
+
+        /// <summary>
         /// Gets a value indicating whether full screen mode is active.
         /// </summary>
         bool FullScreenMode { get; }

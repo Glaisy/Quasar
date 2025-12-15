@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Quasar.Internals;
 using Quasar.Settings;
 using Quasar.UI;
+using Quasar.UI.Internals;
 
 using Space.Core;
 using Space.Core.DependencyInjection;
@@ -30,11 +31,14 @@ namespace Quasar
     /// </summary>
     public sealed class QuasarApplicationBuilder
     {
+        private const string CriticalErrorTitle = $"{nameof(Quasar)} critical error...";
         private const string PlatformSpecificAssemblyNameFormatStringP1 = $"{nameof(Quasar)}.{{0}}.dll";
+        private static readonly Range<float> ScreenRatioRange = new Range<float>(0.1f, 1.0f);
 
 
         private readonly OperatingSystemPlatform operatingSystemPlatform;
         private readonly IServiceProvider serviceProvider;
+        private readonly ICriticalErrorHandler criticalErrorHandler;
 
 
         /// <summary>
@@ -42,17 +46,26 @@ namespace Quasar
         /// </summary>
         public QuasarApplicationBuilder()
         {
-            operatingSystemPlatform = DetectOperatingSystemPlatform();
+            try
+            {
+                operatingSystemPlatform = DetectOperatingSystemPlatform();
 
-            serviceProvider = new DynamicServiceProvider()
-                .InitializeStaticServices();
+                serviceProvider = new DynamicServiceProvider()
+                    .InitializeStaticServices();
 
-            ServiceLoader = serviceProvider.GetRequiredService<IServiceLoader>()
-                .AddExportedServices(typeof(IEnvironmentInformation).Assembly)
-                .AddExportedServices(typeof(IQuasarApplication).Assembly)
-                .ConfigureEnvironmentInformation();
+                ServiceLoader = serviceProvider.GetRequiredService<IServiceLoader>()
+                    .AddExportedServices(typeof(IEnvironmentInformation).Assembly)
+                    .AddExportedServices(typeof(IQuasarApplication).Assembly)
+                    .ConfigureEnvironmentInformation();
 
-            AddPlatformSpecificServices(operatingSystemPlatform);
+                AddPlatformSpecificServices(operatingSystemPlatform);
+
+                criticalErrorHandler = serviceProvider.GetRequiredService<ICriticalErrorHandler>();
+            }
+            catch (Exception exception)
+            {
+                HandleCriticalError(exception);
+            }
         }
 
 
@@ -68,9 +81,18 @@ namespace Quasar
         /// <returns>The application instance.</returns>
         public IQuasarApplication Build()
         {
-            serviceProvider.InitializeStaticServices();
+            try
+            {
+                serviceProvider.InitializeStaticServices();
+                CreateApplicationWindow();
+                return serviceProvider.GetRequiredService<QuasarApplication>();
+            }
+            catch (Exception exception)
+            {
+                HandleCriticalError(exception);
 
-            return serviceProvider.GetRequiredService<QuasarApplication>();
+                return null;
+            }
         }
 
         /// <summary>
@@ -129,6 +151,35 @@ namespace Quasar
             ServiceLoader.AddExportedServices(platformSpecificAssembly);
         }
 
+        private void CreateApplicationWindow()
+        {
+            string title = null;
+            ApplicationWindowType applicationWindowType;
+            float screenRatio;
+            var applicationWindowConfiguration = serviceProvider.GetService<ApplicationWindowConfiguration>();
+            if (applicationWindowConfiguration == null)
+            {
+                applicationWindowType = ApplicationWindowConfiguration.DefaultType;
+                screenRatio = ApplicationWindowConfiguration.DefaultScreenRatio;
+            }
+            else
+            {
+                applicationWindowType = applicationWindowConfiguration.Type;
+                screenRatio = ScreenRatioRange.Clamp(applicationWindowConfiguration.ScreenRatio);
+                title = applicationWindowConfiguration.Title;
+            }
+
+            if (String.IsNullOrEmpty(title))
+            {
+                var environmentInformation = serviceProvider.GetRequiredService<IEnvironmentInformation>();
+                title = environmentInformation.Title;
+            }
+
+            var nativeWindowFactory = serviceProvider.GetRequiredService<INativeWindowFactory>();
+            var applicationWindow = nativeWindowFactory.CreateApplicationWindow(applicationWindowType, title, screenRatio);
+            ServiceLoader.AddSingleton(applicationWindow);
+        }
+
         private static OperatingSystemPlatform DetectOperatingSystemPlatform()
         {
             switch (Environment.OSVersion.Platform)
@@ -139,6 +190,24 @@ namespace Quasar
                 default:
                     throw new NotSupportedException(Environment.OSVersion.ToString());
             }
+        }
+
+        private void HandleCriticalError(Exception exception)
+        {
+            if (criticalErrorHandler != null)
+            {
+                criticalErrorHandler.Handle(CriticalErrorTitle, exception);
+                return;
+            }
+
+#if DEBUG
+            var errorMessage = exception.ToString();
+#else
+            var errorMessage = exception.Message;
+#endif
+
+            Console.WriteLine($"Critical error detected: {errorMessage}");
+            Environment.Exit(exception.HResult);
         }
     }
 }

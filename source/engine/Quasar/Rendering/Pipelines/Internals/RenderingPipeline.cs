@@ -21,7 +21,7 @@ using Space.Core.DependencyInjection;
 namespace Quasar.Rendering.Pipelines.Internals
 {
     /// <summary>
-    /// This render pipeline main class provides entry point for all rendering operations.
+    /// The Quasar rendering pipeline's main class provides entry point for all rendering operations.
     /// </summary>
     /// <seealso cref="PipelineBase{RenderPipelineStageBase, IRenderingContext}" />
     [Export]

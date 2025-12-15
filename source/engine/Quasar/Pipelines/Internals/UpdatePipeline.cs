@@ -16,7 +16,7 @@ using Space.Core.DependencyInjection;
 namespace Quasar.Pipelines.Internals
 {
     /// <summary>
-    /// Quasar's update pipeline implementation.
+    /// The Quasar update pipeline's main class provides entry point for all update operations.
     /// </summary>
     /// <seealso cref="PipelineBase{UpdatePipelineStageBase, Object}" />
     [Export]

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="PhysicsPipelineStageBase.cs" company="Space Development">
+// <copyright file="IPhysicsContext.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,16 +9,12 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-namespace Quasar.Physics.Pipeline
+namespace Quasar.Physics.Pipelines
 {
     /// <summary>
-    /// Represents an abstract base class for physics pipeline's processing stages.
+    /// Represents the physics pipeline's context.
     /// </summary>
-    public abstract class PhysicsPipelineStageBase
+    public interface IPhysicsContext
     {
-        /// <summary>
-        /// Execute event handler.
-        /// </summary>
-        protected abstract void OnExecute();
     }
 }

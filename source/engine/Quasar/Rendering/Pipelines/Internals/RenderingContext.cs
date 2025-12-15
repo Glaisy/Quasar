@@ -17,7 +17,7 @@ using Space.Core.DependencyInjection;
 namespace Quasar.Rendering.Pipelines.Internals
 {
     /// <summary>
-    /// The rendering pipeline's context object implementation.
+    /// The Quasar rendering pipeline's context object implementation.
     /// </summary>
     /// <seealso cref="IRenderingContext" />
     [Export(typeof(IRenderingContext))]

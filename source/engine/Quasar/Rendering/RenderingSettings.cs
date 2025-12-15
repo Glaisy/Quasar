@@ -9,6 +9,8 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System;
+
 using Quasar.Graphics;
 using Quasar.Settings;
 
@@ -29,7 +31,6 @@ namespace Quasar.Rendering
         /// </summary>
         public static readonly IRenderingSettings Defaults = new RenderingSettings
         {
-            FullScreenMode = false,
             Platform = GraphicsPlatform.OpenGL
         };
 
@@ -38,6 +39,16 @@ namespace Quasar.Rendering
         /// Gets or sets the display mode identifier.
         /// </summary>
         public string DisplayMode { get; set; }
+
+        private int fpsLimit;
+        /// <summary>
+        /// Gets or sets the FPS limit [1/s].
+        /// </summary>
+        public int FPSLimit
+        {
+            get => fpsLimit;
+            set => fpsLimit = Math.Max(0, value);
+        }
 
         /// <summary>
         /// Gets or sets a value indicating whether full screen mode is active.
@@ -66,6 +77,7 @@ namespace Quasar.Rendering
         protected override void CopyProperties(IRenderingSettings source)
         {
             DisplayMode = source.DisplayMode;
+            FPSLimit = source.FPSLimit;
             FullScreenMode = source.FullScreenMode;
             Platform = source.Platform;
             VSyncMode = source.VSyncMode;

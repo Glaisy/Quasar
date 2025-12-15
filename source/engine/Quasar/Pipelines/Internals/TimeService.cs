@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="TimeProvider.cs" company="Space Development">
+// <copyright file="TimeService.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -15,12 +15,13 @@ using Space.Core.DependencyInjection;
 namespace Quasar.Pipelines.Internals
 {
     /// <summary>
-    /// The internal time provider implementation.
+    /// The internal time service implementation.
     /// </summary>
     /// <seealso cref="ITimeProvider" />
     [Export(typeof(ITimeProvider))]
+    [Export]
     [Singleton]
-    internal sealed class TimeProvider : ITimeProvider
+    internal sealed class TimeService : ITimeProvider
     {
         /// <inheritdoc/>
         public float DeltaTime { get; private set; }
@@ -32,7 +33,10 @@ namespace Quasar.Pipelines.Internals
         public float Time { get; private set; }
 
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Increments the fixed time counter by the specified delta time.
+        /// </summary>
+        /// <param name="deltaTime">The delta time [s].</param>
         public void IncrementFixedTime(float deltaTime)
         {
             Assertion.ThrowIfNegativeOrZero(deltaTime, nameof(deltaTime));
@@ -40,7 +44,10 @@ namespace Quasar.Pipelines.Internals
             FixedDeltaTime = deltaTime;
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Increments the time counter by the specified delta time.
+        /// </summary>
+        /// <param name="deltaTime">The delta time [s].</param>
         public void IncrementTime(float deltaTime)
         {
             Assertion.ThrowIfNegative(deltaTime, nameof(deltaTime));

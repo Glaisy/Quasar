@@ -10,17 +10,13 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Threading;
 
-using Microsoft.Extensions.DependencyInjection;
-
+using Quasar.Physics.Pipelines.Internals;
 using Quasar.Pipelines.Internals;
 using Quasar.Rendering.Pipelines.Internals;
 using Quasar.Settings;
 using Quasar.UI;
-using Quasar.UI.Internals;
 
-using Space.Core;
 using Space.Core.DependencyInjection;
 using Space.Core.Diagnostics;
 
@@ -29,44 +25,54 @@ namespace Quasar.Internals
     /// <summary>
     /// Quasar application implementation.
     /// </summary>
-    /// <seealso cref="DisposableBase" />
     /// <seealso cref="IQuasarApplication" />
     [Export]
     [Singleton]
-    internal sealed class QuasarApplication : DisposableBase, IQuasarApplication
+    internal sealed class QuasarApplication : IQuasarApplication
     {
-        private static readonly Range<float> ScreenRatioRange = new Range<float>(0.1f, 1.0f);
-
-
-        private ILoggerService loggerService;
-        private UpdatePipeline updatePipeline;
-        private RenderingPipeline renderingPipeline;
+        private readonly ICriticalErrorHandler criticalErrorHandler;
+        private readonly ILoggerService loggerService;
+        private readonly ISettingsService settingsService;
+        private readonly TimeService timeService;
+        private readonly UpdatePipeline updatePipeline;
+        private readonly PhysicsPipeline physicsPipeline;
+        private readonly RenderingPipeline renderingPipeline;
+        private ILogger logger;
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QuasarApplication" /> class.
         /// </summary>
-        /// <param name="environmentInformation">The environment information.</param>
-        /// <param name="nativeWindowFactory">The native window factory.</param>
         /// <param name="serviceProvider">The service provider.</param>
-        /// <param name="serviceLoader">The service loader.</param>
+        /// <param name="criticalErrorHandler">The critical error handler.</param>
+        /// <param name="applicationWindow">The application window.</param>
+        /// <param name="loggerService">The logger service.</param>
+        /// <param name="settingsService">The settings service.</param>
+        /// <param name="timeService">The time service.</param>
+        /// <param name="updatePipeline">The update pipeline.</param>
+        /// <param name="physicsPipeline">The physics pipeline.</param>
+        /// <param name="renderingPipeline">The rendering pipeline.</param>
         public QuasarApplication(
-            IEnvironmentInformation environmentInformation,
-            INativeWindowFactory nativeWindowFactory,
             IServiceProvider serviceProvider,
-            IServiceLoader serviceLoader)
+            ICriticalErrorHandler criticalErrorHandler,
+            IApplicationWindow applicationWindow,
+            ILoggerService loggerService,
+            ISettingsService settingsService,
+            TimeService timeService,
+            UpdatePipeline updatePipeline,
+            PhysicsPipeline physicsPipeline,
+            RenderingPipeline renderingPipeline)
         {
+            this.criticalErrorHandler = criticalErrorHandler;
+            this.loggerService = loggerService;
+            this.settingsService = settingsService;
+            this.timeService = timeService;
+            this.updatePipeline = updatePipeline;
+            this.physicsPipeline = physicsPipeline;
+            this.renderingPipeline = renderingPipeline;
+
             ServiceProvider = serviceProvider;
-
-            ApplicationWindow = CreateApplicationWindow(nativeWindowFactory, environmentInformation);
-            serviceLoader.AddSingleton(ApplicationWindow);
-        }
-
-        /// <inheritdoc/>
-        protected override void Dispose(bool disposing)
-        {
-            renderingPipeline?.Shutdown();
-            loggerService?.Stop();
+            ApplicationWindow = applicationWindow;
         }
 
 
@@ -80,56 +86,68 @@ namespace Quasar.Internals
         /// <inheritdoc/>
         public void Run()
         {
-            // initialize internal services
-            loggerService = ServiceProvider.GetRequiredService<ILoggerService>();
-            loggerService.Start();
-
-            var settingsService = ServiceProvider.GetRequiredService<ISettingsService>();
-            settingsService.Load();
-
-            // initialize pipelines
-            updatePipeline = ServiceProvider.GetRequiredService<UpdatePipeline>();
-            updatePipeline.Start();
-            renderingPipeline = ServiceProvider.GetRequiredService<RenderingPipeline>();
-            renderingPipeline.Start();
-
-            // show application window and execute application loop
-            ApplicationWindow.Show();
-            while (ApplicationWindow.Visible)
+            Exception unhandledException = null;
+            try
             {
-                updatePipeline.Execute();
-                renderingPipeline.Execute();
-                Thread.Sleep(20);
+                StartApplicationInternals();
+
+                // run the main application loop
+                ApplicationWindow.Show();
+                while (ApplicationWindow.Visible)
+                {
+                    updatePipeline.Execute();
+                    renderingPipeline.Execute();
+                }
+            }
+            catch (Exception exception)
+            {
+                unhandledException = exception;
+            }
+            finally
+            {
+                ShutdownApplicationInternals(unhandledException);
             }
         }
 
-
-        private IApplicationWindow CreateApplicationWindow(
-            INativeWindowFactory nativeWindowFactory,
-            IEnvironmentInformation environmentInformation)
+        private void StartApplicationInternals()
         {
-            string title = null;
-            ApplicationWindowType applicationWindowType;
-            float screenRatio;
-            var applicationWindowConfiguration = ServiceProvider.GetService<ApplicationWindowConfiguration>();
-            if (applicationWindowConfiguration == null)
-            {
-                applicationWindowType = ApplicationWindowConfiguration.DefaultType;
-                screenRatio = ApplicationWindowConfiguration.DefaultScreenRatio;
-            }
-            else
-            {
-                applicationWindowType = applicationWindowConfiguration.Type;
-                screenRatio = ScreenRatioRange.Clamp(applicationWindowConfiguration.ScreenRatio);
-                title = applicationWindowConfiguration.Title;
-            }
+            // initialize internal services
+            loggerService.Start();
+            logger = loggerService.Factory.Create<QuasarApplication>();
+            logger.Info("Initializing the application.");
 
-            if (String.IsNullOrEmpty(title))
-            {
-                title = environmentInformation.Title;
-            }
+            logger.Info("Loading application settings.");
+            settingsService.Load();
 
-            return nativeWindowFactory.CreateApplicationWindow(applicationWindowType, title, screenRatio);
+            // initialize pipelines
+            updatePipeline.Start();
+            physicsPipeline.Start();
+            renderingPipeline.Start();
+
+            logger?.Info("Application initialization is completed.");
+        }
+
+        private void ShutdownApplicationInternals(Exception unhandledException)
+        {
+            try
+            {
+                logger?.Info("Shutting down the application.");
+                renderingPipeline.Shutdown();
+                physicsPipeline.Shutdown();
+                updatePipeline.Shutdown();
+
+                logger?.Info("Application shutdown is completed.");
+                loggerService?.Stop();
+
+                if (unhandledException != null)
+                {
+                    criticalErrorHandler.Handle(ApplicationWindow.Title, unhandledException);
+                }
+            }
+            catch (Exception exception)
+            {
+                criticalErrorHandler.Handle(ApplicationWindow.Title, exception);
+            }
         }
     }
 }

@@ -30,18 +30,5 @@ namespace Quasar.Pipelines
         /// Gets the time since application start [s].
         /// </summary>
         float Time { get; }
-
-
-        /// <summary>
-        /// Increments the fixed time counter by the specified delta time.
-        /// </summary>
-        /// <param name="deltaTime">The delta time [s].</param>
-        internal void IncrementFixedTime(float deltaTime);
-
-        /// <summary>
-        /// Increments the time counter by the specified delta time.
-        /// </summary>
-        /// <param name="deltaTime">The delta time [s].</param>
-        internal void IncrementTime(float deltaTime);
     }
 }
