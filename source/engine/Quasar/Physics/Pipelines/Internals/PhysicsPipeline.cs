@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Threading;
+using System.Timers;
 
 using Quasar.Pipelines.Internals;
 using Quasar.Utilities;
@@ -30,7 +30,6 @@ namespace Quasar.Physics.Pipelines.Internals
         private readonly TimeService timeService;
         private readonly ActionBasedObserver<IPhysicsSettings> settingsObserver;
         private IDisposable settingsSubscription;
-        private float timerIntervalMs;
         private Timer timer;
 
 
@@ -63,11 +62,21 @@ namespace Quasar.Physics.Pipelines.Internals
             // collect pipeline stages
             base.OnStart();
 
+            // initialize timer
+            timer = new Timer
+            {
+                Enabled = false,
+                AutoReset = true
+            };
+            timer.Elapsed += TimerCallback;
+
             // subscribe for settings changes and auto apply settings
             var physicsSettings = SettingsProvider.Get<IPhysicsSettings>();
             settingsSubscription = SettingsProvider.Subscribe(settingsObserver);
             OnSettingsChanged(physicsSettings);
-            UpdateTimer(0.04f);
+
+            // enable timer
+            timer.Enabled = true;
         }
 
         /// <inheritdoc/>
@@ -84,13 +93,15 @@ namespace Quasar.Physics.Pipelines.Internals
 
         private void OnSettingsChanged(IPhysicsSettings physicsSettings)
         {
+            UpdateTimer(physicsSettings.TimeStepMs);
+
             foreach (var stage in Stages)
             {
                 stage.ApplySettings(physicsSettings);
             }
         }
 
-        private void TimerCallback(object state)
+        private void TimerCallback(object sender, ElapsedEventArgs e)
         {
             timeService.UpdatePhysicsDeltaTime();
             Execute();
@@ -98,15 +109,13 @@ namespace Quasar.Physics.Pipelines.Internals
 
         private void UpdateTimer(float intervalSeconds)
         {
-            var intervalMs = (int)MathF.Round(intervalSeconds * 1000.0f);
-            if (timerIntervalMs == intervalSeconds)
+            var intervalMs = intervalSeconds * 1000.0;
+            if (timer.Interval == intervalMs)
             {
                 return;
             }
 
-            timer?.Dispose();
-            timer = new Timer(TimerCallback, null, 0, intervalMs);
-            timerIntervalMs = intervalSeconds;
+            timer.Interval = intervalMs;
         }
     }
 }
