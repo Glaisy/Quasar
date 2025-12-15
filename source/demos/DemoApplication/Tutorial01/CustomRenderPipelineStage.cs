@@ -9,6 +9,8 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System;
+
 using Quasar;
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
@@ -32,51 +34,56 @@ namespace DemoApplication.Tutorial01
     {
         private readonly IShaderRepository shaderRepository;
         private readonly IProceduralMeshGenerator proceduralMeshGenerator;
+        private readonly ITimeProvider timeProvider;
         private IMesh mesh;
         private ShaderBase shader;
         private float angle;
-        private int frame;
-
+        private int lastSecond;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomRenderPipelineStage" /> class.
         /// </summary>
         /// <param name="shaderRepository">The shader repository.</param>
         /// <param name="proceduralMeshGenerator">The procedural mesh generator.</param>
+        /// <param name="timeProvider">The time provider.</param>
         internal CustomRenderPipelineStage(
             IShaderRepository shaderRepository,
-            IProceduralMeshGenerator proceduralMeshGenerator)
+            IProceduralMeshGenerator proceduralMeshGenerator,
+            ITimeProvider timeProvider)
         {
             this.shaderRepository = shaderRepository;
             this.proceduralMeshGenerator = proceduralMeshGenerator;
+            this.timeProvider = timeProvider;
         }
 
 
         /// <inheritdoc/>
         protected override void OnExecute()
         {
-            var rotation = Quaternion.AngleAxis(angle, Vector3.PositiveY);
-            Matrix4 rotationMatrix;
-            rotationMatrix.FromQuaternion(rotation, false);
-
-            shader.Activate();
-            shader.SetMatrix(0, rotationMatrix);
-            Context.CommandProcessor.DrawMesh(mesh);
-            shader.Deactivate();
-
             angle += 0.1f;
-            frame++;
+            ////var rotation = Quaternion.AngleAxis(angle, Vector3.PositiveY);
+            ////Matrix4 rotationMatrix;
+            ////rotationMatrix.FromQuaternion(rotation, false);
 
-            if (frame % 360 == 0)
+            ////shader.Activate();
+            ////shader.SetMatrix(0, rotationMatrix);
+            ////Context.CommandProcessor.DrawMesh(mesh);
+            ////shader.Deactivate();
+
+            var second = (int)MathF.Floor(timeProvider.Time);
+
+            if (lastSecond != second)
             {
-                Debug.Info("Hello World!");
+                var fps = timeProvider.DeltaTime > 0 ? 1.0f / timeProvider.DeltaTime : 0.0f;
+                Debug.Info($"FPS: {fps:0}, Time:{timeProvider.Time:0.0}s");
+
+                lastSecond = second;
             }
         }
 
         /// <inheritdoc/>
         protected override void OnStart()
         {
-            Debug.Info("Start!");
             shader = shaderRepository.GetShader("Test");
             proceduralMeshGenerator.GenerateEllipsoid(ref mesh, 4, 5, Vector3.One);
         }

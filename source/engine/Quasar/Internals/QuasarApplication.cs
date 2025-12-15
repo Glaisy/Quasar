@@ -93,10 +93,12 @@ namespace Quasar.Internals
 
                 // run the main application loop
                 ApplicationWindow.Show();
+                timeService.Initialize();
                 while (ApplicationWindow.Visible)
                 {
                     updatePipeline.Execute();
                     renderingPipeline.Execute();
+                    timeService.UpdateTime();
                 }
             }
             catch (Exception exception)

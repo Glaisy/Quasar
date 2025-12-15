@@ -160,6 +160,11 @@ namespace Quasar.Pipelines.Internals
         /// </summary>
         protected virtual void OnShutdown()
         {
+            if (Stages == null)
+            {
+                return;
+            }
+
             for (var i = Stages.Count - 1; i >= 0; i--)
             {
                 Stages[i].Shutdown();

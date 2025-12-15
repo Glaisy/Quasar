@@ -9,6 +9,8 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System;
+
 using Space.Core;
 using Space.Core.DependencyInjection;
 
@@ -23,6 +25,10 @@ namespace Quasar.Pipelines.Internals
     [Singleton]
     internal sealed class TimeService : ITimeProvider
     {
+        private DateTime fixedFrameStart;
+        private DateTime frameStart;
+
+
         /// <inheritdoc/>
         public float DeltaTime { get; private set; }
 
@@ -34,26 +40,39 @@ namespace Quasar.Pipelines.Internals
 
 
         /// <summary>
-        /// Increments the fixed time counter by the specified delta time.
+        /// Executes the time service initialization.
         /// </summary>
-        /// <param name="deltaTime">The delta time [s].</param>
-        public void IncrementFixedTime(float deltaTime)
+        public void Initialize()
         {
-            Assertion.ThrowIfNegativeOrZero(deltaTime, nameof(deltaTime));
-
-            FixedDeltaTime = deltaTime;
+            fixedFrameStart = frameStart = DateTime.UtcNow;
+            DeltaTime = FixedDeltaTime = Time = 0.0f;
         }
 
         /// <summary>
-        /// Increments the time counter by the specified delta time.
+        /// Updates the fixed time (physics pipeline).
         /// </summary>
-        /// <param name="deltaTime">The delta time [s].</param>
-        public void IncrementTime(float deltaTime)
+        public void UpdateFixedTime()
         {
-            Assertion.ThrowIfNegative(deltaTime, nameof(deltaTime));
+            var fixedFrameEnd = DateTime.UtcNow;
+            var fixedDeltaTime = (float)(fixedFrameEnd - fixedFrameStart).TotalSeconds;
+            Assertion.ThrowIfNegativeOrZero(fixedDeltaTime, nameof(fixedDeltaTime));
+
+            FixedDeltaTime = fixedDeltaTime;
+            fixedFrameStart = fixedFrameEnd;
+        }
+
+        /// <summary>
+        /// Updates the time (update and rendering pipeline).
+        /// </summary>
+        public void UpdateTime()
+        {
+            var frameEnd = DateTime.UtcNow;
+            var deltaTime = (float)(frameEnd - frameStart).TotalSeconds;
+            Assertion.ThrowIfNegativeOrZero(deltaTime, nameof(deltaTime));
 
             DeltaTime = deltaTime;
             Time += deltaTime;
+            frameStart = frameEnd;
         }
     }
 }

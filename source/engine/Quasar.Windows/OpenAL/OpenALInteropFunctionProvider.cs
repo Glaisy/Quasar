@@ -38,8 +38,12 @@ namespace Quasar.Windows.OpenAL
         /// </summary>
         public OpenALInteropFunctionProvider()
         {
-            var dllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, OpenAL32Dll);
             openAL32Module = Kernel32.LoadLibrary(OpenAL32Dll);
+            if (openAL32Module == IntPtr.Zero)
+            {
+                var dllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, OpenAL32Dll);
+                openAL32Module = Kernel32.LoadLibrary(dllPath);
+            }
         }
 
 
