@@ -120,9 +120,9 @@ namespace Quasar.Internals
             settingsService.Load();
 
             // initialize pipelines
+            renderingPipeline.Start();
             updatePipeline.Start();
             physicsPipeline.Start();
-            renderingPipeline.Start();
 
             logger?.Info("Application initialization is completed.");
         }
@@ -132,9 +132,9 @@ namespace Quasar.Internals
             try
             {
                 logger?.Info("Shutting down the application.");
-                renderingPipeline.Shutdown();
                 physicsPipeline.Shutdown();
                 updatePipeline.Shutdown();
+                renderingPipeline.Shutdown();
 
                 logger?.Info("Application shutdown is completed.");
                 loggerService?.Stop();
