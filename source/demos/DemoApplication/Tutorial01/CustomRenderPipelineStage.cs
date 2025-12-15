@@ -35,6 +35,8 @@ namespace DemoApplication.Tutorial01
         private IMesh mesh;
         private ShaderBase shader;
         private float angle;
+        private int frame;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomRenderPipelineStage" /> class.
@@ -63,11 +65,18 @@ namespace DemoApplication.Tutorial01
             shader.Deactivate();
 
             angle += 0.1f;
+            frame++;
+
+            if (frame % 360 == 0)
+            {
+                Debug.Info("Hello World!");
+            }
         }
 
         /// <inheritdoc/>
         protected override void OnStart()
         {
+            Debug.Info("Start!");
             shader = shaderRepository.GetShader("Test");
             proceduralMeshGenerator.GenerateEllipsoid(ref mesh, 4, 5, Vector3.One);
         }

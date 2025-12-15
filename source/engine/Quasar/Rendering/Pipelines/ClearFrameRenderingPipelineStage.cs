@@ -37,7 +37,7 @@ namespace Quasar.Rendering.Pipelines
         /// Initializes a new instance of the <see cref="ClearFrameRenderingPipelineStage" /> class.
         /// </summary>
         /// <param name="applicationWindow">The application window.</param>
-        public ClearFrameRenderingPipelineStage(IApplicationWindow applicationWindow)
+        internal ClearFrameRenderingPipelineStage(IApplicationWindow applicationWindow)
         {
             this.applicationWindow = applicationWindow;
 

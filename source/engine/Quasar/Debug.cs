@@ -100,6 +100,7 @@ namespace Quasar
         {
 #if DEBUG
             debugTextService = serviceProvider.GetRequiredService<DebugTextService>();
+            debugTextService.Initialize();
 #endif
         }
 

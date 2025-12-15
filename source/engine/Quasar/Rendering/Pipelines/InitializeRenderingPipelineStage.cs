@@ -9,6 +9,9 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using Microsoft.Extensions.DependencyInjection;
+
+using Quasar.Diagnostics.Pipeline.Internals;
 using Quasar.Graphics;
 using Quasar.Rendering.Procedurals;
 
@@ -36,7 +39,7 @@ namespace Quasar.Rendering.Pipelines
         /// <param name="textureRepository">The texture repository.</param>
         /// <param name="cubeMapTextureRepository">The cube map texture repository.</param>
         /// <param name="fontFamilyRepository">The font family repository.</param>
-        public InitializeRenderingPipelineStage(
+        internal InitializeRenderingPipelineStage(
             IShaderRepository shaderRepository,
             ITextureRepository textureRepository,
             ICubeMapTextureRepository cubeMapTextureRepository,
@@ -69,9 +72,14 @@ namespace Quasar.Rendering.Pipelines
             fontFamilyRepository.LoadBuiltInFontFamilies();
 
             // initialize internal rendering/graphics related components
+            Debug.InitializeServices(ServiceProvider);
             MeshGeneratorBase.InitializeServices(ServiceProvider);
             ////RenderObject.InitializeDependencies(resolver);
             ////Material.InitializeDependencies(resolver);
+
+            // initialize late-started rendering services (due to dependency on GraphicsContext)
+            var debugTextService = ServiceProvider.GetRequiredService<DebugTextService>();
+            debugTextService.Initialize();
         }
     }
 }

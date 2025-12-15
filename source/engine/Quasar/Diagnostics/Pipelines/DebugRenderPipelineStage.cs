@@ -58,15 +58,6 @@ namespace Quasar.Diagnostics.Pipeline.Internals
 
             uiElementRenderer.Render(Context.CommandProcessor, elements);
         }
-
-        /// <summary>
-        /// Start event handler.
-        /// </summary>
-        protected override void OnStart()
-        {
-            debugTextService.Initialize();
-            Debug.InitializeServices(ServiceProvider);
-        }
     }
 }
 #endif
