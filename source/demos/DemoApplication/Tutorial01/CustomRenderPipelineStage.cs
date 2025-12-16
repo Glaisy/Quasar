@@ -40,6 +40,7 @@ namespace DemoApplication.Tutorial01
         private readonly ILogger logger;
         private IMesh mesh;
         private ShaderBase shader;
+        private int mvpPropertyIndex;
         private Material material;
         private float angle;
         private int lastSecond;
@@ -78,7 +79,7 @@ namespace DemoApplication.Tutorial01
             Matrix4.Multiply(scaleMatrix, rotationMatrix, ref mvp);
 
             shader.Activate();
-            shader.SetMatrix(2, mvp);
+            shader.SetMatrix(mvpPropertyIndex, mvp);
             material.TransferToShader();
             Context.CommandProcessor.DrawMesh(mesh);
             shader.Deactivate();
@@ -100,6 +101,8 @@ namespace DemoApplication.Tutorial01
         protected override void OnStart()
         {
             shader = shaderRepository.GetShader("Wireframe");
+            mvpPropertyIndex = shader["ModelViewProjectionMatrix"].Index;
+
             material = new Material(shader);
             material.SetColor("LineColor", Color.Blue);
             material.SetColor("FillColor", Color.White);

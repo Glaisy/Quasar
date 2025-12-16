@@ -11,6 +11,7 @@
 
 #if DEBUG
 using Microsoft.Extensions.DependencyInjection;
+
 using Quasar.Diagnostics.Pipeline.Internals;
 #endif
 
@@ -77,6 +78,7 @@ namespace Quasar.Rendering.Pipelines
             Debug.InitializeStaticServices(ServiceProvider);
             MeshGeneratorBase.InitializeStaticServices(ServiceProvider);
             Material.InitializeStaticServices(ServiceProvider);
+            RenderObject.InitializeStaticServices(ServiceProvider);
 
             // initialize late-started rendering services (due to dependency on GraphicsContext)
 #if DEBUG
