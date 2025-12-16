@@ -21,6 +21,7 @@ using Quasar.Rendering.Procedurals;
 using Quasar.UI.Pipelines;
 
 using Space.Core.DependencyInjection;
+using Space.Core.Diagnostics;
 
 namespace DemoApplication.Tutorial01
 {
@@ -36,6 +37,7 @@ namespace DemoApplication.Tutorial01
         private readonly IShaderRepository shaderRepository;
         private readonly IProceduralMeshGenerator proceduralMeshGenerator;
         private readonly ITimeProvider timeProvider;
+        private readonly ILogger logger;
         private IMesh mesh;
         private ShaderBase shader;
         private Material material;
@@ -48,14 +50,18 @@ namespace DemoApplication.Tutorial01
         /// <param name="shaderRepository">The shader repository.</param>
         /// <param name="proceduralMeshGenerator">The procedural mesh generator.</param>
         /// <param name="timeProvider">The time provider.</param>
+        /// <param name="loggerFactory">The logger factory.</param>
         internal CustomRenderPipelineStage(
             IShaderRepository shaderRepository,
             IProceduralMeshGenerator proceduralMeshGenerator,
-            ITimeProvider timeProvider)
+            ITimeProvider timeProvider,
+            ILoggerFactory loggerFactory)
         {
             this.shaderRepository = shaderRepository;
             this.proceduralMeshGenerator = proceduralMeshGenerator;
             this.timeProvider = timeProvider;
+
+            logger = loggerFactory.Create<CustomRenderPipelineStage>();
         }
 
 
@@ -82,7 +88,9 @@ namespace DemoApplication.Tutorial01
             if (lastSecond != second)
             {
                 var fps = timeProvider.DeltaTime > 0 ? 1.0f / timeProvider.DeltaTime : 0.0f;
-                Debug.Info($"FPS: {fps:0}, Time:{timeProvider.Time:0.0}s, Delta: {timeProvider.DeltaTime * 1000:0.0}ms,  Physics delta: {timeProvider.PhysicsDeltaTime * 1000:0.0}ms");
+                var logMessage = $"FPS: {fps:0}, Time:{timeProvider.Time:0.0}s, Delta: {timeProvider.DeltaTime * 1000:0.0}ms,  Physics delta: {timeProvider.PhysicsDeltaTime * 1000:0.0}ms";
+                logger.Info(logMessage);
+                Debug.Info(logMessage);
 
                 lastSecond = second;
             }

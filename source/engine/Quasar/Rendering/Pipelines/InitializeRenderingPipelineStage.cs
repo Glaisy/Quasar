@@ -9,9 +9,11 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+#if DEBUG
 using Microsoft.Extensions.DependencyInjection;
-
 using Quasar.Diagnostics.Pipeline.Internals;
+#endif
+
 using Quasar.Graphics;
 using Quasar.Rendering.Procedurals;
 
@@ -77,8 +79,10 @@ namespace Quasar.Rendering.Pipelines
             Material.InitializeStaticServices(ServiceProvider);
 
             // initialize late-started rendering services (due to dependency on GraphicsContext)
+#if DEBUG
             var debugTextService = ServiceProvider.GetRequiredService<DebugTextService>();
             debugTextService.Initialize();
+#endif
         }
     }
 }
