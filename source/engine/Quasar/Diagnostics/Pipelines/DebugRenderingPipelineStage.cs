@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="DebugRenderPipelineStage.cs" company="Space Development">
+// <copyright file="DebugRenderingPipelineStage.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -23,22 +23,22 @@ namespace Quasar.Diagnostics.Pipeline.Internals
     /// Debug text rendering pipeline stage implementation.
     /// </summary>
     /// <seealso cref="RenderingPipelineStageBase" />
-    [Export(typeof(RenderingPipelineStageBase), nameof(DebugRenderPipelineStage))]
+    [Export(typeof(RenderingPipelineStageBase), nameof(DebugRenderingPipelineStage))]
     [Singleton]
     [ExecuteAfter(typeof(UIRenderingPipelineStage))]
     [ExecuteBefore(typeof(FrameBufferSwapperRenderingPipelineStage))]
-    public sealed class DebugRenderPipelineStage : RenderingPipelineStageBase
+    public sealed class DebugRenderingPipelineStage : RenderingPipelineStageBase
     {
         private UIElementRenderer uiElementRenderer;
         private DebugTextService debugTextService;
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DebugRenderPipelineStage" /> class.
+        /// Initializes a new instance of the <see cref="DebugRenderingPipelineStage" /> class.
         /// </summary>
         /// <param name="uiElementRenderer">The UI element renderer.</param>
         /// <param name="debugTextService">The debug text service.</param>
-        internal DebugRenderPipelineStage(
+        internal DebugRenderingPipelineStage(
             UIElementRenderer uiElementRenderer,
             DebugTextService debugTextService)
         {

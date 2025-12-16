@@ -12,6 +12,7 @@
 using System;
 
 using Quasar.Graphics;
+using Quasar.Rendering.Processors.Internals;
 
 using Space.Core;
 
@@ -231,16 +232,22 @@ namespace Quasar.Rendering
 
 
         /// <summary>
+        /// Gets or sets the command processor.
+        /// </summary>
+        internal static CameraCommandProcessor CommandProcessor { get; set; }
+
+
+        /// <summary>
         /// Sends the enabled changed command to the processor.
         /// </summary>
         /// <param name="enabled">The new value of the enabled flag.</param>
         protected override void SendEnabledChangedCommand(bool enabled)
         {
-            ////var command = new CameraCommand(this, CameraCommandType.EnabledChanged)
-            ////{
-            ////    Enabled = enabled
-            ////};
-            ////CommandProcessor.Add(command);
+            var command = new CameraCommand(this, CameraCommandType.EnabledChanged)
+            {
+                Enabled = enabled
+            };
+            CommandProcessor.Add(command);
         }
 
 
