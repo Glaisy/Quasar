@@ -87,6 +87,7 @@ namespace Quasar.Rendering
         protected CameraBase(bool isEnabled)
             : base(isEnabled)
         {
+            frameBuffer = RenderingContext.PrimaryFrameBuffer;
             Invalidate(CameraInvalidationFlags.All);
         }
 

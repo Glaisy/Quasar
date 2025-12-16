@@ -38,6 +38,7 @@ namespace DemoApplication.Tutorial01
         private readonly IProceduralMeshGenerator proceduralMeshGenerator;
         private readonly ITimeProvider timeProvider;
         private readonly ILogger logger;
+        private Camera camera;
         private IMesh mesh;
         private ShaderBase shader;
         private int mvpPropertyIndex;
@@ -71,12 +72,11 @@ namespace DemoApplication.Tutorial01
         {
             angle += 0.03f;
             var rotation = Quaternion.AngleAxis(angle, Vector3.PositiveY);
-            Matrix4 rotationMatrix;
-            rotationMatrix.FromQuaternion(rotation, false);
-            Matrix4 scaleMatrix;
-            scaleMatrix.FromScale(new Vector3(0.5f));
+            Matrix4 modelMatrix;
+            modelMatrix.FromQuaternion(rotation, false);
+
             Matrix4 mvp;
-            Matrix4.Multiply(scaleMatrix, rotationMatrix, ref mvp);
+            Matrix4.Multiply(modelMatrix, camera.ViewProjectionMatrix, ref mvp);
 
             shader.Activate();
             shader.SetMatrix(mvpPropertyIndex, mvp);
@@ -100,16 +100,23 @@ namespace DemoApplication.Tutorial01
         /// <inheritdoc/>
         protected override void OnStart()
         {
+            camera = new Camera
+            {
+                Name = "Main Camera",
+            };
+            camera.Transform.LocalPosition = new Vector3(0, 1, -2);
+            camera.Transform.LocalRotation = Quaternion.LookRotation(camera.Transform.LocalPosition, Vector3.Zero, Vector3.PositiveY, true);
+
             shader = shaderRepository.GetShader("Wireframe");
             mvpPropertyIndex = shader["ModelViewProjectionMatrix"].Index;
 
             material = new Material(shader);
             material.SetColor("LineColor", Color.Blue);
             material.SetColor("FillColor", Color.White);
-            material.SetFloat("Thickness", 0.25f);
+            material.SetFloat("Thickness", 0.1f);
 
 
-            proceduralMeshGenerator.GenerateEllipsoid(ref mesh, 8, 9, Vector3.One);
+            proceduralMeshGenerator.GenerateCube(ref mesh, Vector3.One);
         }
     }
 }
