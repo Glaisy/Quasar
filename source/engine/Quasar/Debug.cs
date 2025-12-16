@@ -96,7 +96,7 @@ namespace Quasar
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
         [Conditional("DEBUG")]
-        internal static void InitializeServices(IServiceProvider serviceProvider)
+        internal static void InitializeStaticServices(IServiceProvider serviceProvider)
         {
 #if DEBUG
             debugTextService = serviceProvider.GetRequiredService<DebugTextService>();

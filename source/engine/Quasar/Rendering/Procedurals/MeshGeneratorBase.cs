@@ -26,7 +26,7 @@ namespace Quasar.Rendering.Procedurals
         /// Initializes the static services.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
-        internal static void InitializeServices(IServiceProvider serviceProvider)
+        internal static void InitializeStaticServices(IServiceProvider serviceProvider)
         {
             MeshFactory = serviceProvider.GetRequiredService<IMeshFactory>();
             MeshHelper = serviceProvider.GetRequiredService<IMeshHelper>();

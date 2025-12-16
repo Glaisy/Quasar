@@ -288,7 +288,7 @@ namespace Quasar.Graphics
         /// Initializes the static services.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
-        internal static void InitializeServices(IServiceProvider serviceProvider)
+        internal static void InitializeStaticServices(IServiceProvider serviceProvider)
         {
             textureRepository = serviceProvider.GetRequiredService<ITextureRepository>();
             fontFamilyRepository = serviceProvider.GetRequiredService<IFontFamilyRepository>();

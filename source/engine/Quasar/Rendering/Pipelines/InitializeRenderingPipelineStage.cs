@@ -62,8 +62,8 @@ namespace Quasar.Rendering.Pipelines
         protected override void OnStart()
         {
             // initialize internal graphics components
-            GraphicsResourceBase.InitializeServices(ServiceProvider);
-            Font.InitializeServices(ServiceProvider);
+            GraphicsResourceBase.InitializeStaticServices(ServiceProvider);
+            Font.InitializeStaticServices(ServiceProvider);
 
             // load built-in resources
             shaderRepository.LoadBuiltInShaders();
@@ -72,10 +72,9 @@ namespace Quasar.Rendering.Pipelines
             fontFamilyRepository.LoadBuiltInFontFamilies();
 
             // initialize internal rendering/graphics related components
-            Debug.InitializeServices(ServiceProvider);
-            MeshGeneratorBase.InitializeServices(ServiceProvider);
-            ////RenderObject.InitializeDependencies(resolver);
-            ////Material.InitializeDependencies(resolver);
+            Debug.InitializeStaticServices(ServiceProvider);
+            MeshGeneratorBase.InitializeStaticServices(ServiceProvider);
+            Material.InitializeStaticServices(ServiceProvider);
 
             // initialize late-started rendering services (due to dependency on GraphicsContext)
             var debugTextService = ServiceProvider.GetRequiredService<DebugTextService>();

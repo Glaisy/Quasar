@@ -22,8 +22,25 @@ namespace Quasar.OpenGL.Graphics
     ///  OpenGL render shader program implementation.
     /// </summary>
     /// <seealso cref="ShaderBase" />
-    internal sealed class GLShader : ShaderBase
+    internal sealed unsafe class GLShader : ShaderBase
     {
+        private delegate void PropertySetter(ShaderProperty shaderProperty, byte* buffer);
+
+        private static readonly PropertySetter[] propertySetters =
+        [
+            null,
+            PropertySetterColor,
+            PropertySetterCubeMapTexture,
+            PropertySetterFloat,
+            PropertySetterInteger,
+            PropertySetterMatrix4,
+            PropertySetterTexture,
+            PropertySetterTexture,
+            PropertySetterVector2,
+            PropertySetterVector3,
+            PropertySetterVector4,
+        ];
+
         private static readonly Dictionary<string, ShaderProperty> emptyProperties = new Dictionary<string, ShaderProperty>();
 
 
@@ -74,6 +91,12 @@ namespace Quasar.OpenGL.Graphics
             GL.UseProgram(0);
         }
 
+
+        /// <inheritdoc/>
+        internal override unsafe void SetProperty(ShaderProperty shaderProperty, byte* buffer)
+        {
+            propertySetters[(int)shaderProperty.Type](shaderProperty, buffer);
+        }
 
         /// <inheritdoc/>
         internal override void SetColor(int index, in Color value)
@@ -222,6 +245,59 @@ namespace Quasar.OpenGL.Graphics
                 default:
                     throw new NotSupportedException($"GL property type '{uniformType}' in shader '{Id}' at '{name}'.");
             }
+        }
+
+        private static void PropertySetterColor(ShaderProperty shaderProperty, byte* value)
+        {
+            var color = (Color*)value;
+            GL.Uniform4f(shaderProperty.Index, color->R, color->G, color->B, color->A);
+        }
+
+        private static void PropertySetterCubeMapTexture(ShaderProperty shaderProperty, byte* value)
+        {
+            GL.ActiveTexture(TextureUnit.Texture0 + shaderProperty.TextureUnit);
+            GL.BindTexture(TextureTarget.TextureCubeMap, *(int*)value);
+            GL.Uniform1i(shaderProperty.Index, shaderProperty.TextureUnit);
+        }
+
+        private static void PropertySetterFloat(ShaderProperty shaderProperty, byte* value)
+        {
+            GL.Uniform1f(shaderProperty.Index, *(float*)value);
+        }
+
+        private static void PropertySetterInteger(ShaderProperty shaderProperty, byte* value)
+        {
+            GL.Uniform1f(shaderProperty.Index, *(int*)value);
+        }
+
+        private static void PropertySetterMatrix4(ShaderProperty shaderProperty, byte* value)
+        {
+            GL.UniformMatrix4(shaderProperty.Index, 1, false, (float*)value);
+        }
+
+        private static void PropertySetterTexture(ShaderProperty shaderProperty, byte* value)
+        {
+            GL.ActiveTexture(TextureUnit.Texture0 + shaderProperty.TextureUnit);
+            GL.BindTexture(TextureTarget.Texture2D, *(int*)value);
+            GL.Uniform1i(shaderProperty.Index, shaderProperty.TextureUnit);
+        }
+
+        private static void PropertySetterVector2(ShaderProperty shaderProperty, byte* value)
+        {
+            var vector2 = (Vector2*)value;
+            GL.Uniform2f(shaderProperty.Index, vector2->X, vector2->Y);
+        }
+
+        private static void PropertySetterVector3(ShaderProperty shaderProperty, byte* value)
+        {
+            var vector3 = (Vector3*)value;
+            GL.Uniform3f(shaderProperty.Index, vector3->X, vector3->Y, vector3->Z);
+        }
+
+        private static void PropertySetterVector4(ShaderProperty shaderProperty, byte* value)
+        {
+            var vector4 = (Vector4*)value;
+            GL.Uniform4f(shaderProperty.Index, vector4->X, vector4->Y, vector4->Z, vector4->W);
         }
     }
 }

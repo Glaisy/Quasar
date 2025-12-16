@@ -106,7 +106,7 @@ namespace Quasar.Graphics
         /// Initializes the static services.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
-        internal static void InitializeServices(IServiceProvider serviceProvider)
+        internal static void InitializeStaticServices(IServiceProvider serviceProvider)
         {
             dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
         }

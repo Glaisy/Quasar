@@ -15,6 +15,7 @@ using Quasar;
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
 using Quasar.Pipelines;
+using Quasar.Rendering;
 using Quasar.Rendering.Pipelines;
 using Quasar.Rendering.Procedurals;
 using Quasar.UI.Pipelines;
@@ -37,6 +38,7 @@ namespace DemoApplication.Tutorial01
         private readonly ITimeProvider timeProvider;
         private IMesh mesh;
         private ShaderBase shader;
+        private Material material;
         private float angle;
         private int lastSecond;
 
@@ -60,15 +62,20 @@ namespace DemoApplication.Tutorial01
         /// <inheritdoc/>
         protected override void OnExecute()
         {
-            angle += 0.1f;
-            ////var rotation = Quaternion.AngleAxis(angle, Vector3.PositiveY);
-            ////Matrix4 rotationMatrix;
-            ////rotationMatrix.FromQuaternion(rotation, false);
+            angle += 0.03f;
+            var rotation = Quaternion.AngleAxis(angle, Vector3.PositiveY);
+            Matrix4 rotationMatrix;
+            rotationMatrix.FromQuaternion(rotation, false);
+            Matrix4 scaleMatrix;
+            scaleMatrix.FromScale(new Vector3(0.5f));
+            Matrix4 mvp;
+            Matrix4.Multiply(scaleMatrix, rotationMatrix, ref mvp);
 
-            ////shader.Activate();
-            ////shader.SetMatrix(0, rotationMatrix);
-            ////Context.CommandProcessor.DrawMesh(mesh);
-            ////shader.Deactivate();
+            shader.Activate();
+            shader.SetMatrix(2, mvp);
+            material.TransferToShader();
+            Context.CommandProcessor.DrawMesh(mesh);
+            shader.Deactivate();
 
             var second = (int)MathF.Floor(timeProvider.Time);
 
@@ -84,8 +91,14 @@ namespace DemoApplication.Tutorial01
         /// <inheritdoc/>
         protected override void OnStart()
         {
-            shader = shaderRepository.GetShader("Test");
-            proceduralMeshGenerator.GenerateEllipsoid(ref mesh, 4, 5, Vector3.One);
+            shader = shaderRepository.GetShader("Wireframe");
+            material = new Material(shader);
+            material.SetColor("LineColor", Color.Blue);
+            material.SetColor("FillColor", Color.White);
+            material.SetFloat("Thickness", 0.25f);
+
+
+            proceduralMeshGenerator.GenerateEllipsoid(ref mesh, 8, 9, Vector3.One);
         }
     }
 }

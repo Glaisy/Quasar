@@ -118,6 +118,13 @@ namespace Quasar.Graphics.Internals
         }
 
         /// <summary>
+        /// Sets the shader property from the specified buffer.
+        /// </summary>
+        /// <param name="shaderProperty">The shader property.</param>
+        /// <param name="buffer">The buffer.</param>
+        internal abstract unsafe void SetProperty(ShaderProperty shaderProperty, byte* buffer);
+
+        /// <summary>
         /// Sets the shader color property value at index.
         /// </summary>
         /// <param name="index">The index.</param>
