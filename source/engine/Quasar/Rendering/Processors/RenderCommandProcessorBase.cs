@@ -22,11 +22,6 @@ namespace Quasar.Rendering.Processors
         internal abstract void ExecuteCommands();
 
         /// <summary>
-        /// Add a reset command to the processor.
-        /// </summary>
-        internal abstract void Reset();
-
-        /// <summary>
         /// Internal start event handler.
         /// </summary>
         internal void Start()

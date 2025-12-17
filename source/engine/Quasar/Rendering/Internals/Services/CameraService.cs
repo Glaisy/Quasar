@@ -9,7 +9,6 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 
 using Space.Core.DependencyInjection;
@@ -19,42 +18,11 @@ namespace Quasar.Rendering.Internals.Services
     /// <summary>
     /// Camera service and provider implementation.
     /// </summary>
-    /// <seealso cref="ICameraProvider" />
-    [Export(typeof(ICameraProvider))]
     [Export]
     [Singleton]
-    internal class CameraService : ICameraProvider
+    internal sealed class CameraService
     {
         private readonly List<ICamera> activeCameras = new List<ICamera>();
-
-
-        /// <inheritdoc/>
-        ICamera ICameraProvider.this[int index] => activeCameras[index];
-
-        /// <inheritdoc/>
-        ICamera ICameraProvider.this[string name]
-        {
-            get
-            {
-                ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
-                return activeCameras.Find(camera => camera.Name == name);
-            }
-        }
-
-        /// <inheritdoc/>
-        int ICameraProvider.Count => activeCameras.Count;
-
-        private ICamera mainCamera;
-        /// <inheritdoc/>
-        ICamera ICameraProvider.MainCamera => mainCamera;
-
-
-        /// <inheritdoc/>
-        List<ICamera>.Enumerator ICameraProvider.GetEnumerator()
-        {
-            return activeCameras.GetEnumerator();
-        }
-
 
 
         /// <summary>
@@ -64,7 +32,6 @@ namespace Quasar.Rendering.Internals.Services
         public void Activate(ICamera camera)
         {
             activeCameras.Add(camera);
-            mainCamera ??= camera;
         }
 
         /// <summary>
@@ -73,7 +40,6 @@ namespace Quasar.Rendering.Internals.Services
         public void Clear()
         {
             activeCameras.Clear();
-            mainCamera = null;
         }
 
         /// <summary>
@@ -83,11 +49,14 @@ namespace Quasar.Rendering.Internals.Services
         public void Deactive(ICamera camera)
         {
             activeCameras.Remove(camera);
+        }
 
-            if (mainCamera == camera)
-            {
-                mainCamera = activeCameras.Count > 0 ? activeCameras[0] : null;
-            }
+        /// <summary>
+        /// Gets the camera enumerator.
+        /// </summary>
+        public List<ICamera>.Enumerator GetEnumerator()
+        {
+            return activeCameras.GetEnumerator();
         }
     }
 }

@@ -58,21 +58,6 @@ namespace Quasar.Rendering.Processors
             }
         }
 
-        /// <inheritdoc/>
-        internal override sealed void Reset()
-        {
-            lock (syncRoot)
-            {
-                var command = CreateResetCommand();
-                commands.Add(command);
-            }
-        }
-
-
-        /// <summary>
-        /// Creates a reset command.
-        /// </summary>
-        protected abstract TCommand CreateResetCommand();
 
         /// <summary>
         /// Command execution event handler.

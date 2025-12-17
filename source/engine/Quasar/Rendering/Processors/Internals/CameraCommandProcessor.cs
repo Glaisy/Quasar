@@ -39,12 +39,6 @@ namespace Quasar.Rendering.Processors.Internals
         }
 
 
-        /// <inheritdoc/>
-        protected override CameraCommand CreateResetCommand()
-        {
-            return new CameraCommand(null, CameraCommandType.Reset);
-        }
-
         /// <summary>
         /// Command execution event handler.
         /// </summary>
