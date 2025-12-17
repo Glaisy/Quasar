@@ -13,6 +13,7 @@ using System;
 
 using Quasar.Graphics.Internals.Factories;
 using Quasar.Pipelines.Internals;
+using Quasar.Rendering.Profiler.Internals;
 using Quasar.UI;
 using Quasar.Utilities;
 
@@ -30,6 +31,7 @@ namespace Quasar.Rendering.Pipelines.Internals
     {
         private readonly GraphicsContextFactory graphicsContextFactory;
         private readonly IApplicationWindow applicationWindow;
+        private readonly IRenderingProfiler renderingProfiler;
         private readonly IServiceLoader serviceLoader;
         private readonly ActionBasedObserver<IRenderingSettings> settingsObserver;
         private IDisposable settingsSubscription;
@@ -38,20 +40,23 @@ namespace Quasar.Rendering.Pipelines.Internals
         /// <summary>
         /// Initializes a new instance of the <see cref="RenderingPipeline" /> class.
         /// </summary>
-        /// <param name="graphicsContextFactory">The graphics context factory.</param>
         /// <param name="applicationWindow">The application window.</param>
         /// <param name="renderingContext">The rendering context.</param>
+        /// <param name="renderingProfiler">The rendering profiler.</param>
         /// <param name="serviceLoader">The service loader.</param>
         /// <param name="serviceProvider">The service provider.</param>
+        /// <param name="graphicsContextFactory">The graphics context factory.</param>
         internal RenderingPipeline(
             IApplicationWindow applicationWindow,
             IRenderingContext renderingContext,
+            IRenderingProfiler renderingProfiler,
             IServiceLoader serviceLoader,
             IServiceProvider serviceProvider,
             GraphicsContextFactory graphicsContextFactory)
             : base(serviceProvider)
         {
             this.applicationWindow = applicationWindow;
+            this.renderingProfiler = renderingProfiler;
             this.serviceLoader = serviceLoader;
             this.graphicsContextFactory = graphicsContextFactory;
 
@@ -88,6 +93,15 @@ namespace Quasar.Rendering.Pipelines.Internals
             base.OnShutdown();
         }
 
+        /// <inheritdoc/>
+        protected override void OnExecute()
+        {
+            renderingProfiler.BeginFrame();
+
+            base.OnExecute();
+
+            renderingProfiler.EndFrame();
+        }
 
         private void InitializeRenderingContext(IRenderingSettings renderingSettings)
         {

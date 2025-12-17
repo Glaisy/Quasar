@@ -12,12 +12,14 @@
 using System;
 
 using Quasar;
+using Quasar.Diagnostics.Profiler;
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
 using Quasar.Pipelines;
 using Quasar.Rendering;
 using Quasar.Rendering.Pipelines;
 using Quasar.Rendering.Procedurals;
+using Quasar.Rendering.Profiler;
 using Quasar.UI.Pipelines;
 
 using Space.Core.DependencyInjection;
@@ -37,6 +39,7 @@ namespace DemoApplication.Tutorial01
         private readonly IShaderRepository shaderRepository;
         private readonly IProceduralMeshGenerator proceduralMeshGenerator;
         private readonly ITimeProvider timeProvider;
+        private readonly IProfilerDataProvider<IRenderingStatistics> renderingStatisticsProvider;
         private readonly ILogger logger;
         private Camera camera;
         private IMesh mesh;
@@ -46,22 +49,26 @@ namespace DemoApplication.Tutorial01
         private float angle;
         private int lastSecond;
 
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomRenderPipelineStage" /> class.
         /// </summary>
         /// <param name="shaderRepository">The shader repository.</param>
         /// <param name="proceduralMeshGenerator">The procedural mesh generator.</param>
         /// <param name="timeProvider">The time provider.</param>
+        /// <param name="renderingStatisticsProvider">The rendering statistics provider.</param>
         /// <param name="loggerFactory">The logger factory.</param>
         internal CustomRenderPipelineStage(
             IShaderRepository shaderRepository,
             IProceduralMeshGenerator proceduralMeshGenerator,
             ITimeProvider timeProvider,
+            IProfilerDataProvider<IRenderingStatistics> renderingStatisticsProvider,
             ILoggerFactory loggerFactory)
         {
             this.shaderRepository = shaderRepository;
             this.proceduralMeshGenerator = proceduralMeshGenerator;
             this.timeProvider = timeProvider;
+            this.renderingStatisticsProvider = renderingStatisticsProvider;
 
             logger = loggerFactory.Create<CustomRenderPipelineStage>();
         }
@@ -88,7 +95,7 @@ namespace DemoApplication.Tutorial01
 
             if (lastSecond != second)
             {
-                var fps = timeProvider.DeltaTime > 0 ? 1.0f / timeProvider.DeltaTime : 0.0f;
+                var fps = renderingStatisticsProvider.Get().FramesPerSecond;
                 var logMessage = $"FPS: {fps:0}, Time:{timeProvider.Time:0.0}s, Delta: {timeProvider.DeltaTime * 1000:0.0}ms,  Physics delta: {timeProvider.PhysicsDeltaTime * 1000:0.0}ms";
                 logger.Info(logMessage);
                 Debug.Info(logMessage);

@@ -14,6 +14,7 @@ using System.Threading;
 
 using Quasar.Graphics;
 using Quasar.Pipelines;
+using Quasar.Rendering.Profiler.Internals;
 
 using Space.Core.DependencyInjection;
 
@@ -27,9 +28,20 @@ namespace Quasar.Rendering.Pipelines
     [ExecuteAfter(typeof(FrameBufferSwapperRenderingPipelineStage))]
     public sealed class FrameRateLimiterRenderingPipelineStage : RenderingPipelineStageBase
     {
+        private readonly IRenderingProfiler renderingProfiler;
         private DateTime lastFrameEndTime;
         private TimeSpan expectedFrameTime;
         private bool limitFrameRate;
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FrameRateLimiterRenderingPipelineStage"/> class.
+        /// </summary>
+        /// <param name="renderingProfiler">The rendering profiler.</param>
+        internal FrameRateLimiterRenderingPipelineStage(IRenderingProfiler renderingProfiler)
+        {
+            this.renderingProfiler = renderingProfiler;
+        }
 
 
         /// <inheritdoc/>
@@ -61,7 +73,10 @@ namespace Quasar.Rendering.Pipelines
             var waitTimeTicks = expectedFrameTime.Ticks - frameTime.Ticks;
             if (waitTimeTicks > 0)
             {
-                Thread.Sleep(TimeSpan.FromTicks(waitTimeTicks));
+                var waitingTime = TimeSpan.FromTicks(waitTimeTicks);
+                renderingProfiler.UpdateWaitingTime((float)waitingTime.TotalSeconds);
+
+                Thread.Sleep(waitingTime);
             }
 
             lastFrameEndTime = DateTime.UtcNow;
