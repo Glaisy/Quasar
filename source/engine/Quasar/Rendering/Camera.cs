@@ -10,6 +10,9 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Threading;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using Quasar.Graphics;
 using Quasar.Rendering.Processors.Internals;
@@ -21,21 +24,31 @@ namespace Quasar.Rendering
     /// <summary>
     /// Render camera implementation.
     /// </summary>
-    /// <seealso cref="CameraBase" />
+    /// <seealso cref="InvalidatableBase" />
     /// <seealso cref="ICamera" />
-    public class Camera : CameraBase, ICamera
+    public sealed partial class Camera : InvalidatableBase, ICamera
     {
         private static readonly Range<float> fovRange = new Range<float>(0.0f, 180.0f);
+
+
+        private static CameraCommandProcessor commandProcessor;
+        private static IRenderingContext renderingContext;
+        private static IMatrixFactory matrixFactory;
+        private static int lastCameraId = 0;
+        private Size projectionSize;
         private int transformationTimestamp;
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Camera"/> class.
+        /// Initializes a new instance of the <see cref="Camera" /> class.
         /// </summary>
-        public Camera()
-            : base(true)
+        /// <param name="name">The name.</param>
+        public Camera(string name = null)
         {
-            transformationTimestamp = Transform.Timestamp;
+            transformationTimestamp = transform.Timestamp;
+            frameBuffer = renderingContext.PrimaryFrameBuffer;
+            Id = Interlocked.Increment(ref lastCameraId);
+            Name = name;
         }
 
 
@@ -47,10 +60,10 @@ namespace Quasar.Rendering
         {
             get
             {
-                if (InvalidationFlags.HasFlag(CameraInvalidationFlags.AspectRatio))
+                if (HasInvalidationFlags(InvalidationFlags.AspectRatio))
                 {
                     aspectRatio = FrameBuffer.Size.Width / (float)FrameBuffer.Size.Height;
-                    ClearInvalidation(CameraInvalidationFlags.AspectRatio);
+                    ClearInvalidationFlags(InvalidationFlags.AspectRatio);
                 }
 
                 return aspectRatio;
@@ -66,6 +79,25 @@ namespace Quasar.Rendering
         /// Gets or sets the clear type.
         /// </summary>
         public CameraClearType ClearType { get; set; } = CameraClearType.SolidColor;
+
+        private bool enabled;
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is enabled.
+        /// </summary>
+        public bool Enabled
+        {
+            get => enabled;
+            set
+            {
+                if (enabled == value)
+                {
+                    return;
+                }
+
+                enabled = value;
+                SendEnabledChangedCommand(value);
+            }
+        }
 
         private float fieldOfView = 90.0f;
         /// <summary>
@@ -84,7 +116,27 @@ namespace Quasar.Rendering
                 }
 
                 fieldOfView = value;
-                Invalidate(CameraInvalidationFlags.AllProjections);
+                Invalidate(InvalidationFlags.AllProjections);
+            }
+        }
+
+        private IFrameBuffer frameBuffer;
+        /// <summary>
+        /// Gets or sets the frame buffer.
+        /// </summary>
+        public IFrameBuffer FrameBuffer
+        {
+            get => frameBuffer;
+            set
+            {
+                ArgumentNullException.ThrowIfNull(value, nameof(FrameBuffer));
+                if (frameBuffer == value)
+                {
+                    return;
+                }
+
+                frameBuffer = value;
+                Invalidate(InvalidationFlags.AllProjections);
             }
         }
 
@@ -94,21 +146,63 @@ namespace Quasar.Rendering
         {
             get
             {
-                if (InvalidationFlags.HasFlag(CameraInvalidationFlags.Frustum))
+                if (HasInvalidationFlags(InvalidationFlags.Frustum))
                 {
-                    frustum.Update(Transform, fieldOfView, AspectRatio, zNear, zFar);
+                    frustum.Update(transform, fieldOfView, AspectRatio, zNear, zFar);
 
-                    ClearInvalidation(CameraInvalidationFlags.Frustum);
+                    ClearInvalidationFlags(InvalidationFlags.Frustum);
                 }
 
                 return frustum;
             }
         }
 
+        /// <inheritdoc/>
+        public int Id { get; }
+
         /// <summary>
         /// Gets or sets the layer mask.
         /// </summary>
         public LayerMask LayerMask { get; set; } = LayerMask.Opaque | LayerMask.Transparent;
+
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        public string Name
+        {
+            get => transform.Name;
+            set
+            {
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = nameof(Camera);
+                }
+
+                transform.Name = value;
+            }
+        }
+
+        private Matrix4 projectionMatrix;
+        /// <inheritdoc/>
+        public ref readonly Matrix4 ProjectionMatrix
+        {
+            get
+            {
+                if (projectionSize != frameBuffer.Size)
+                {
+                    Invalidate(InvalidationFlags.AllProjections);
+                    projectionSize = frameBuffer.Size;
+                }
+
+                if (HasInvalidationFlags(InvalidationFlags.ProjectionMatrix))
+                {
+                    UpdateProjectionMatrix(ref projectionMatrix, projectionSize);
+                    ClearInvalidationFlags(InvalidationFlags.ProjectionMatrix);
+                }
+
+                return ref projectionMatrix;
+            }
+        }
 
         private ProjectionType projectionType = ProjectionType.Perspective;
         /// <summary>
@@ -125,25 +219,31 @@ namespace Quasar.Rendering
                 }
 
                 projectionType = value;
-                Invalidate(CameraInvalidationFlags.AllProjections);
+                Invalidate(InvalidationFlags.AllProjections);
             }
         }
 
+        private readonly Transform transform = new Transform();
+        /// <summary>
+        /// Gets the transformation.
+        /// </summary>
+        public Transform Transform => transform;
+
         /// <inheritdoc/>
-        ITransform ICamera.Transform => Transform;
+        ITransform ICamera.Transform => transform;
 
         private Matrix4 viewMatrix = Matrix4.Identity;
         /// <inheritdoc/>
-        public override ref readonly Matrix4 ViewMatrix
+        public ref readonly Matrix4 ViewMatrix
         {
             get
             {
                 EnsureTransformationHasNotChanged();
-                if (InvalidationFlags.HasFlag(CameraInvalidationFlags.ViewMatrix))
+                if (HasInvalidationFlags(InvalidationFlags.ViewMatrix))
                 {
-                    MatrixFactory.CreateViewMatrix(Transform, ref viewMatrix);
+                    matrixFactory.CreateViewMatrix(transform, ref viewMatrix);
 
-                    ClearInvalidation(CameraInvalidationFlags.ViewMatrix);
+                    ClearInvalidationFlags(InvalidationFlags.ViewMatrix);
                 }
 
                 return ref viewMatrix;
@@ -152,16 +252,16 @@ namespace Quasar.Rendering
 
         private Matrix4 viewProjectionMatrix = Matrix4.Identity;
         /// <inheritdoc/>
-        public override ref readonly Matrix4 ViewProjectionMatrix
+        public ref readonly Matrix4 ViewProjectionMatrix
         {
             get
             {
                 EnsureTransformationHasNotChanged();
-                if (InvalidationFlags.HasFlag(CameraInvalidationFlags.ViewProjectionMatrix))
+                if (HasInvalidationFlags(InvalidationFlags.ViewProjectionMatrix))
                 {
                     Matrix4.Multiply(ViewMatrix, ProjectionMatrix, ref viewProjectionMatrix);
 
-                    ClearInvalidation(CameraInvalidationFlags.ViewProjectionMatrix);
+                    ClearInvalidationFlags(InvalidationFlags.ViewProjectionMatrix);
                 }
 
                 return ref viewProjectionMatrix;
@@ -170,18 +270,18 @@ namespace Quasar.Rendering
 
         private Matrix4 viewRotationProjectionMatrix = Matrix4.Identity;
         /// <inheritdoc/>
-        public override ref readonly Matrix4 ViewRotationProjectionMatrix
+        public ref readonly Matrix4 ViewRotationProjectionMatrix
         {
             get
             {
                 EnsureTransformationHasNotChanged();
-                if (InvalidationFlags.HasFlag(CameraInvalidationFlags.ViewRotationProjectionMatrix))
+                if (HasInvalidationFlags(InvalidationFlags.ViewRotationProjectionMatrix))
                 {
                     Matrix4 viewRotationMatrix;
-                    MatrixFactory.CreateViewRotationMatrix(ViewMatrix, ref viewRotationMatrix);
+                    matrixFactory.CreateViewRotationMatrix(ViewMatrix, ref viewRotationMatrix);
                     Matrix4.Multiply(viewRotationMatrix, ProjectionMatrix, ref viewRotationProjectionMatrix);
 
-                    ClearInvalidation(CameraInvalidationFlags.ViewRotationProjectionMatrix);
+                    ClearInvalidationFlags(InvalidationFlags.ViewRotationProjectionMatrix);
                 }
 
                 return ref viewRotationProjectionMatrix;
@@ -205,7 +305,7 @@ namespace Quasar.Rendering
 
                 zFar = value;
                 SortZPlanes();
-                Invalidate(CameraInvalidationFlags.AllProjections);
+                Invalidate(InvalidationFlags.AllProjections);
             }
         }
 
@@ -226,61 +326,76 @@ namespace Quasar.Rendering
 
                 zNear = value;
                 SortZPlanes();
-                Invalidate(CameraInvalidationFlags.AllProjections);
+                Invalidate(InvalidationFlags.AllProjections);
             }
         }
 
 
-        /// <summary>
-        /// Gets or sets the command processor.
-        /// </summary>
-        internal static CameraCommandProcessor CommandProcessor { get; set; }
-
-
-        /// <summary>
-        /// Sends the enabled changed command to the processor.
-        /// </summary>
-        /// <param name="enabled">The new value of the enabled flag.</param>
-        protected override void SendEnabledChangedCommand(bool enabled)
+        /// <inheritdoc/>
+        public override bool Equals(object obj)
         {
-            var command = new CameraCommand(this, CameraCommandType.EnabledChanged)
+            if (obj is not IRawCamera other)
             {
-                Enabled = enabled
-            };
-            CommandProcessor.Add(command);
+                return false;
+            }
+
+            return Id == other.Id;
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(IRawCamera other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return Id == other.Id;
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return Name;
         }
 
 
         /// <summary>
-        /// Updates the projection matrix.
+        /// Initializes the static services.
         /// </summary>
-        /// <param name="projectionMatrix">The projection matrix.</param>
-        /// <param name="projectionSize">The projection size.</param>
-        protected override void UpdateProjectionMatrix(ref Matrix4 projectionMatrix, in Size projectionSize)
+        /// <param name="serviceProvider">The service provider.</param>
+        internal static void InitializeStaticServices(IServiceProvider serviceProvider)
         {
-            switch (projectionType)
-            {
-                case ProjectionType.Orthographic:
-                    MatrixFactory.CreateOrthographicProjectionMatrix(projectionSize.Width, projectionSize.Height, zNear, zFar, ref projectionMatrix);
-                    break;
-                case ProjectionType.Perspective:
-                    MatrixFactory.CreatePerspectiveProjectionMatrix(AspectRatio, fieldOfView, zNear, zFar, ref projectionMatrix);
-                    break;
-                default:
-                    throw new NotSupportedException($"Unsupported camera projection type: {projectionType}");
-            }
+            commandProcessor = serviceProvider.GetRequiredService<CameraCommandProcessor>();
+            renderingContext = serviceProvider.GetRequiredService<IRenderingContext>();
+            matrixFactory = serviceProvider.GetRequiredService<IMatrixFactory>();
         }
 
 
         private void EnsureTransformationHasNotChanged()
         {
-            if (transformationTimestamp == Transform.Timestamp)
+            if (transformationTimestamp == transform.Timestamp)
             {
                 return;
             }
 
-            Invalidate(CameraInvalidationFlags.AllViews);
-            transformationTimestamp = Transform.Timestamp;
+            Invalidate(InvalidationFlags.AllViews);
+            transformationTimestamp = transform.Timestamp;
+        }
+
+        private void SendEnabledChangedCommand(bool enabled)
+        {
+            var command = new CameraCommand(this, CameraCommandType.EnabledChanged)
+            {
+                Enabled = enabled
+            };
+            commandProcessor.Add(command);
         }
 
         private void SortZPlanes()
@@ -293,6 +408,21 @@ namespace Quasar.Rendering
             var temp = zFar;
             zFar = zNear;
             zNear = temp;
+        }
+
+        private void UpdateProjectionMatrix(ref Matrix4 projectionMatrix, in Size projectionSize)
+        {
+            switch (projectionType)
+            {
+                case ProjectionType.Orthographic:
+                    matrixFactory.CreateOrthographicProjectionMatrix(projectionSize.Width, projectionSize.Height, zNear, zFar, ref projectionMatrix);
+                    break;
+                case ProjectionType.Perspective:
+                    matrixFactory.CreatePerspectiveProjectionMatrix(AspectRatio, fieldOfView, zNear, zFar, ref projectionMatrix);
+                    break;
+                default:
+                    throw new NotSupportedException($"Unsupported camera projection type: {projectionType}");
+            }
         }
     }
 }

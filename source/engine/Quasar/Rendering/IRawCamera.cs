@@ -9,6 +9,8 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System;
+
 using Quasar.Graphics;
 
 using Space.Core;
@@ -19,7 +21,8 @@ namespace Quasar.Rendering
     /// Represents a camera object only with the raw rendering properties.
     /// </summary>
     /// <seealso cref="IIdentifierProvider{Int32}" />
-    public interface IRawCamera : IIdentifierProvider<int>
+    /// <seealso cref="IEquatable{ICamera}" />
+    public interface IRawCamera : IIdentifierProvider<int>, IEquatable<IRawCamera>
     {
         /// <summary>
         /// Gets the frame buffer.

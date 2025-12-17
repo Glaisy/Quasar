@@ -22,6 +22,7 @@ namespace Quasar.Rendering.Processors.Internals
     /// </summary>
     /// <seealso cref="RenderCommandProcessorBase{CameraCommand}" />
     [Export(typeof(RenderCommandProcessorBase), nameof(CameraCommand))]
+    [Export]
     [Singleton]
     internal sealed class CameraCommandProcessor : RenderCommandProcessorBase<CameraCommand>
     {
@@ -74,19 +75,11 @@ namespace Quasar.Rendering.Processors.Internals
         }
 
         /// <summary>
-        /// Start event handler.
-        /// </summary>
-        protected override void OnStart()
-        {
-            Camera.CommandProcessor = this;
-        }
-
-        /// <summary>
         /// Shutdown event handler.
         /// </summary>
         protected override void OnShutdown()
         {
-            Camera.CommandProcessor = null;
+            cameraService.Clear();
         }
     }
 }

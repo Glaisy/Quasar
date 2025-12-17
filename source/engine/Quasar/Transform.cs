@@ -40,7 +40,7 @@ namespace Quasar
         private Transform()
             : base(nameof(Root))
         {
-            Invalidate(InvalidationType.All);
+            Invalidate(InvalidationFlags.All);
         }
 
 
@@ -50,7 +50,7 @@ namespace Quasar
         {
             get
             {
-                if (HasInvalidationType(InvalidationType.InverseRotation))
+                if (HasInvalidationFlags(InvalidationFlags.InverseRotation))
                 {
                     if (parent == null)
                     {
@@ -61,7 +61,7 @@ namespace Quasar
                         inverseRotation = Rotation.Invert();
                     }
 
-                    ClearInvalidationType(InvalidationType.InverseRotation);
+                    ClearInvalidationFlags(InvalidationFlags.InverseRotation);
                 }
 
                 return inverseRotation;
@@ -83,7 +83,7 @@ namespace Quasar
                 }
 
                 localPosition = value;
-                Invalidate(InvalidationType.Position);
+                Invalidate(InvalidationFlags.Position);
             }
         }
 
@@ -102,7 +102,7 @@ namespace Quasar
                 }
 
                 localRotation = value;
-                Invalidate(InvalidationType.Rotation | InvalidationType.InverseRotation | InvalidationType.AllVectors);
+                Invalidate(InvalidationFlags.Rotation | InvalidationFlags.InverseRotation | InvalidationFlags.AllVectors);
             }
         }
 
@@ -121,7 +121,7 @@ namespace Quasar
                 }
 
                 localScale = value;
-                Invalidate(InvalidationType.Scale);
+                Invalidate(InvalidationFlags.Scale);
             }
         }
 
@@ -131,10 +131,10 @@ namespace Quasar
         {
             get
             {
-                if (HasInvalidationType(InvalidationType.NegativeX))
+                if (HasInvalidationFlags(InvalidationFlags.NegativeX))
                 {
                     negativeX = Rotation * Vector3.NegativeX;
-                    ClearInvalidationType(InvalidationType.NegativeX);
+                    ClearInvalidationFlags(InvalidationFlags.NegativeX);
                 }
 
                 return negativeX;
@@ -147,10 +147,10 @@ namespace Quasar
         {
             get
             {
-                if (HasInvalidationType(InvalidationType.NegativeY))
+                if (HasInvalidationFlags(InvalidationFlags.NegativeY))
                 {
                     negativeY = Rotation * Vector3.NegativeY;
-                    ClearInvalidationType(InvalidationType.NegativeY);
+                    ClearInvalidationFlags(InvalidationFlags.NegativeY);
                 }
 
                 return negativeY;
@@ -163,10 +163,10 @@ namespace Quasar
         {
             get
             {
-                if (HasInvalidationType(InvalidationType.NegativeZ))
+                if (HasInvalidationFlags(InvalidationFlags.NegativeZ))
                 {
                     negativeZ = Rotation * Vector3.NegativeZ;
-                    ClearInvalidationType(InvalidationType.NegativeZ);
+                    ClearInvalidationFlags(InvalidationFlags.NegativeZ);
                 }
 
                 return negativeZ;
@@ -205,7 +205,7 @@ namespace Quasar
         {
             get
             {
-                if (HasInvalidationType(InvalidationType.Position))
+                if (HasInvalidationFlags(InvalidationFlags.Position))
                 {
                     if (parent == null)
                     {
@@ -216,7 +216,7 @@ namespace Quasar
                         position = parent.Position + parent.Rotation * localPosition;
                     }
 
-                    ClearInvalidationType(InvalidationType.Position);
+                    ClearInvalidationFlags(InvalidationFlags.Position);
                 }
 
                 return position;
@@ -229,10 +229,10 @@ namespace Quasar
         {
             get
             {
-                if (HasInvalidationType(InvalidationType.PositiveX))
+                if (HasInvalidationFlags(InvalidationFlags.PositiveX))
                 {
                     positiveX = Rotation * Vector3.PositiveX;
-                    ClearInvalidationType(InvalidationType.PositiveX);
+                    ClearInvalidationFlags(InvalidationFlags.PositiveX);
                 }
 
                 return positiveX;
@@ -245,10 +245,10 @@ namespace Quasar
         {
             get
             {
-                if (HasInvalidationType(InvalidationType.PositiveY))
+                if (HasInvalidationFlags(InvalidationFlags.PositiveY))
                 {
                     positiveY = Rotation * Vector3.PositiveY;
-                    ClearInvalidationType(InvalidationType.PositiveY);
+                    ClearInvalidationFlags(InvalidationFlags.PositiveY);
                 }
 
                 return positiveY;
@@ -261,10 +261,10 @@ namespace Quasar
         {
             get
             {
-                if (HasInvalidationType(InvalidationType.PositiveZ))
+                if (HasInvalidationFlags(InvalidationFlags.PositiveZ))
                 {
                     positiveZ = Rotation * Vector3.PositiveZ;
-                    ClearInvalidationType(InvalidationType.PositiveZ);
+                    ClearInvalidationFlags(InvalidationFlags.PositiveZ);
                 }
 
                 return positiveZ;
@@ -283,7 +283,7 @@ namespace Quasar
         {
             get
             {
-                if (HasInvalidationType(InvalidationType.Rotation))
+                if (HasInvalidationFlags(InvalidationFlags.Rotation))
                 {
                     if (parent == null)
                     {
@@ -294,7 +294,7 @@ namespace Quasar
                         rotation = parent.Rotation * localRotation;
                     }
 
-                    ClearInvalidationType(InvalidationType.Rotation);
+                    ClearInvalidationFlags(InvalidationFlags.Rotation);
                 }
 
                 return rotation;
@@ -307,7 +307,7 @@ namespace Quasar
         {
             get
             {
-                if (HasInvalidationType(InvalidationType.Scale))
+                if (HasInvalidationFlags(InvalidationFlags.Scale))
                 {
                     if (parent == null)
                     {
@@ -318,7 +318,7 @@ namespace Quasar
                         scale = parent.Scale * localScale;
                     }
 
-                    ClearInvalidationType(InvalidationType.Scale);
+                    ClearInvalidationFlags(InvalidationFlags.Scale);
                 }
 
                 return scale;
@@ -373,23 +373,23 @@ namespace Quasar
         }
 
 
-        private bool HasInvalidationType(InvalidationType invalidationType)
+        private new bool HasInvalidationFlags(int invalidationFlags)
         {
             if (parent != null && parentTimestamp != parent.Timestamp)
             {
-                Invalidate(InvalidationType.All);
+                Invalidate(InvalidationFlags.All);
                 parentTimestamp = parent.Timestamp;
                 return true;
             }
 
-            return IsInvalidationTypeSet(invalidationType);
+            return base.HasInvalidationFlags(invalidationFlags);
         }
 
         private void SetParent(Transform value)
         {
             parent = value ?? root;
             parentTimestamp = parent.Timestamp;
-            Invalidate(InvalidationType.All);
+            Invalidate(InvalidationFlags.All);
         }
     }
 }

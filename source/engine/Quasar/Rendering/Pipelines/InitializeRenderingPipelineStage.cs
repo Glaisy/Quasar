@@ -79,6 +79,7 @@ namespace Quasar.Rendering.Pipelines
             MeshGeneratorBase.InitializeStaticServices(ServiceProvider);
             Material.InitializeStaticServices(ServiceProvider);
             RenderObject.InitializeStaticServices(ServiceProvider);
+            Camera.InitializeStaticServices(ServiceProvider);
 
             // initialize late-started rendering services (due to dependency on GraphicsContext)
 #if DEBUG

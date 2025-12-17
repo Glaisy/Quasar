@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="TransformBase.InvalidationType.cs" company="Space Development">
+// <copyright file="TransformBase.InvalidationFlags.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,8 +9,6 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System;
-
 namespace Quasar
 {
     /// <summary>
@@ -19,75 +17,74 @@ namespace Quasar
     public abstract partial class TransformBase
     {
         /// <summary>
-        /// Transformation invalidation type flags.
+        /// Transformation invalidation flags.
         /// </summary>
-        [Flags]
-        protected enum InvalidationType
+        protected static class InvalidationFlags
         {
             /// <summary>
             /// The none invalidation type.
             /// </summary>
-            None = 0,
+            public const int None = 0;
 
             /// <summary>
             /// The world space position invalidation type.
             /// </summary>
-            Position = 1,
+            public const int Position = 1;
 
             /// <summary>
             /// The world space negative Z vector invalidation type.
             /// </summary>
-            NegativeX = 2,
+            public const int NegativeX = 2;
 
             /// <summary>
             /// The world space negative Y vector invalidation type.
             /// </summary>
-            NegativeY = 4,
+            public const int NegativeY = 4;
 
             /// <summary>
             /// The world space negative Z vector invalidation type.
             /// </summary>
-            NegativeZ = 8,
+            public const int NegativeZ = 8;
 
             /// <summary>
             /// The world space positive X vector invalidation type.
             /// </summary>
-            PositiveX = 16,
+            public const int PositiveX = 16;
 
             /// <summary>
             /// The world space positive Y vector invalidation type.
             /// </summary>
-            PositiveY = 32,
+            public const int PositiveY = 32;
 
             /// <summary>
             /// The world space positive Z vector invalidation type.
             /// </summary>
-            PositiveZ = 64,
+            public const int PositiveZ = 64;
 
             /// <summary>
             /// The world space scale invalidation type.
             /// </summary>
-            Scale = 128,
+            public const int Scale = 128;
 
             /// <summary>
             /// The world space rotation invalidation type.
             /// </summary>
-            Rotation = 256,
+            public const int Rotation = 256;
 
             /// <summary>
             /// The world space inverse rotation invalidation type.
             /// </summary>
-            InverseRotation = 512,
+            public const int InverseRotation = 512;
 
             /// <summary>
             /// All vectors invalidation type.
             /// </summary>
-            AllVectors = NegativeX | NegativeY | NegativeZ | PositiveX | PositiveY | PositiveZ,
+            public const int AllVectors = NegativeX | NegativeY | NegativeZ | PositiveX | PositiveY | PositiveZ;
 
             /// <summary>
             /// The all invalidation types.
             /// </summary>
-            All = Position | Rotation | InverseRotation | Scale | AllVectors
+            public const int All = Position | Rotation | InverseRotation | Scale | AllVectors;
         }
     }
 }

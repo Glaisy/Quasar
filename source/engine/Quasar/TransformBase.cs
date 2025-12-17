@@ -9,21 +9,15 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System.Runtime.CompilerServices;
-using System.Threading;
-
 namespace Quasar
 {
     /// <summary>
     /// Abstract base class for 3D space transformation objects.
     /// </summary>
     /// <seealso cref="INameProvider" />
-    public abstract partial class TransformBase : INameProvider
+    /// <seealso cref="InvalidatableBase" />
+    public abstract partial class TransformBase : InvalidatableBase, INameProvider
     {
-        private InvalidationType invalidationType;
-        private static int lastTimestamp;
-
-
         /// <summary>
         /// Initializes a new instance of the <see cref="TransformBase" /> class.
         /// </summary>
@@ -38,42 +32,5 @@ namespace Quasar
         /// Gets or sets the name.
         /// </summary>
         public string Name { get; set; }
-
-        /// <summary>
-        /// Gets the timestamp.
-        /// </summary>
-        public int Timestamp { get; private set; }
-
-
-
-        /// <summary>
-        /// Clears the invalidation type flags.
-        /// </summary>
-        /// <param name="invalidationType">The invalidation type flags.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected void ClearInvalidationType(InvalidationType invalidationType)
-        {
-            this.invalidationType &= ~invalidationType;
-        }
-
-        /// <summary>
-        /// Invalidates the transformation by the specified invalidation type.
-        /// </summary>
-        /// <param name="invalidationType">Type of the invalidation.</param>
-        protected void Invalidate(InvalidationType invalidationType)
-        {
-            this.invalidationType |= invalidationType;
-            Timestamp = Interlocked.Increment(ref lastTimestamp);
-        }
-
-        /// <summary>
-        /// Determines whether the specified invalidation type flag(s) is/are set.
-        /// </summary>
-        /// <param name="invalidationType">The invalidation flags.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected bool IsInvalidationTypeSet(InvalidationType invalidationType)
-        {
-            return (this.invalidationType & invalidationType) == invalidationType;
-        }
     }
 }
