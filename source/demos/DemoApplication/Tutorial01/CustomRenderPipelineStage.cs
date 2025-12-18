@@ -43,6 +43,7 @@ namespace DemoApplication.Tutorial01
         private RenderModel renderModel;
         private float angle;
         private int lastSecond;
+        private IMesh mesh;
 
 
         /// <summary>
@@ -82,6 +83,8 @@ namespace DemoApplication.Tutorial01
                 Debug.Info(logMessage);
 
                 lastSecond = second;
+                renderModel.SetMesh(renderModel.Mesh == null ? mesh : null, true);
+                ////renderModel.IsEnabled = !renderModel.IsEnabled;
             }
         }
 
@@ -100,7 +103,6 @@ namespace DemoApplication.Tutorial01
             material.SetColor("FillColor", Color.White);
             material.SetFloat("Thickness", 0.1f);
 
-            IMesh mesh = null;
             proceduralMeshGenerator.GenerateCube(ref mesh, Vector3.One);
 
             renderModel = new RenderModel
@@ -109,7 +111,7 @@ namespace DemoApplication.Tutorial01
                 Material = material
             };
 
-            renderModel.SetMesh(mesh, false);
+            renderModel.SetMesh(mesh, true);
         }
     }
 }

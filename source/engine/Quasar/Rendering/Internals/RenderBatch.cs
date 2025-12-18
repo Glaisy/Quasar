@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 // <copyright file="RenderBatch.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
@@ -44,5 +44,74 @@ namespace Quasar.Rendering.Internals
         /// The shader.
         /// </summary>
         public readonly ShaderBase Shader;
+
+
+        /// <summary>
+        /// Adds the model to the batch.
+        /// </summary>
+        /// <param name="renderModel">The render model.</param>
+        public void AddModel(RenderModel renderModel)
+        {
+            if (renderModel.State.IsDoubleSided)
+            {
+                DoubleSidedModels.Add(renderModel);
+                return;
+            }
+
+            Models.Add(renderModel);
+        }
+
+        /// <summary>
+        /// Removes all model from the batch.
+        /// </summary>
+        public void Clear()
+        {
+            foreach (var renderModel in DoubleSidedModels)
+            {
+                renderModel.State.IsRenderable = false;
+                renderModel.State.RenderBatch = null;
+            }
+
+            foreach (var renderModel in Models)
+            {
+                renderModel.State.IsRenderable = false;
+                renderModel.State.RenderBatch = null;
+            }
+
+            DoubleSidedModels.Clear();
+            Models.Clear();
+        }
+
+        /// <summary>
+        /// Moves the model by the double sided flag.
+        /// </summary>
+        /// <param name="renderModel">The render model.</param>
+        public void MoveModel(RenderModel renderModel)
+        {
+            if (renderModel.State.IsDoubleSided)
+            {
+                Models.Remove(renderModel);
+                DoubleSidedModels.Add(renderModel);
+                return;
+            }
+
+            DoubleSidedModels.Remove(renderModel);
+            Models.Add(renderModel);
+        }
+
+        /// <summary>
+        /// Removes the model from the batch.
+        /// </summary>
+        /// <param name="renderModel">The render model.</param>
+        public void RemoveModel(RenderModel renderModel)
+        {
+            if (renderModel.State.IsDoubleSided)
+            {
+                DoubleSidedModels.Remove(renderModel);
+                return;
+            }
+
+            Models.Remove(renderModel);
+        }
     }
 }

@@ -206,7 +206,7 @@ namespace Quasar.Rendering.Internals.Renderers
                 }
 
                 // draw mesh
-                context.CommandProcessor.DrawMesh(renderModel.Mesh);
+                context.CommandProcessor.DrawMesh(renderModel.State.Mesh);
             }
         }
     }

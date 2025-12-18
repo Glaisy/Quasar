@@ -11,6 +11,9 @@
 
 using System;
 
+using Quasar.Graphics;
+using Quasar.Graphics.Internals;
+using Quasar.Rendering.Internals;
 using Quasar.Rendering.Internals.Services;
 
 using Space.Core.DependencyInjection;
@@ -46,32 +49,144 @@ namespace Quasar.Rendering.Processors.Internals
             switch (command.Type)
             {
                 case RenderModelCommandType.Create:
-                    renderModel.State.RenderLayer = renderingLayerService[command.Layer];
-                    renderModel.Enabled = command.Value;
+                    renderModel.State.RenderingLayer = renderingLayerService[command.Layer];
+                    renderModel.State.IsRenderable = false;
+                    renderModel.State.IsDoubleSided = false;
+                    renderModel.State.IsEnabled = command.Value;
                     break;
 
                 case RenderModelCommandType.DoubleSidedChanged:
-                    throw new NotImplementedException();
+                    HandleDoubleSidedChangedCommand(renderModel, command.Value);
+                    break;
 
                 case RenderModelCommandType.EnabledChanged:
-                    throw new NotImplementedException();
+                    HandleEnabledChangedCommand(renderModel, command.Value);
+                    break;
 
                 case RenderModelCommandType.LayerChanged:
-                    throw new NotImplementedException();
+                    var renderingLayer = renderingLayerService[command.Layer];
+                    HandleLayerChangedCommand(renderModel, renderingLayer);
+                    break;
 
                 case RenderModelCommandType.MeshChanged:
-                    renderModel.State.Mesh = command.Mesh;
-                    renderModel.State.SharedMesh = command.Value;
+                    HandleMeshChangedCommand(renderModel, command.Mesh, command.Value);
                     break;
 
                 case RenderModelCommandType.ShaderChanged:
-                    renderModel.State.Shader = command.Shader;
-                    renderModel.State.RenderLayer.AddModel(renderModel);
+                    HandleShaderChangedCommand(renderModel, command.Shader);
                     break;
 
                 default:
                     throw new NotSupportedException(command.Type.ToString());
             }
+        }
+
+
+        private static void HandleDoubleSidedChangedCommand(RenderModel renderModel, bool newValue)
+        {
+            renderModel.State.IsDoubleSided = newValue;
+            if (!renderModel.State.IsRenderable)
+            {
+                return;
+            }
+
+            var renderBatch = renderModel.State.RenderBatch;
+            renderBatch.MoveModel(renderModel);
+        }
+
+        private static void HandleEnabledChangedCommand(RenderModel renderModel, bool newValue)
+        {
+            renderModel.State.IsEnabled = newValue;
+            if (!renderModel.State.IsRenderable)
+            {
+                return;
+            }
+
+            // enable
+            var renderBatch = renderModel.State.RenderBatch;
+            if (newValue)
+            {
+                renderBatch.AddModel(renderModel);
+                return;
+            }
+
+            // disable
+            renderBatch.RemoveModel(renderModel);
+        }
+
+        private static void HandleLayerChangedCommand(RenderModel renderModel, RenderingLayer newValue)
+        {
+            var oldValue = renderModel.State.RenderingLayer;
+            renderModel.State.RenderingLayer = newValue;
+            if (!renderModel.State.IsRenderable ||
+                !renderModel.State.IsEnabled)
+            {
+                return;
+            }
+
+            renderModel.State.RenderBatch.RemoveModel(renderModel);
+            renderModel.State.RenderBatch = newValue.GetRenderBatch(renderModel.State.Shader);
+            renderModel.State.RenderBatch.AddModel(renderModel);
+        }
+
+        private static void HandleMeshChangedCommand(RenderModel renderModel, IMesh newValue, bool newSharedMeshValue)
+        {
+            if (renderModel.State.Mesh != null &&
+                !renderModel.State.SharedMesh)
+            {
+                renderModel.State.Mesh.Dispose();
+            }
+
+            renderModel.State.Mesh = newValue;
+            renderModel.State.SharedMesh = newSharedMeshValue;
+
+            if (newValue == null)
+            {
+                if (renderModel.State.IsRenderable &&
+                    renderModel.State.IsEnabled)
+                {
+                    renderModel.State.RenderBatch.RemoveModel(renderModel);
+                    renderModel.State.IsRenderable = false;
+                }
+
+                return;
+            }
+
+            if (renderModel.State.IsRenderable ||
+                !renderModel.State.IsEnabled ||
+                !IsRenderable(renderModel.State))
+            {
+                return;
+            }
+
+            var shader = renderModel.State.Shader;
+            renderModel.State.RenderBatch = renderModel.State.RenderingLayer.GetRenderBatch(shader);
+            renderModel.State.RenderBatch.AddModel(renderModel);
+            renderModel.State.IsRenderable = true;
+        }
+
+        private static void HandleShaderChangedCommand(RenderModel renderModel, ShaderBase newValue)
+        {
+            renderModel.State.Shader = newValue;
+
+            var isActivated = renderModel.State.IsEnabled && renderModel.State.IsRenderable;
+            if (renderModel.State.RenderBatch != null && isActivated)
+            {
+                renderModel.State.RenderBatch.RemoveModel(renderModel);
+            }
+
+            renderModel.State.RenderBatch = renderModel.State.RenderingLayer.GetRenderBatch(newValue);
+            if (!isActivated)
+            {
+                return;
+            }
+
+            renderModel.State.RenderBatch.AddModel(renderModel);
+        }
+
+        private static bool IsRenderable(in RenderModelState renderModelState)
+        {
+            return renderModelState.RenderBatch != null && renderModelState.Mesh != null;
         }
     }
 }

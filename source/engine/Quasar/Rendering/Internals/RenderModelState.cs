@@ -23,12 +23,17 @@ namespace Quasar.Rendering.Processors.Internals
         /// <summary>
         /// The double sided flag.
         /// </summary>
-        public bool DoubleSided;
+        public bool IsDoubleSided;
 
         /// <summary>
         /// The enabled flag.
         /// </summary>
-        public bool Enabled;
+        public bool IsEnabled;
+
+        /// <summary>
+        /// The renderable flag.
+        /// </summary>
+        public bool IsRenderable;
 
         /// <summary>
         /// The mesh.
@@ -36,9 +41,14 @@ namespace Quasar.Rendering.Processors.Internals
         public IMesh Mesh;
 
         /// <summary>
+        /// The render batch.
+        /// </summary>
+        public RenderBatch RenderBatch;
+
+        /// <summary>
         /// The render layer.
         /// </summary>
-        public RenderingLayer RenderLayer;
+        public RenderingLayer RenderingLayer;
 
         /// <summary>
         /// The shader.

@@ -75,7 +75,7 @@ namespace Quasar.Rendering
 
         private void DisposeInternal()
         {
-            Enabled = false;
+            IsEnabled = false;
             isDisposed = true;
         }
 
@@ -127,7 +127,7 @@ namespace Quasar.Rendering
         /// <summary>
         /// Gets or sets a value indicating whether this instance is enabled.
         /// </summary>
-        public bool Enabled
+        public bool IsEnabled
         {
             get => enabled;
             set
@@ -353,9 +353,9 @@ namespace Quasar.Rendering
 
         private void SendEnabledChangedCommand(bool enabled)
         {
-            commandProcessor.Add(new RenderModelCommand(this, RenderModelCommandType.LayerChanged)
+            commandProcessor.Add(new RenderModelCommand(this, RenderModelCommandType.EnabledChanged)
             {
-                Layer = layer
+                Value = enabled
             });
         }
 

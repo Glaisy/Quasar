@@ -49,7 +49,7 @@ namespace DemoApplication
             builder.ConfigureApplicationWindow(configuration =>
             {
                 configuration.Type = ApplicationWindowType.Resizable;
-                configuration.ScreenRatio = 0.75f;
+                configuration.ScreenRatio = 0.10f;
             });
 
 
