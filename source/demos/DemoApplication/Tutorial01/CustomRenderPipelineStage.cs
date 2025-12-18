@@ -14,7 +14,6 @@ using System;
 using Quasar;
 using Quasar.Diagnostics.Profiler;
 using Quasar.Graphics;
-using Quasar.Graphics.Internals;
 using Quasar.Pipelines;
 using Quasar.Rendering;
 using Quasar.Rendering.Pipelines;
@@ -36,16 +35,12 @@ namespace DemoApplication.Tutorial01
     [ExecuteBefore(typeof(UIRenderingPipelineStage))]
     internal sealed class CustomRenderPipelineStage : RenderingPipelineStageBase
     {
-        private readonly IShaderRepository shaderRepository;
         private readonly IProceduralMeshGenerator proceduralMeshGenerator;
         private readonly ITimeProvider timeProvider;
         private readonly IProfilerDataProvider<IRenderingStatistics> renderingStatisticsProvider;
         private readonly ILogger logger;
         private Camera camera;
-        private IMesh mesh;
-        private ShaderBase shader;
-        private int mvpPropertyIndex;
-        private Material material;
+        private RenderModel renderModel;
         private float angle;
         private int lastSecond;
 
@@ -53,19 +48,16 @@ namespace DemoApplication.Tutorial01
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomRenderPipelineStage" /> class.
         /// </summary>
-        /// <param name="shaderRepository">The shader repository.</param>
         /// <param name="proceduralMeshGenerator">The procedural mesh generator.</param>
         /// <param name="timeProvider">The time provider.</param>
         /// <param name="renderingStatisticsProvider">The rendering statistics provider.</param>
         /// <param name="loggerFactory">The logger factory.</param>
         internal CustomRenderPipelineStage(
-            IShaderRepository shaderRepository,
             IProceduralMeshGenerator proceduralMeshGenerator,
             ITimeProvider timeProvider,
             IProfilerDataProvider<IRenderingStatistics> renderingStatisticsProvider,
             ILoggerFactory loggerFactory)
         {
-            this.shaderRepository = shaderRepository;
             this.proceduralMeshGenerator = proceduralMeshGenerator;
             this.timeProvider = timeProvider;
             this.renderingStatisticsProvider = renderingStatisticsProvider;
@@ -78,18 +70,7 @@ namespace DemoApplication.Tutorial01
         protected override void OnExecute()
         {
             angle += 0.03f;
-            var rotation = Quaternion.AngleAxis(angle, Vector3.PositiveY);
-            Matrix4 modelMatrix;
-            modelMatrix.FromQuaternion(rotation, false);
-
-            Matrix4 mvp;
-            Matrix4.Multiply(modelMatrix, camera.ViewProjectionMatrix, ref mvp);
-
-            shader.Activate();
-            shader.SetMatrix(mvpPropertyIndex, mvp);
-            material.TransferToShader();
-            Context.CommandProcessor.DrawMesh(mesh);
-            shader.Deactivate();
+            renderModel.Transform.LocalRotation = Quaternion.AngleAxis(angle, Vector3.PositiveY);
 
             var second = (int)MathF.Floor(timeProvider.Time);
 
@@ -114,16 +95,21 @@ namespace DemoApplication.Tutorial01
             camera.Transform.LocalPosition = new Vector3(0, 1, -2);
             camera.Transform.LocalRotation = Quaternion.LookRotation(camera.Transform.LocalPosition, Vector3.Zero, Vector3.PositiveY, true);
 
-            shader = shaderRepository.GetShader("Wireframe");
-            mvpPropertyIndex = shader["ModelViewProjectionMatrix"].Index;
-
-            material = new Material(shader);
+            var material = new Material("Wireframe");
             material.SetColor("LineColor", Color.Blue);
             material.SetColor("FillColor", Color.White);
             material.SetFloat("Thickness", 0.1f);
 
-
+            IMesh mesh = null;
             proceduralMeshGenerator.GenerateCube(ref mesh, Vector3.One);
+
+            renderModel = new RenderModel
+            {
+                Name = "TestCube",
+                Material = material
+            };
+
+            renderModel.SetMesh(mesh, false);
         }
     }
 }

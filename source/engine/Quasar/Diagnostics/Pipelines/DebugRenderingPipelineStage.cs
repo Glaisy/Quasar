@@ -12,7 +12,7 @@
 #if DEBUG
 using Quasar.Pipelines;
 using Quasar.Rendering.Pipelines;
-using Quasar.UI.Internals;
+using Quasar.UI.Internals.Renderers;
 using Quasar.UI.Pipelines;
 
 using Space.Core.DependencyInjection;

@@ -47,10 +47,6 @@ namespace Quasar.Rendering.Processors.Internals
         {
             switch (command.Type)
             {
-                case CameraCommandType.Reset:
-                    cameraService.Clear();
-                    break;
-
                 case CameraCommandType.EnabledChanged:
                     if (command.Enabled)
                     {

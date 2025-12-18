@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 // <copyright file="CameraCommandType.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
@@ -16,11 +16,6 @@ namespace Quasar.Rendering.Processors.Internals
     /// </summary>
     internal enum CameraCommandType
     {
-        /// <summary>
-        /// The reset command.
-        /// </summary>
-        Reset,
-
         /// <summary>
         /// The enabled changed command.
         /// </summary>

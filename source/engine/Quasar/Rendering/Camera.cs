@@ -49,6 +49,7 @@ namespace Quasar.Rendering
             frameBuffer = renderingContext.PrimaryFrameBuffer;
             Id = Interlocked.Increment(ref lastCameraId);
             Name = name;
+            Enabled = true;
         }
 
 

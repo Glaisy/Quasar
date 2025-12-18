@@ -17,7 +17,7 @@ using Quasar.Graphics.Internals;
 
 using Space.Core.DependencyInjection;
 
-namespace Quasar.UI.Internals
+namespace Quasar.UI.Internals.Renderers
 {
     /// <summary>
     /// Internal component to render UI elements.

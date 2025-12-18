@@ -392,6 +392,14 @@ namespace Quasar.Rendering
 
 
         /// <summary>
+        /// Gets the underlying shader.
+        /// </summary>
+        internal ShaderBase GetShader()
+        {
+            return shader;
+        }
+
+        /// <summary>
         /// Initializes the static services.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
