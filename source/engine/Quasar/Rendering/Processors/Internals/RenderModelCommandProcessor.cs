@@ -46,21 +46,27 @@ namespace Quasar.Rendering.Processors.Internals
             switch (command.Type)
             {
                 case RenderModelCommandType.Create:
+                    renderModel.State.RenderLayer = renderingLayerService[command.Layer];
+                    renderModel.Enabled = command.Value;
                     break;
 
                 case RenderModelCommandType.DoubleSidedChanged:
-                    break;
+                    throw new NotImplementedException();
 
                 case RenderModelCommandType.EnabledChanged:
-                    break;
+                    throw new NotImplementedException();
 
                 case RenderModelCommandType.LayerChanged:
-                    break;
+                    throw new NotImplementedException();
 
                 case RenderModelCommandType.MeshChanged:
+                    renderModel.State.Mesh = command.Mesh;
+                    renderModel.State.SharedMesh = command.Value;
                     break;
 
                 case RenderModelCommandType.ShaderChanged:
+                    renderModel.State.Shader = command.Shader;
+                    renderModel.State.RenderLayer.AddModel(renderModel);
                     break;
 
                 default:

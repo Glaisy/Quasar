@@ -11,6 +11,8 @@
 
 using System.Collections.Generic;
 
+using Quasar.Graphics.Internals;
+
 namespace Quasar.Rendering.Internals
 {
     /// <summary>
@@ -43,14 +45,14 @@ namespace Quasar.Rendering.Internals
         public readonly LayerMask LayerMask;
 
 
-        /////// <summary>
-        /////// Adds the render model to this layer.
-        /////// </summary>
-        /////// <param name="renderModel">The render model.</param>
-        ////public void AddModel(RenderModel renderModel)
-        ////{
-        ////    AddModelInternal(renderModel.State.Shader, renderModel);
-        ////}
+        /// <summary>
+        /// Adds the render model to this layer.
+        /// </summary>
+        /// <param name="renderModel">The render model.</param>
+        public void AddModel(RenderModel renderModel)
+        {
+            AddModelInternal(renderModel.State.Shader, renderModel);
+        }
 
         /// <summary>
         /// Clears  the layer.
@@ -135,23 +137,23 @@ namespace Quasar.Rendering.Internals
         ////}
 
 
-        ////private void AddModelInternal(ShaderBase shader, RenderModel renderModel)
-        ////{
-        ////    if (!renderBatches.TryGetValue(shader.Handle, out var renderBatch))
-        ////    {
-        ////        renderBatch = new RenderBatch(shader);
-        ////        renderBatches.Add(shader.Handle, renderBatch);
-        ////    }
+        private void AddModelInternal(ShaderBase shader, RenderModel renderModel)
+        {
+            if (!renderBatches.TryGetValue(shader.Handle, out var renderBatch))
+            {
+                renderBatch = new RenderBatch(shader);
+                renderBatches.Add(shader.Handle, renderBatch);
+            }
 
-        ////    if (renderModel.State.DoubleSided)
-        ////    {
-        ////        renderBatch.DoubleSidedModels.Add(renderModel);
-        ////    }
-        ////    else
-        ////    {
-        ////        renderBatch.Models.Add(renderModel);
-        ////    }
-        ////}
+            if (renderModel.State.DoubleSided)
+            {
+                renderBatch.DoubleSidedModels.Add(renderModel);
+            }
+            else
+            {
+                renderBatch.Models.Add(renderModel);
+            }
+        }
 
         ////private void RemoveModelInternal(ShaderBase shader, RenderModel renderModel)
         ////{

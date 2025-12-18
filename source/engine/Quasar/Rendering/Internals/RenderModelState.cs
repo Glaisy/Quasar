@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------
 
 using Quasar.Graphics;
+using Quasar.Graphics.Internals;
 using Quasar.Rendering.Internals;
 
 namespace Quasar.Rendering.Processors.Internals
@@ -40,9 +41,9 @@ namespace Quasar.Rendering.Processors.Internals
         public RenderingLayer RenderLayer;
 
         /// <summary>
-        /// The render batch.
+        /// The shader.
         /// </summary>
-        public RenderBatch RenderBatch;
+        public ShaderBase Shader;
 
         /// <summary>
         /// The shared mesh flag.
