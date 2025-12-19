@@ -83,7 +83,7 @@ namespace Quasar.Tests.Rendering
             // assert
             Assert.That(sut.Models.Count, Is.EqualTo(0));
             Assert.That(sut.DoubleSidedModels.Count, Is.EqualTo(0));
-            Assert.That(renderModel.State.IsActive, Is.False);
+            Assert.That(renderModel.State.IsRendered, Is.False);
             Assert.That(renderModel.State.RenderBatch, Is.Null);
         }
 
@@ -102,7 +102,7 @@ namespace Quasar.Tests.Rendering
             // assert
             Assert.That(sut.Models.Count, Is.EqualTo(0));
             Assert.That(sut.DoubleSidedModels.Count, Is.EqualTo(0));
-            Assert.That(renderModel.State.IsActive, Is.False);
+            Assert.That(renderModel.State.IsRendered, Is.False);
             Assert.That(renderModel.State.RenderBatch, Is.Null);
         }
 
@@ -162,9 +162,9 @@ namespace Quasar.Tests.Rendering
             // assert
             Assert.That(sut.Models.Count, Is.EqualTo(0));
             Assert.That(sut.DoubleSidedModels.Count, Is.EqualTo(0));
-            Assert.That(renderModel1.State.IsActive, Is.False);
+            Assert.That(renderModel1.State.IsRendered, Is.False);
             Assert.That(renderModel1.State.RenderBatch, Is.Null);
-            Assert.That(renderModel2.State.IsActive, Is.False);
+            Assert.That(renderModel2.State.IsRendered, Is.False);
             Assert.That(renderModel2.State.RenderBatch, Is.Null);
         }
     }

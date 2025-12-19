@@ -9,6 +9,8 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System.Runtime.CompilerServices;
+
 using Quasar.Graphics;
 using Quasar.Rendering.Internals;
 
@@ -46,28 +48,56 @@ namespace Quasar.Rendering.Processors.Internals
 
 
         /// <summary>
-        /// Gets a value indicating whether the model is active.
-        /// </summary>
-        public bool IsActive => RenderBatch != null && Flags.HasFlag(RenderModelStateFlags.Enabled | RenderModelStateFlags.Renderable);
-
-        /// <summary>
         /// Gets a value indicating whether the model is enabled.
         /// </summary>
-        public bool IsEnabled => Flags.HasFlag(RenderModelStateFlags.Enabled);
+        public bool IsEnabled
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Flags.HasFlag(RenderModelStateFlags.Enabled);
+        }
 
         /// <summary>
         /// Gets a value indicating whether the model is double sided.
         /// </summary>
-        public bool IsDoubleSided => Flags.HasFlag(RenderModelStateFlags.DoubleSided);
+        public bool IsDoubleSided
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Flags.HasFlag(RenderModelStateFlags.DoubleSided);
+        }
 
         /// <summary>
-        /// Gets a value indicating whether the model is renderable.
+        /// Gets a value indicating whether the model is rendered.
         /// </summary>
-        public bool IsRenderable => Flags.HasFlag(RenderModelStateFlags.Renderable);
+        public bool IsRendered
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Flags.HasFlag(RenderModelStateFlags.Rendered);
+        }
 
         /// <summary>
         /// Gets a value indicating whether this model is renderable by properties.
         /// </summary>
-        public bool IsRenderableByProperties => Mesh != null && Material != null;
+        public bool IsRenderableByProperties
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Mesh != null && Material != null && Flags.HasFlag(RenderModelStateFlags.Enabled);
+        }
+
+
+        /// <summary>
+        /// Updates the specified flags by the "set" value.
+        /// </summary>
+        /// <param name="flags">The flags.</param>
+        /// <param name="set">The set flag. If true the flags will be set; otherwise they will be cleared.</param>
+        public void UpdateFlags(RenderModelStateFlags flags, bool set)
+        {
+            if (set)
+            {
+                Flags |= flags;
+                return;
+            }
+
+            Flags &= ~flags;
+        }
     }
 }

@@ -40,8 +40,8 @@ namespace Quasar.Rendering.Internals
         SharedMesh = 4,
 
         /// <summary>
-        /// The renderable flag.
+        /// The rendered flag.
         /// </summary>
-        Renderable = 8
+        Rendered = 8
     }
 }

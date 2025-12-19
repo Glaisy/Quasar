@@ -84,66 +84,65 @@ namespace Quasar.Rendering.Processors.Internals
         private static void HandleCreateCommand(ref RenderModelState renderModelState, RenderingLayer renderingLayer, bool isEnabled)
         {
             renderModelState.RenderingLayer = renderingLayer;
-            renderModelState.Flags = isEnabled ? RenderModelStateFlags.Enabled : RenderModelStateFlags.None;
+            renderModelState.UpdateFlags(RenderModelStateFlags.Enabled, isEnabled);
         }
 
         private static void HandleDoubleSidedChangedCommand(RenderModel renderModel, bool newValue)
         {
-            if (newValue)
-            {
-                renderModel.State.Flags |= RenderModelStateFlags.DoubleSided;
-            }
-            else
-            {
-                renderModel.State.Flags &= ~RenderModelStateFlags.DoubleSided;
-            }
+            renderModel.State.UpdateFlags(RenderModelStateFlags.DoubleSided, newValue);
 
-            if (!renderModel.State.IsActive)
+            if (!renderModel.State.IsRendered)
             {
                 return;
             }
 
-            var renderBatch = renderModel.State.RenderBatch;
-            renderBatch.MoveModel(renderModel);
+            renderModel.State.RenderBatch.MoveModel(renderModel);
         }
 
         private static void HandleEnabledChangedCommand(RenderModel renderModel, bool newValue)
         {
+            // enabling?
             if (newValue)
             {
-                renderModel.State.Flags |= RenderModelStateFlags.Enabled;
-            }
-            else
-            {
-                renderModel.State.Flags &= ~RenderModelStateFlags.Enabled;
-            }
+                Assertion.ThrowIfEqual(renderModel.State.IsRendered, true, nameof(RenderModelState.IsRendered));
+                Assertion.ThrowIfEqual(renderModel.State.RenderBatch != null, true, nameof(RenderModelState.RenderBatch));
 
-            if (!renderModel.State.IsRenderable)
-            {
+                renderModel.State.UpdateFlags(RenderModelStateFlags.Enabled, newValue);
+                if (renderModel.State.IsRenderableByProperties)
+                {
+                    var shader = renderModel.State.Material.GetShader();
+                    renderModel.State.RenderBatch = renderModel.State.RenderingLayer.GetRenderBatch(shader);
+                    renderModel.State.RenderBatch.AddModel(renderModel);
+
+                    Assertion.ThrowIfEqual(renderModel.State.IsRendered, false, nameof(RenderModelState.IsRendered));
+                    Assertion.ThrowIfEqual(renderModel.State.RenderBatch != null, false, nameof(RenderModelState.RenderBatch));
+                }
+#if DEBUG
+                else
+                {
+                    Assertion.ThrowIfEqual(renderModel.State.IsRendered, true, nameof(RenderModelState.IsRendered));
+                    Assertion.ThrowIfEqual(renderModel.State.RenderBatch != null, true, nameof(RenderModelState.RenderBatch));
+                }
+#endif
                 return;
             }
 
-            // enable
-            if (renderModel.State.RenderBatch == null)
+            // disabling
+            if (renderModel.State.IsRendered)
             {
-                var shader = renderModel.State.Material.GetShader();
-                renderModel.State.RenderBatch = renderModel.State.RenderingLayer.GetRenderBatch(shader);
+                renderModel.State.RenderBatch.RemoveModel(renderModel);
             }
 
-            if (newValue)
-            {
-                renderModel.State.RenderBatch.AddModel(renderModel);
-                return;
-            }
+            renderModel.State.UpdateFlags(RenderModelStateFlags.Enabled, newValue);
 
-            // disable
-            renderModel.State.RenderBatch.RemoveModel(renderModel);
+            Assertion.ThrowIfEqual(renderModel.State.IsRendered, true, nameof(RenderModelState.IsRendered));
+            Assertion.ThrowIfEqual(renderModel.State.RenderBatch != null, true, nameof(RenderModelState.RenderBatch));
         }
 
         private static void HandleLayerChangedCommand(RenderModel renderModel, RenderingLayer newValue)
         {
             renderModel.State.RenderingLayer = newValue;
-            if (!renderModel.State.IsActive)
+            if (renderModel.State.RenderBatch == null)
             {
                 return;
             }
@@ -152,91 +151,82 @@ namespace Quasar.Rendering.Processors.Internals
             var shader = renderModel.State.Material.GetShader();
             renderModel.State.RenderBatch = newValue.GetRenderBatch(shader);
             renderModel.State.RenderBatch.AddModel(renderModel);
+
+            Assertion.ThrowIfEqual(renderModel.State.IsRendered, false, nameof(RenderModelState.IsRendered));
+            Assertion.ThrowIfEqual(renderModel.State.RenderBatch != null, false, nameof(RenderModelState.RenderBatch));
         }
 
         private static void HandleMaterialChangedCommand(RenderModel renderModel, Material newValue)
         {
-            var oldShader = renderModel.State.Material?.GetShader();
-            var newShader = newValue?.GetShader();
-            renderModel.State.Material = newValue;
-
-            if (oldShader != null &&
-               newShader == null)
+            // remove old material
+            if (renderModel.State.Material != null)
             {
-                renderModel.State.Flags &= ~RenderModelStateFlags.Renderable;
-                if (renderModel.State.IsEnabled)
+                if (renderModel.State.IsRendered)
                 {
                     renderModel.State.RenderBatch.RemoveModel(renderModel);
                 }
 
-                return;
+                renderModel.State.Material = null;
+
+                Assertion.ThrowIfEqual(renderModel.State.IsRendered, true, nameof(RenderModelState.IsRendered));
+                Assertion.ThrowIfEqual(renderModel.State.RenderBatch != null, true, nameof(RenderModelState.RenderBatch));
             }
+
+            // update state & material
+            renderModel.State.Material = newValue;
 
             if (!renderModel.State.IsRenderableByProperties)
             {
+                Assertion.ThrowIfEqual(renderModel.State.RenderBatch != null, true, nameof(RenderModelState.RenderBatch));
+                Assertion.ThrowIfEqual(renderModel.State.IsRendered, true, nameof(RenderModelState.IsRendered));
                 return;
             }
 
-            renderModel.State.Flags |= RenderModelStateFlags.Renderable;
-            if (!renderModel.State.IsEnabled)
-            {
-                return;
-            }
-
-            if (oldShader != null)
-            {
-                if (oldShader != newShader)
-                {
-                    renderModel.State.RenderBatch.RemoveModel(renderModel);
-                }
-            }
-
-            renderModel.State.RenderBatch = renderModel.State.RenderingLayer.GetRenderBatch(newShader);
+            var shader = newValue.GetShader();
+            renderModel.State.RenderBatch = renderModel.State.RenderingLayer.GetRenderBatch(shader);
             renderModel.State.RenderBatch.AddModel(renderModel);
+
+            Assertion.ThrowIfEqual(renderModel.State.RenderBatch != null, false, nameof(RenderModelState.RenderBatch));
+            Assertion.ThrowIfEqual(renderModel.State.IsRendered, false, nameof(RenderModelState.IsRendered));
         }
 
         private static void HandleMeshChangedCommand(RenderModel renderModel, IMesh newValue, bool newSharedMeshValue)
         {
-            if (renderModel.State.Mesh != null &&
-                !renderModel.State.Flags.HasFlag(RenderModelStateFlags.SharedMesh))
+            // remove existing mesh
+            if (renderModel.State.Mesh != null)
             {
-                renderModel.State.Mesh.Dispose();
-            }
-
-            renderModel.State.Mesh = newValue;
-            if (newSharedMeshValue)
-            {
-                renderModel.State.Flags |= RenderModelStateFlags.SharedMesh;
-            }
-            else
-            {
-                renderModel.State.Flags &= ~RenderModelStateFlags.SharedMesh;
-            }
-
-            if (newValue == null)
-            {
-                if (renderModel.State.IsActive)
+                if (renderModel.State.IsRendered)
                 {
                     renderModel.State.RenderBatch.RemoveModel(renderModel);
-                    renderModel.State.Flags &= ~RenderModelStateFlags.Renderable;
                 }
 
-                return;
+                if (!renderModel.State.Flags.HasFlag(RenderModelStateFlags.SharedMesh))
+                {
+                    renderModel.State.Mesh.Dispose();
+                }
+
+                Assertion.ThrowIfEqual(renderModel.State.IsRendered, true, nameof(RenderModelState.IsRendered));
             }
 
-            if (renderModel.State.IsRenderable ||
-                !renderModel.State.IsRenderableByProperties ||
-                !renderModel.State.Flags.HasFlag(RenderModelStateFlags.Enabled))
+            Assertion.ThrowIfEqual(renderModel.State.RenderBatch != null, true, nameof(RenderModelState.RenderBatch));
+
+            // update state & mesh
+            renderModel.State.Mesh = newValue;
+            renderModel.State.UpdateFlags(RenderModelStateFlags.SharedMesh, newSharedMeshValue);
+
+            if (newValue == null ||
+                !renderModel.State.IsRenderableByProperties)
             {
-                // already renderable or not renderable or not enabled => we do nothing
+                Assertion.ThrowIfEqual(renderModel.State.IsRendered, true, nameof(RenderModelState.IsRendered));
                 return;
             }
 
-            Assertion.ThrowIfNotEqual(renderModel.State.RenderBatch, null, "RenderBatch should have been null at this point.");
             var shader = renderModel.State.Material.GetShader();
             renderModel.State.RenderBatch = renderModel.State.RenderingLayer.GetRenderBatch(shader);
             renderModel.State.RenderBatch.AddModel(renderModel);
-            renderModel.State.Flags |= RenderModelStateFlags.Renderable;
+
+            Assertion.ThrowIfEqual(renderModel.State.RenderBatch != null, false, nameof(RenderModelState.RenderBatch));
+            Assertion.ThrowIfEqual(renderModel.State.IsRendered, false, nameof(RenderModelState.IsRendered));
         }
     }
 }

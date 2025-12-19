@@ -53,6 +53,7 @@ namespace Quasar.Rendering.Internals
         public void AddModel(RenderModel renderModel)
         {
             renderModel.State.RenderBatch = this;
+            renderModel.State.UpdateFlags(RenderModelStateFlags.Rendered, true);
 
             if (renderModel.State.IsDoubleSided)
             {
@@ -71,11 +72,13 @@ namespace Quasar.Rendering.Internals
             foreach (var renderModel in DoubleSidedModels)
             {
                 renderModel.State.RenderBatch = null;
+                renderModel.State.UpdateFlags(RenderModelStateFlags.Rendered, false);
             }
 
             foreach (var renderModel in Models)
             {
                 renderModel.State.RenderBatch = null;
+                renderModel.State.UpdateFlags(RenderModelStateFlags.Rendered, false);
             }
 
             DoubleSidedModels.Clear();
@@ -106,6 +109,7 @@ namespace Quasar.Rendering.Internals
         public void RemoveModel(RenderModel renderModel)
         {
             renderModel.State.RenderBatch = null;
+            renderModel.State.UpdateFlags(RenderModelStateFlags.Rendered, false);
 
             if (renderModel.State.IsDoubleSided)
             {

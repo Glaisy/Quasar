@@ -37,7 +37,7 @@ namespace Quasar.Tests.Rendering
         public void CreateCommand(bool isModelEnabled)
         {
             // arrange
-            var sut = CreateSutAndModel(isModelEnabled, out var model);
+            var sut = CreateSutAndRawModel(isModelEnabled, out var model);
 
             // act
             sut.ExecuteCommands();
@@ -57,7 +57,7 @@ namespace Quasar.Tests.Rendering
         public void DoubleSidedChangedCommand_Inactive(bool isDoubleSided, bool isEnabled)
         {
             // arrange
-            var sut = CreateSutAndModel(isEnabled, out var model);
+            var sut = CreateSutAndRawModel(isEnabled, out var model);
 
             var expectedFlags = isEnabled ? RenderModelStateFlags.Enabled : RenderModelStateFlags.None;
             if (isDoubleSided)
@@ -81,10 +81,40 @@ namespace Quasar.Tests.Rendering
 
         [Test]
         [TestCaseSource(nameof(Boolean_DataSource))]
+        public void DoubleSidedChangedCommand_Rendered(bool isDoubleSided)
+        {
+            // arrange
+            var sut = CreateSutAndRenderedModel(out var model);
+
+            // act
+            model.DoubleSided = !isDoubleSided;
+            model.DoubleSided = isDoubleSided;
+
+            sut.ExecuteCommands();
+            var result = model.State;
+
+            // assert
+            Assert.That(result.RenderingLayer, Is.Not.Null);
+            Assert.That(result.RenderingLayer.Layer, Is.EqualTo(model.Layer));
+            Assert.That(result.IsRendered, Is.EqualTo(true));
+            Assert.That(result.RenderBatch, Is.Not.Null);
+
+            if (isDoubleSided)
+            {
+                Assert.That(result.RenderBatch.DoubleSidedModels.Contains(model), Is.True);
+            }
+            else
+            {
+                Assert.That(result.RenderBatch.Models.Contains(model), Is.True);
+            }
+        }
+
+        [Test]
+        [TestCaseSource(nameof(Boolean_DataSource))]
         public void EnabledChangedCommand_Inactive(bool isEnabled)
         {
             // arrange
-            var sut = CreateSutAndModel(!isEnabled, out var model);
+            var sut = CreateSutAndRawModel(!isEnabled, out var model);
 
             // act
             model.IsEnabled = isEnabled;
@@ -94,7 +124,7 @@ namespace Quasar.Tests.Rendering
             // assert
             Assert.That(result.RenderingLayer, Is.Not.Null);
             Assert.That(result.RenderingLayer.Layer, Is.EqualTo(model.Layer));
-            Assert.That(result.Flags.HasFlag(RenderModelStateFlags.Enabled), Is.EqualTo(isEnabled));
+            Assert.That(result.IsEnabled, Is.EqualTo(isEnabled));
             Assert.That(result.RenderBatch, Is.Null);
             Assert.That(result.Material, Is.Null);
             Assert.That(result.Mesh, Is.Null);
@@ -102,10 +132,38 @@ namespace Quasar.Tests.Rendering
 
         [Test]
         [TestCaseSource(nameof(Boolean_DataSource))]
+        public void EnabledChangedCommand_Rendered(bool isEnabled)
+        {
+            // arrange
+            var sut = CreateSutAndRenderableByPropertiesModel(!isEnabled, out var model);
+
+            // act
+            model.IsEnabled = isEnabled;
+            sut.ExecuteCommands();
+            var result = model.State;
+
+            // assert
+            Assert.That(result.RenderingLayer, Is.Not.Null);
+            Assert.That(result.RenderingLayer.Layer, Is.EqualTo(model.Layer));
+            Assert.That(result.IsEnabled, Is.EqualTo(isEnabled));
+            Assert.That(result.IsRendered, Is.EqualTo(isEnabled));
+
+            if (isEnabled)
+            {
+                Assert.That(result.RenderBatch, Is.Not.Null);
+            }
+            else
+            {
+                Assert.That(result.RenderBatch, Is.Null);
+            }
+        }
+
+        [Test]
+        [TestCaseSource(nameof(Boolean_DataSource))]
         public void LayerChangedCommand_Inactive(bool isEnabled)
         {
             // arrange
-            var sut = CreateSutAndModel(isEnabled, out var model);
+            var sut = CreateSutAndRawModel(isEnabled, out var model);
 
             // act
             model.Layer = Layer.Transparent;
@@ -115,17 +173,17 @@ namespace Quasar.Tests.Rendering
             // assert
             Assert.That(result.RenderingLayer, Is.Not.Null);
             Assert.That(result.RenderingLayer.Layer, Is.EqualTo(model.Layer));
-            Assert.That(result.IsActive, Is.EqualTo(false));
+            Assert.That(result.IsRendered, Is.EqualTo(false));
             Assert.That(result.RenderBatch, Is.Null);
             Assert.That(result.Material, Is.Null);
             Assert.That(result.Mesh, Is.Null);
         }
 
         [Test]
-        public void LayerChangedCommand_Active()
+        public void LayerChangedCommand_Rendered()
         {
             // arrange
-            var sut = CreateSutAndModel(true, out var model);
+            var sut = CreateSutAndRawModel(true, out var model);
             var shader = CreateShader(2);
             model.Material = new Material(shader);
             sut.ExecuteCommands();
@@ -138,7 +196,7 @@ namespace Quasar.Tests.Rendering
             var previousRenderBatch = model.State.RenderBatch;
             Assert.That(previousRenderBatch, Is.Not.Null);
             Assert.That(previousRenderBatch.Models.Contains(model), Is.True);
-            Assert.That(model.State.IsActive, Is.EqualTo(true));
+            Assert.That(model.State.IsRendered, Is.EqualTo(true));
 
             model.Layer = Layer.Transparent;
             sut.ExecuteCommands();
@@ -149,7 +207,7 @@ namespace Quasar.Tests.Rendering
 
             Assert.That(result.RenderingLayer, Is.Not.Null);
             Assert.That(result.RenderingLayer.Layer, Is.EqualTo(model.Layer));
-            Assert.That(result.IsActive, Is.EqualTo(true));
+            Assert.That(result.IsRendered, Is.EqualTo(true));
             Assert.That(result.RenderBatch, Is.Not.Null);
             Assert.That(result.RenderBatch.Models.Contains(model), Is.True);
             Assert.That(result.Material, Is.SameAs(model.Material));
@@ -158,30 +216,10 @@ namespace Quasar.Tests.Rendering
 
         [Test]
         [TestCaseSource(nameof(Boolean_DataSource))]
-        public void MeshChangedCommand_Inactive(bool isEnabled)
-        {
-            // arrange
-            var sut = CreateSutAndModel(isEnabled, out var model);
-            var mesh = CreateMesh(1);
-
-            // act
-            model.SetMesh(mesh, true);
-            sut.ExecuteCommands();
-            var result = model.State;
-
-            // assert
-            Assert.That(result.IsActive, Is.EqualTo(false));
-            Assert.That(result.RenderBatch, Is.Null);
-            Assert.That(result.Material, Is.Null);
-            Assert.That(result.Mesh, Is.SameAs(mesh));
-        }
-
-        [Test]
-        [TestCaseSource(nameof(Boolean_DataSource))]
         public void MaterialChangedCommand_Inactive(bool isEnabled)
         {
             // arrange
-            var sut = CreateSutAndModel(isEnabled, out var model);
+            var sut = CreateSutAndRawModel(isEnabled, out var model);
             var shader = CreateShader(1);
             var material = new Material(shader);
 
@@ -191,17 +229,17 @@ namespace Quasar.Tests.Rendering
             var result = model.State;
 
             // assert
-            Assert.That(result.IsActive, Is.EqualTo(false));
+            Assert.That(result.IsRendered, Is.EqualTo(false));
             Assert.That(result.RenderBatch, Is.Null);
             Assert.That(result.Mesh, Is.Null);
             Assert.That(result.Material, Is.SameAs(material));
         }
 
         [Test]
-        public void MaterialChangedCommand_Active_SetNull()
+        public void MaterialChangedCommand_Rendered_SetNull()
         {
             // arrange
-            var sut = CreateSutAndActiveModel(out var model);
+            var sut = CreateSutAndRenderedModel(out var model);
 
             // act
             model.Material = null;
@@ -209,17 +247,17 @@ namespace Quasar.Tests.Rendering
             var result = model.State;
 
             // assert
-            Assert.That(result.IsActive, Is.EqualTo(false));
+            Assert.That(result.IsRendered, Is.EqualTo(false));
             Assert.That(result.RenderBatch, Is.Null);
             Assert.That(result.Mesh, Is.Not.Null);
             Assert.That(result.Material, Is.Null);
         }
 
         [Test]
-        public void MaterialChangedCommand_Active_Other()
+        public void MaterialChangedCommand_Rendered_Other()
         {
             // arrange
-            var sut = CreateSutAndActiveModel(out var model);
+            var sut = CreateSutAndRenderedModel(out var model);
             var material = new Material(CreateShader(191));
             // act
             model.Material = material;
@@ -227,11 +265,67 @@ namespace Quasar.Tests.Rendering
             var result = model.State;
 
             // assert
-            Assert.That(result.IsActive, Is.EqualTo(true));
+            Assert.That(result.IsRendered, Is.EqualTo(true));
             Assert.That(result.RenderBatch, Is.Not.Null);
             Assert.That(result.RenderBatch.Models.Contains(model), Is.True);
             Assert.That(result.Mesh, Is.Not.Null);
             Assert.That(result.Material, Is.SameAs(material));
+        }
+
+        [Test]
+        [TestCaseSource(nameof(Boolean_DataSource))]
+        public void MeshChangedCommand_Inactive(bool isEnabled)
+        {
+            // arrange
+            var sut = CreateSutAndRawModel(isEnabled, out var model);
+            var mesh = CreateMesh(1);
+
+            // act
+            model.SetMesh(mesh, true);
+            sut.ExecuteCommands();
+            var result = model.State;
+
+            // assert
+            Assert.That(result.IsRendered, Is.EqualTo(false));
+            Assert.That(result.RenderBatch, Is.Null);
+            Assert.That(result.Material, Is.Null);
+            Assert.That(result.Mesh, Is.SameAs(mesh));
+        }
+
+        [Test]
+        public void MeshChangedCommand_Rendered_SetNull()
+        {
+            // arrange
+            var sut = CreateSutAndRenderedModel(out var model);
+
+            // act
+            model.SetMesh(null, false);
+            sut.ExecuteCommands();
+            var result = model.State;
+
+            // assert
+            Assert.That(result.IsRendered, Is.EqualTo(false));
+            Assert.That(result.RenderBatch, Is.Null);
+            Assert.That(result.Mesh, Is.Null);
+        }
+
+        [Test]
+        public void MeshChangedCommand_Rendered_Other()
+        {
+            // arrange
+            var sut = CreateSutAndRenderedModel(out var model);
+            var mesh = CreateMesh(191);
+
+            // act
+            model.SetMesh(mesh, false);
+            sut.ExecuteCommands();
+            var result = model.State;
+
+            // assert
+            Assert.That(result.IsRendered, Is.EqualTo(true));
+            Assert.That(result.RenderBatch, Is.Not.Null);
+            Assert.That(result.RenderBatch.Models.Contains(model), Is.True);
+            Assert.That(result.Mesh, Is.SameAs(mesh));
         }
 
 
@@ -264,7 +358,12 @@ namespace Quasar.Tests.Rendering
             return mesh;
         }
 
-        private static RenderModelCommandProcessor CreateSutAndModel(bool isModelEnabled, out RenderModel model)
+        private static RenderModelCommandProcessor CreateSutAndRenderedModel(out RenderModel model)
+        {
+            return CreateSutAndRenderableByPropertiesModel(true, out model);
+        }
+
+        private static RenderModelCommandProcessor CreateSutAndRawModel(bool isModelEnabled, out RenderModel model)
         {
             var renderingCommandProcessor = serviceProvider.GetRequiredService<RenderModelCommandProcessor>();
             RenderModel.InitializeStaticServices(serviceProvider);
@@ -273,17 +372,18 @@ namespace Quasar.Tests.Rendering
             return renderingCommandProcessor;
         }
 
-        private static RenderModelCommandProcessor CreateSutAndActiveModel(out RenderModel model)
+        private static RenderModelCommandProcessor CreateSutAndRenderableByPropertiesModel(bool isModelEnabled, out RenderModel model)
         {
             var renderingCommandProcessor = serviceProvider.GetRequiredService<RenderModelCommandProcessor>();
             RenderModel.InitializeStaticServices(serviceProvider);
 
-            model = new RenderModel(true);
+            model = new RenderModel(isModelEnabled);
             model.SetMesh(CreateMesh(1), false);
             model.Material = new Material(CreateShader(2));
             renderingCommandProcessor.ExecuteCommands();
 
-            Assert.That(model.State.IsActive, Is.EqualTo(true));
+            Assert.That(model.State.IsEnabled, Is.EqualTo(isModelEnabled));
+            Assert.That(model.State.IsRenderableByProperties, Is.EqualTo(isModelEnabled));
 
             return renderingCommandProcessor;
         }
