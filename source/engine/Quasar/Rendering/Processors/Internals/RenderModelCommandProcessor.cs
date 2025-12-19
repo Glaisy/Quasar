@@ -12,10 +12,10 @@
 using System;
 
 using Quasar.Graphics;
-using Quasar.Graphics.Internals;
 using Quasar.Rendering.Internals;
 using Quasar.Rendering.Internals.Services;
 
+using Space.Core;
 using Space.Core.DependencyInjection;
 
 namespace Quasar.Rendering.Processors.Internals
@@ -45,14 +45,13 @@ namespace Quasar.Rendering.Processors.Internals
         /// <inheritdoc/>
         protected override void OnExecuteCommand(in RenderModelCommand command)
         {
+            RenderingLayer renderingLayer;
             var renderModel = command.RenderModel;
             switch (command.Type)
             {
                 case RenderModelCommandType.Create:
-                    renderModel.State.RenderingLayer = renderingLayerService[command.Layer];
-                    renderModel.State.IsRenderable = false;
-                    renderModel.State.IsDoubleSided = false;
-                    renderModel.State.IsEnabled = command.Value;
+                    renderingLayer = renderingLayerService[command.Layer];
+                    HandleCreateCommand(ref renderModel.State, renderingLayer, command.Value);
                     break;
 
                 case RenderModelCommandType.DoubleSidedChanged:
@@ -64,16 +63,16 @@ namespace Quasar.Rendering.Processors.Internals
                     break;
 
                 case RenderModelCommandType.LayerChanged:
-                    var renderingLayer = renderingLayerService[command.Layer];
+                    renderingLayer = renderingLayerService[command.Layer];
                     HandleLayerChangedCommand(renderModel, renderingLayer);
+                    break;
+
+                case RenderModelCommandType.MaterialChanged:
+                    HandleMaterialChangedCommand(renderModel, command.Material);
                     break;
 
                 case RenderModelCommandType.MeshChanged:
                     HandleMeshChangedCommand(renderModel, command.Mesh, command.Value);
-                    break;
-
-                case RenderModelCommandType.ShaderChanged:
-                    HandleShaderChangedCommand(renderModel, command.Shader);
                     break;
 
                 default:
@@ -82,10 +81,24 @@ namespace Quasar.Rendering.Processors.Internals
         }
 
 
+        private static void HandleCreateCommand(ref RenderModelState renderModelState, RenderingLayer renderingLayer, bool isEnabled)
+        {
+            renderModelState.RenderingLayer = renderingLayer;
+            renderModelState.Flags = isEnabled ? RenderModelStateFlags.Enabled : RenderModelStateFlags.None;
+        }
+
         private static void HandleDoubleSidedChangedCommand(RenderModel renderModel, bool newValue)
         {
-            renderModel.State.IsDoubleSided = newValue;
-            if (!renderModel.State.IsRenderable)
+            if (newValue)
+            {
+                renderModel.State.Flags |= RenderModelStateFlags.DoubleSided;
+            }
+            else
+            {
+                renderModel.State.Flags &= ~RenderModelStateFlags.DoubleSided;
+            }
+
+            if (!renderModel.State.IsActive)
             {
                 return;
             }
@@ -96,97 +109,134 @@ namespace Quasar.Rendering.Processors.Internals
 
         private static void HandleEnabledChangedCommand(RenderModel renderModel, bool newValue)
         {
-            renderModel.State.IsEnabled = newValue;
+            if (newValue)
+            {
+                renderModel.State.Flags |= RenderModelStateFlags.Enabled;
+            }
+            else
+            {
+                renderModel.State.Flags &= ~RenderModelStateFlags.Enabled;
+            }
+
             if (!renderModel.State.IsRenderable)
             {
                 return;
             }
 
             // enable
-            var renderBatch = renderModel.State.RenderBatch;
+            if (renderModel.State.RenderBatch == null)
+            {
+                var shader = renderModel.State.Material.GetShader();
+                renderModel.State.RenderBatch = renderModel.State.RenderingLayer.GetRenderBatch(shader);
+            }
+
             if (newValue)
             {
-                renderBatch.AddModel(renderModel);
+                renderModel.State.RenderBatch.AddModel(renderModel);
                 return;
             }
 
             // disable
-            renderBatch.RemoveModel(renderModel);
+            renderModel.State.RenderBatch.RemoveModel(renderModel);
         }
 
         private static void HandleLayerChangedCommand(RenderModel renderModel, RenderingLayer newValue)
         {
-            var oldValue = renderModel.State.RenderingLayer;
             renderModel.State.RenderingLayer = newValue;
-            if (!renderModel.State.IsRenderable ||
-                !renderModel.State.IsEnabled)
+            if (!renderModel.State.IsActive)
             {
                 return;
             }
 
             renderModel.State.RenderBatch.RemoveModel(renderModel);
-            renderModel.State.RenderBatch = newValue.GetRenderBatch(renderModel.State.Shader);
+            var shader = renderModel.State.Material.GetShader();
+            renderModel.State.RenderBatch = newValue.GetRenderBatch(shader);
+            renderModel.State.RenderBatch.AddModel(renderModel);
+        }
+
+        private static void HandleMaterialChangedCommand(RenderModel renderModel, Material newValue)
+        {
+            var oldShader = renderModel.State.Material?.GetShader();
+            var newShader = newValue?.GetShader();
+            renderModel.State.Material = newValue;
+
+            if (oldShader != null &&
+               newShader == null)
+            {
+                renderModel.State.Flags &= ~RenderModelStateFlags.Renderable;
+                if (renderModel.State.IsEnabled)
+                {
+                    renderModel.State.RenderBatch.RemoveModel(renderModel);
+                }
+
+                return;
+            }
+
+            if (!renderModel.State.IsRenderableByProperties)
+            {
+                return;
+            }
+
+            renderModel.State.Flags |= RenderModelStateFlags.Renderable;
+            if (!renderModel.State.IsEnabled)
+            {
+                return;
+            }
+
+            if (oldShader != null)
+            {
+                if (oldShader != newShader)
+                {
+                    renderModel.State.RenderBatch.RemoveModel(renderModel);
+                }
+            }
+
+            renderModel.State.RenderBatch = renderModel.State.RenderingLayer.GetRenderBatch(newShader);
             renderModel.State.RenderBatch.AddModel(renderModel);
         }
 
         private static void HandleMeshChangedCommand(RenderModel renderModel, IMesh newValue, bool newSharedMeshValue)
         {
             if (renderModel.State.Mesh != null &&
-                !renderModel.State.SharedMesh)
+                !renderModel.State.Flags.HasFlag(RenderModelStateFlags.SharedMesh))
             {
                 renderModel.State.Mesh.Dispose();
             }
 
             renderModel.State.Mesh = newValue;
-            renderModel.State.SharedMesh = newSharedMeshValue;
+            if (newSharedMeshValue)
+            {
+                renderModel.State.Flags |= RenderModelStateFlags.SharedMesh;
+            }
+            else
+            {
+                renderModel.State.Flags &= ~RenderModelStateFlags.SharedMesh;
+            }
 
             if (newValue == null)
             {
-                if (renderModel.State.IsRenderable &&
-                    renderModel.State.IsEnabled)
+                if (renderModel.State.IsActive)
                 {
                     renderModel.State.RenderBatch.RemoveModel(renderModel);
-                    renderModel.State.IsRenderable = false;
+                    renderModel.State.Flags &= ~RenderModelStateFlags.Renderable;
                 }
 
                 return;
             }
 
             if (renderModel.State.IsRenderable ||
-                !renderModel.State.IsEnabled ||
-                !IsRenderable(renderModel.State))
+                !renderModel.State.IsRenderableByProperties ||
+                !renderModel.State.Flags.HasFlag(RenderModelStateFlags.Enabled))
             {
+                // already renderable or not renderable or not enabled => we do nothing
                 return;
             }
 
-            var shader = renderModel.State.Shader;
+            Assertion.ThrowIfNotEqual(renderModel.State.RenderBatch, null, "RenderBatch should have been null at this point.");
+            var shader = renderModel.State.Material.GetShader();
             renderModel.State.RenderBatch = renderModel.State.RenderingLayer.GetRenderBatch(shader);
             renderModel.State.RenderBatch.AddModel(renderModel);
-            renderModel.State.IsRenderable = true;
-        }
-
-        private static void HandleShaderChangedCommand(RenderModel renderModel, ShaderBase newValue)
-        {
-            renderModel.State.Shader = newValue;
-
-            var isActivated = renderModel.State.IsEnabled && renderModel.State.IsRenderable;
-            if (renderModel.State.RenderBatch != null && isActivated)
-            {
-                renderModel.State.RenderBatch.RemoveModel(renderModel);
-            }
-
-            renderModel.State.RenderBatch = renderModel.State.RenderingLayer.GetRenderBatch(newValue);
-            if (!isActivated)
-            {
-                return;
-            }
-
-            renderModel.State.RenderBatch.AddModel(renderModel);
-        }
-
-        private static bool IsRenderable(in RenderModelState renderModelState)
-        {
-            return renderModelState.RenderBatch != null && renderModelState.Mesh != null;
+            renderModel.State.Flags |= RenderModelStateFlags.Renderable;
         }
     }
 }

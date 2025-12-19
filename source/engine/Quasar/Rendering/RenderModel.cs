@@ -16,7 +16,6 @@ using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 
 using Quasar.Graphics;
-using Quasar.Graphics.Internals;
 using Quasar.Rendering.Processors.Internals;
 
 using Space.Core;
@@ -54,7 +53,6 @@ namespace Quasar.Rendering
             Id = Interlocked.Increment(ref lastIdentifier);
             this.enabled = enabled;
             transformationTimestamp = Transform.Timestamp;
-
             SendCreateCommand();
         }
 
@@ -182,16 +180,8 @@ namespace Quasar.Rendering
                 }
 
                 // update material
-                var oldShader = material?.GetShader();
-                var newShader = value?.GetShader();
                 material = value;
-
-                if (newShader == oldShader)
-                {
-                    return;
-                }
-
-                SendShaderChangedCommand(newShader);
+                SendMaterialChangeCommand(value);
             }
         }
 
@@ -376,11 +366,11 @@ namespace Quasar.Rendering
             });
         }
 
-        private void SendShaderChangedCommand(ShaderBase shader)
+        private void SendMaterialChangeCommand(Material material)
         {
-            commandProcessor.Add(new RenderModelCommand(this, RenderModelCommandType.ShaderChanged)
+            commandProcessor.Add(new RenderModelCommand(this, RenderModelCommandType.MaterialChanged)
             {
-                Shader = shader
+                Material = material
             });
         }
 

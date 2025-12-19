@@ -52,6 +52,8 @@ namespace Quasar.Rendering.Internals
         /// <param name="renderModel">The render model.</param>
         public void AddModel(RenderModel renderModel)
         {
+            renderModel.State.RenderBatch = this;
+
             if (renderModel.State.IsDoubleSided)
             {
                 DoubleSidedModels.Add(renderModel);
@@ -68,13 +70,11 @@ namespace Quasar.Rendering.Internals
         {
             foreach (var renderModel in DoubleSidedModels)
             {
-                renderModel.State.IsRenderable = false;
                 renderModel.State.RenderBatch = null;
             }
 
             foreach (var renderModel in Models)
             {
-                renderModel.State.IsRenderable = false;
                 renderModel.State.RenderBatch = null;
             }
 
@@ -105,6 +105,8 @@ namespace Quasar.Rendering.Internals
         /// <param name="renderModel">The render model.</param>
         public void RemoveModel(RenderModel renderModel)
         {
+            renderModel.State.RenderBatch = null;
+
             if (renderModel.State.IsDoubleSided)
             {
                 DoubleSidedModels.Remove(renderModel);

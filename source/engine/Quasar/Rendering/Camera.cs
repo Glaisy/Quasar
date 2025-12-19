@@ -164,7 +164,7 @@ namespace Quasar.Rendering
         /// <summary>
         /// Gets or sets the layer mask.
         /// </summary>
-        public LayerMask LayerMask { get; set; } = LayerMask.Opaque | LayerMask.Transparent;
+        public LayerMask LayerMask { get; set; } = LayerMask.All;
 
         /// <summary>
         /// Gets or sets the name.

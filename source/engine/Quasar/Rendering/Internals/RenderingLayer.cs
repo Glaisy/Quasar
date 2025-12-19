@@ -46,7 +46,7 @@ namespace Quasar.Rendering.Internals
 
 
         /// <summary>
-        /// Clears  the layer.
+        /// Clears the layer.
         /// </summary>
         public void Clear()
         {
@@ -54,6 +54,8 @@ namespace Quasar.Rendering.Internals
             {
                 renderBatch.Clear();
             }
+
+            renderBatches.Clear();
         }
 
         /// <summary>

@@ -21,6 +21,6 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Quasar.Tests")]
 [assembly: InternalsVisibleTo("Quasar.OpenGL.Tests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 [assembly: InternalsVisibleTo("QFontGen")]
-[assembly: InternalsVisibleTo("DemoApplication")]
