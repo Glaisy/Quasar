@@ -42,14 +42,18 @@ namespace Quasar.Rendering
         /// <summary>
         /// Initializes a new instance of the <see cref="Camera" /> class.
         /// </summary>
+        /// <param name="isEnabled">The initial value of the IsEnabled property.</param>
         /// <param name="name">The name.</param>
-        public Camera(string name = null)
+        public Camera(bool isEnabled = true, string name = null)
         {
-            transformationTimestamp = transform.Timestamp;
+            this.isEnabled = isEnabled;
+            Name = name;
+
+            transformationTimestamp = Transform.Timestamp;
             frameBuffer = renderingContext.PrimaryFrameBuffer;
             Id = Interlocked.Increment(ref lastCameraId);
-            Name = name;
-            Enabled = true;
+
+            SendCreateCommand();
         }
 
 
@@ -80,25 +84,6 @@ namespace Quasar.Rendering
         /// Gets or sets the clear type.
         /// </summary>
         public CameraClearType ClearType { get; set; } = CameraClearType.SolidColor;
-
-        private bool enabled;
-        /// <summary>
-        /// Gets or sets a value indicating whether this instance is enabled.
-        /// </summary>
-        public bool Enabled
-        {
-            get => enabled;
-            set
-            {
-                if (enabled == value)
-                {
-                    return;
-                }
-
-                enabled = value;
-                SendEnabledChangedCommand(value);
-            }
-        }
 
         private float fieldOfView = 90.0f;
         /// <summary>
@@ -149,7 +134,7 @@ namespace Quasar.Rendering
             {
                 if (HasInvalidationFlags(InvalidationFlags.Frustum))
                 {
-                    frustum.Update(transform, fieldOfView, AspectRatio, zNear, zFar);
+                    frustum.Update(Transform, fieldOfView, AspectRatio, zNear, zFar);
 
                     ClearInvalidationFlags(InvalidationFlags.Frustum);
                 }
@@ -161,6 +146,25 @@ namespace Quasar.Rendering
         /// <inheritdoc/>
         public int Id { get; }
 
+        private bool isEnabled;
+        /// <summary>
+        /// Gets or sets a value indicating whether the camera is enabled or not.
+        /// </summary>
+        public bool IsEnabled
+        {
+            get => isEnabled;
+            set
+            {
+                if (isEnabled == value)
+                {
+                    return;
+                }
+
+                isEnabled = value;
+                SendEnabledChangedCommand(value);
+            }
+        }
+
         /// <summary>
         /// Gets or sets the layer mask.
         /// </summary>
@@ -171,16 +175,8 @@ namespace Quasar.Rendering
         /// </summary>
         public string Name
         {
-            get => transform.Name;
-            set
-            {
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = nameof(Camera);
-                }
-
-                transform.Name = value;
-            }
+            get => Transform.Name;
+            set => Transform.Name = value;
         }
 
         private Matrix4 projectionMatrix;
@@ -224,14 +220,13 @@ namespace Quasar.Rendering
             }
         }
 
-        private readonly Transform transform = new Transform();
         /// <summary>
-        /// Gets the transformation.
+        /// The transformation.
         /// </summary>
-        public Transform Transform => transform;
+        public readonly Transform Transform = new Transform();
 
         /// <inheritdoc/>
-        ITransform ICamera.Transform => transform;
+        ITransform ICamera.Transform => Transform;
 
         private Matrix4 viewMatrix = Matrix4.Identity;
         /// <inheritdoc/>
@@ -242,7 +237,7 @@ namespace Quasar.Rendering
                 EnsureTransformationHasNotChanged();
                 if (HasInvalidationFlags(InvalidationFlags.ViewMatrix))
                 {
-                    matrixFactory.CreateViewMatrix(transform, ref viewMatrix);
+                    matrixFactory.CreateViewMatrix(Transform, ref viewMatrix);
 
                     ClearInvalidationFlags(InvalidationFlags.ViewMatrix);
                 }
@@ -357,13 +352,13 @@ namespace Quasar.Rendering
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            return Id.GetHashCode();
+            return Id;
         }
 
         /// <inheritdoc/>
         public override string ToString()
         {
-            return Name;
+            return Name ?? $"{nameof(Camera)} {Id}";
         }
 
 
@@ -381,22 +376,29 @@ namespace Quasar.Rendering
 
         private void EnsureTransformationHasNotChanged()
         {
-            if (transformationTimestamp == transform.Timestamp)
+            if (transformationTimestamp == Transform.Timestamp)
             {
                 return;
             }
 
             Invalidate(InvalidationFlags.AllViews);
-            transformationTimestamp = transform.Timestamp;
+            transformationTimestamp = Transform.Timestamp;
+        }
+
+        private void SendCreateCommand()
+        {
+            commandProcessor.Add(new CameraCommand(this, CameraCommandType.Create)
+            {
+                IsEnabled = isEnabled
+            });
         }
 
         private void SendEnabledChangedCommand(bool enabled)
         {
-            var command = new CameraCommand(this, CameraCommandType.EnabledChanged)
+            commandProcessor.Add(new CameraCommand(this, CameraCommandType.EnabledChanged)
             {
-                Enabled = enabled
-            };
-            commandProcessor.Add(command);
+                IsEnabled = enabled
+            });
         }
 
         private void SortZPlanes()

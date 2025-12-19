@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="IRawCamera.cs" company="Space Development">
+// <copyright file="IRawLightSource.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -18,21 +18,26 @@ using Space.Core;
 namespace Quasar.Rendering
 {
     /// <summary>
-    /// Represents a camera object only with the raw rendering properties.
+    /// Represents a light source object only with the raw rendering properties.
     /// </summary>
     /// <seealso cref="IIdentifierProvider{Int32}" />
     /// <seealso cref="IEquatable{ICamera}" />
-    public interface IRawCamera : IIdentifierProvider<int>, IEquatable<IRawCamera>
+    public interface IRawLightSource : IIdentifierProvider<int>, IEquatable<IRawLightSource>
     {
         /// <summary>
-        /// Gets the frame buffer.
+        /// Gets the effective color (color * intensity).
         /// </summary>
-        IFrameBuffer FrameBuffer { get; }
+        Color EffectiveColor { get; }
 
         /// <summary>
-        /// Gets the projection matrix.
+        /// Gets the field of view angle [0...180][degrees] (only for spot light sources).
         /// </summary>
-        ref readonly Matrix4 ProjectionMatrix { get; }
+        float FieldOfView { get; }
+
+        /// <summary>
+        /// Gets the effective radius (only for spot and point light sources).
+        /// </summary>
+        float Radius { get; }
 
         /// <summary>
         /// Gets the timestamp.
@@ -40,18 +45,13 @@ namespace Quasar.Rendering
         int Timestamp { get; }
 
         /// <summary>
-        /// Gets the view matrix.
+        /// Gets the transformation.
         /// </summary>
-        ref readonly Matrix4 ViewMatrix { get; }
+        ITransform Transform { get; }
 
         /// <summary>
-        /// Gets the view - projection matrix.
+        /// Gets the type.
         /// </summary>
-        ref readonly Matrix4 ViewProjectionMatrix { get; }
-
-        /// <summary>
-        /// Gets the view rotation - projection matrix.
-        /// </summary>
-        ref readonly Matrix4 ViewRotationProjectionMatrix { get; }
+        LightSourceType Type { get; }
     }
 }

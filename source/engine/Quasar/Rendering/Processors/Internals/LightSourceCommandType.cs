@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="CameraCommandType.cs" company="Space Development">
+// <copyright file="LightSourceCommandType.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -12,9 +12,9 @@
 namespace Quasar.Rendering.Processors.Internals
 {
     /// <summary>
-    /// Camera command type enumeration.
+    /// Light source command type enumeration.
     /// </summary>
-    internal enum CameraCommandType
+    internal enum LightSourceCommandType
     {
         /// <summary>
         /// The create command.

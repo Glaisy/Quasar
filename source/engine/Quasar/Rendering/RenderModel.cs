@@ -45,14 +45,18 @@ namespace Quasar.Rendering
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RenderModel"/> class.
+        /// Initializes a new instance of the <see cref="RenderModel" /> class.
         /// </summary>
-        /// <param name="enabled">The initial value of the Enabled property.</param>
-        public RenderModel(bool enabled = true)
+        /// <param name="isEnabled">The initial value of the IsEnabled property.</param>
+        /// <param name="name">The name.</param>
+        public RenderModel(bool isEnabled = true, string name = null)
         {
+            this.isEnabled = isEnabled;
+            Name = name;
+
             Id = Interlocked.Increment(ref lastIdentifier);
-            this.enabled = enabled;
             transformationTimestamp = Transform.Timestamp;
+
             SendCreateCommand();
         }
 
@@ -121,23 +125,23 @@ namespace Quasar.Rendering
         /// <inheritdoc/>
         public int Id { get; }
 
-        private bool enabled;
+        private bool isEnabled;
         /// <summary>
-        /// Gets or sets a value indicating whether this instance is enabled.
+        /// Gets or sets a value indicating whether the render model is enabled or not.
         /// </summary>
         public bool IsEnabled
         {
-            get => enabled;
+            get => isEnabled;
             set
             {
                 EnsureIsNotDisposed();
 
-                if (enabled == value)
+                if (isEnabled == value)
                 {
                     return;
                 }
 
-                enabled = value;
+                isEnabled = value;
                 SendEnabledChangedCommand(value);
             }
         }
@@ -209,20 +213,15 @@ namespace Quasar.Rendering
             }
         }
 
-        private string name;
         /// <inheritdoc/>
         public string Name
         {
-            get => name;
-            set
-            {
-                name = value;
-                Transform.Name = value;
-            }
+            get => Transform.Name;
+            set => Transform.Name = value;
         }
 
         /// <summary>
-        /// The transform.
+        /// The transformation.
         /// </summary>
         public readonly Transform Transform = new Transform();
 
@@ -230,12 +229,12 @@ namespace Quasar.Rendering
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
-            if (obj is not RenderModel renderObject)
+            if (obj is not RenderModel other)
             {
                 return false;
             }
 
-            return Id == renderObject.Id;
+            return Id == other.Id;
         }
 
         /// <inheritdoc/>
@@ -277,12 +276,7 @@ namespace Quasar.Rendering
         /// <inheritdoc/>
         public override string ToString()
         {
-            if (String.IsNullOrEmpty(name))
-            {
-                return name;
-            }
-
-            return Id.ToString();
+            return Name ?? $"{nameof(RenderModel)} {Id}";
         }
 
 
@@ -328,7 +322,7 @@ namespace Quasar.Rendering
         {
             commandProcessor.Add(new RenderModelCommand(this, RenderModelCommandType.Create)
             {
-                Value = enabled,
+                Value = isEnabled,
                 Layer = layer
             });
         }

@@ -47,8 +47,9 @@ namespace Quasar.Rendering.Processors.Internals
         {
             switch (command.Type)
             {
+                case CameraCommandType.Create:
                 case CameraCommandType.EnabledChanged:
-                    if (command.Enabled)
+                    if (command.IsEnabled)
                     {
                         cameraService.Activate(command.Camera);
                     }

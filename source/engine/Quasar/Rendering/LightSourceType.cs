@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="CameraCommandType.cs" company="Space Development">
+// <copyright file="LightSourceType.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,21 +9,26 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-namespace Quasar.Rendering.Processors.Internals
+namespace Quasar.Rendering
 {
     /// <summary>
-    /// Camera command type enumeration.
+    /// Light source type enumeration.
     /// </summary>
-    internal enum CameraCommandType
+    public enum LightSourceType
     {
         /// <summary>
-        /// The create command.
+        /// Directional light source type.
         /// </summary>
-        Create,
+        Directional,
 
         /// <summary>
-        /// The enabled changed command.
+        /// Point light source type.
         /// </summary>
-        EnabledChanged
+        Point,
+
+        /// <summary>
+        /// Spot light source type.
+        /// </summary>
+        Spot
     }
 }

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="CameraCommand.cs" company="Space Development">
+// <copyright file="LightSourceCommand.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -12,32 +12,31 @@
 namespace Quasar.Rendering.Processors.Internals
 {
     /// <summary>
-    /// Camera command structure.
+    /// Light source command data structure.
     /// </summary>
-    internal struct CameraCommand
+    internal struct LightSourceCommand
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CameraCommand" /> struct.
+        /// Initializes a new instance of the <see cref="LightSourceCommand" /> struct.
         /// </summary>
-        /// <param name="camera">The camera.</param>
-        /// <param name="type">The type.</param>
-        public CameraCommand(ICamera camera, CameraCommandType type)
+        /// <param name="lightSource">The light source.</param>
+        /// <param name="type">The command type..</param>
+        public LightSourceCommand(LightSource lightSource, LightSourceCommandType type)
         {
-            Camera = camera;
+            LightSource = lightSource;
             Type = type;
         }
 
 
         /// <summary>
-        /// The camera.
+        /// The light source value.
         /// </summary>
-        public readonly ICamera Camera;
+        public readonly LightSource LightSource;
 
         /// <summary>
         /// The command type.
         /// </summary>
-        public readonly CameraCommandType Type;
-
+        public readonly LightSourceCommandType Type;
 
         /// <summary>
         /// The enabled flag value.

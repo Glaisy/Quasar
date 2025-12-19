@@ -38,7 +38,7 @@ namespace Quasar.Rendering
         /// <summary>
         /// Gets a value indicating whether the camera is enabled or not.
         /// </summary>
-        bool Enabled { get; }
+        bool IsEnabled { get; }
 
         /// <summary>
         /// Gets the field of view angle [0...180][degrees].
