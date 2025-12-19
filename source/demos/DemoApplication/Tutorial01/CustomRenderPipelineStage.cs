@@ -79,6 +79,7 @@ namespace DemoApplication.Tutorial01
             if (lastSecond != second)
             {
                 var fps = renderingStatisticsProvider.Get().FramesPerSecond;
+
                 var logMessage = $"FPS: {fps:0}, Time:{timeProvider.Time:0.0}s, Delta: {timeProvider.DeltaTime * 1000:0.0}ms,  Physics delta: {timeProvider.PhysicsDeltaTime * 1000:0.0}ms";
                 logger.Info(logMessage);
                 Debug.Info(logMessage);

@@ -9,6 +9,7 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Diagnostics;
 
 using Quasar.Diagnostics.Profiler;
@@ -27,7 +28,7 @@ namespace Quasar.Rendering.Profiler.Internals
     [Singleton]
     internal sealed class RenderingProfiler : IRenderingProfiler, IProfilerDataProvider<IRenderingStatistics>
     {
-        private const float fpsFilteringRate = 5;
+        private const float fpsFilteringRate = 3;
         private readonly Stopwatch stopwatch = new Stopwatch();
         private readonly RenderFrameStatistics frameStatistics = new RenderFrameStatistics();
         private readonly RenderingStatistics statistics = new RenderingStatistics();
@@ -61,7 +62,15 @@ namespace Quasar.Rendering.Profiler.Internals
             frameStatistics.RenderingTime = frameStatistics.FrameTime - frameStatistics.WaitingTime;
 
             var fps = frameStatistics.FrameTime > 0.0f ? 1.0f / frameStatistics.FrameTime : 0.0f;
-            statistics.FramesPerSecond = (fpsFilteringRate * statistics.FramesPerSecond + fps) / (1.0f + fpsFilteringRate);
+            var cummulatedFps = fpsFilteringRate * statistics.FramesPerSecond;
+
+            // remove fake FPS pikes by limiting the last measured FPS
+            if (cummulatedFps > 0.0f)
+            {
+                fps = MathF.Min(fps, cummulatedFps);
+            }
+
+            statistics.FramesPerSecond = (cummulatedFps + fps) / (1.0f + fpsFilteringRate);
 
             statistics.FrameStatistics.CopyFrom(frameStatistics);
             frameStatistics.Clear();
