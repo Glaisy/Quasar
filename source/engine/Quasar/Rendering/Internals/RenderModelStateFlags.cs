@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="RenderModelCommandType.cs" company="Space Development">
+// <copyright file="RenderModelStateFlags.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,41 +9,39 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-namespace Quasar.Rendering.Processors.Internals
+using System;
+
+namespace Quasar.Rendering.Internals
 {
     /// <summary>
-    /// Render model command type enumeration.
+    /// Render model state flag enumeration.
     /// </summary>
-    internal enum RenderModelCommandType
+    [Flags]
+    internal enum RenderModelStateFlags
     {
         /// <summary>
-        /// The create command.
+        /// The none flag.
         /// </summary>
-        Create,
+        None = 0,
 
         /// <summary>
-        /// The DoubleSided property changed command.
+        /// The enabled flag.
         /// </summary>
-        DoubleSidedChanged,
+        Enabled = 1,
 
         /// <summary>
-        /// The Enabled property changed command.
+        /// The double sided flag.
         /// </summary>
-        EnabledChanged,
+        DoubleSided = 2,
 
         /// <summary>
-        /// The Layer property changed command.
+        /// The shared mesh flag.
         /// </summary>
-        LayerChanged,
+        SharedMesh = 4,
 
         /// <summary>
-        /// The material changed command.
+        /// The renderable flag.
         /// </summary>
-        MaterialChanged,
-
-        /// <summary>
-        /// The Mesh property changed command.
-        /// </summary>
-        MeshChanged,
+        Renderable = 8
     }
 }

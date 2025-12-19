@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 // <copyright file="RenderModelCommand.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
@@ -10,7 +10,6 @@
 //-----------------------------------------------------------------------
 
 using Quasar.Graphics;
-using Quasar.Graphics.Internals;
 
 namespace Quasar.Rendering.Processors.Internals
 {
@@ -48,14 +47,14 @@ namespace Quasar.Rendering.Processors.Internals
         public Layer Layer;
 
         /// <summary>
+        /// The material.
+        /// </summary>
+        public Material Material;
+
+        /// <summary>
         /// The mesh.
         /// </summary>
         public IMesh Mesh;
-
-        /// <summary>
-        /// The shader.
-        /// </summary>
-        public ShaderBase Shader;
 
         /// <summary>
         /// The value flag.

@@ -44,6 +44,7 @@ namespace DemoApplication.Tutorial01
         private float angle;
         private int lastSecond;
         private IMesh mesh;
+        private Material material;
 
 
         /// <summary>
@@ -83,8 +84,11 @@ namespace DemoApplication.Tutorial01
                 Debug.Info(logMessage);
 
                 lastSecond = second;
-                renderModel.SetMesh(renderModel.Mesh == null ? mesh : null, true);
-                ////renderModel.IsEnabled = !renderModel.IsEnabled;
+                renderModel.SetMesh(second % 11 == 0 ? null : mesh, true);
+                renderModel.IsEnabled = second % 7 == 0;
+                renderModel.Layer = (Layer)(second % 3);
+                renderModel.Material = second % 5 == 0 ? material : null;
+                renderModel.DoubleSided = second % 3 == 0;
             }
         }
 
@@ -95,10 +99,10 @@ namespace DemoApplication.Tutorial01
             {
                 Name = "Main Camera",
             };
-            camera.Transform.LocalPosition = new Vector3(0, 1, -2);
+            camera.Transform.LocalPosition = new Vector3(0, 1f, -2f);
             camera.Transform.LocalRotation = Quaternion.LookRotation(camera.Transform.LocalPosition, Vector3.Zero, Vector3.PositiveY, true);
 
-            var material = new Material("Wireframe");
+            material = new Material("Wireframe");
             material.SetColor("LineColor", Color.Blue);
             material.SetColor("FillColor", Color.White);
             material.SetFloat("Thickness", 0.1f);

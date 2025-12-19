@@ -167,10 +167,11 @@ namespace Quasar.Rendering.Internals.Renderers
             foreach (var renderModel in renderModels)
             {
                 // update material properties in shader
-                if (materialTimestamp != renderModel.Material.Timestamp)
+                var material = renderModel.State.Material;
+                if (materialTimestamp != material.Timestamp)
                 {
-                    renderModel.Material.TransferToShader();
-                    materialTimestamp = renderModel.Material.Timestamp;
+                    material.TransferToShader();
+                    materialTimestamp = material.Timestamp;
                 }
 
                 // update draw properties

@@ -10,7 +10,6 @@
 //-----------------------------------------------------------------------
 
 using Quasar.Graphics;
-using Quasar.Graphics.Internals;
 using Quasar.Rendering.Internals;
 
 namespace Quasar.Rendering.Processors.Internals
@@ -21,19 +20,14 @@ namespace Quasar.Rendering.Processors.Internals
     internal struct RenderModelState
     {
         /// <summary>
-        /// The double sided flag.
+        /// The flags.
         /// </summary>
-        public bool IsDoubleSided;
+        public RenderModelStateFlags Flags;
 
         /// <summary>
-        /// The enabled flag.
+        /// The material.
         /// </summary>
-        public bool IsEnabled;
-
-        /// <summary>
-        /// The renderable flag.
-        /// </summary>
-        public bool IsRenderable;
+        public Material Material;
 
         /// <summary>
         /// The mesh.
@@ -50,14 +44,30 @@ namespace Quasar.Rendering.Processors.Internals
         /// </summary>
         public RenderingLayer RenderingLayer;
 
-        /// <summary>
-        /// The shader.
-        /// </summary>
-        public ShaderBase Shader;
 
         /// <summary>
-        /// The shared mesh flag.
+        /// Gets a value indicating whether the model is active.
         /// </summary>
-        public bool SharedMesh;
+        public bool IsActive => RenderBatch != null && Flags.HasFlag(RenderModelStateFlags.Enabled | RenderModelStateFlags.Renderable);
+
+        /// <summary>
+        /// Gets a value indicating whether the model is enabled.
+        /// </summary>
+        public bool IsEnabled => Flags.HasFlag(RenderModelStateFlags.Enabled);
+
+        /// <summary>
+        /// Gets a value indicating whether the model is double sided.
+        /// </summary>
+        public bool IsDoubleSided => Flags.HasFlag(RenderModelStateFlags.DoubleSided);
+
+        /// <summary>
+        /// Gets a value indicating whether the model is renderable.
+        /// </summary>
+        public bool IsRenderable => Flags.HasFlag(RenderModelStateFlags.Renderable);
+
+        /// <summary>
+        /// Gets a value indicating whether this model is renderable by properties.
+        /// </summary>
+        public bool IsRenderableByProperties => Mesh != null && Material != null;
     }
 }
