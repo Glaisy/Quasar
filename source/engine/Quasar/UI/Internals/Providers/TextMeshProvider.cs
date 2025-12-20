@@ -63,9 +63,6 @@ namespace Quasar.UI.Internals.Providers
         /// <param name="text">The text.</param>
         /// <param name="start">The start.</param>
         /// <param name="length">The length.</param>
-        /// <returns>
-        /// The mesh.
-        /// </returns>
         public IMesh Get(Font font, string text, int start, int length)
         {
             Assertion.ThrowIfNull(font, nameof(font));
