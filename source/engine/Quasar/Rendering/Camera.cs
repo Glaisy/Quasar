@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -35,7 +36,7 @@ namespace Quasar.Rendering
         private static IRenderingContext renderingContext;
         private static IMatrixFactory matrixFactory;
         private static int lastCameraId = 0;
-        private Size projectionSize;
+        private Size frameBufferSize;
         private int transformationTimestamp;
 
 
@@ -185,15 +186,10 @@ namespace Quasar.Rendering
         {
             get
             {
-                if (projectionSize != frameBuffer.Size)
-                {
-                    projectionSize = frameBuffer.Size;
-                    Invalidate(InvalidationFlags.AllProjections);
-                }
-
+                EnsureFrameBufferSizeHasNotChanged();
                 if (HasInvalidationFlags(InvalidationFlags.ProjectionMatrix))
                 {
-                    UpdateProjectionMatrix(ref projectionMatrix, projectionSize);
+                    UpdateProjectionMatrix(ref projectionMatrix, frameBufferSize);
                     ClearInvalidationFlags(InvalidationFlags.ProjectionMatrix);
                 }
 
@@ -252,6 +248,7 @@ namespace Quasar.Rendering
         {
             get
             {
+                EnsureFrameBufferSizeHasNotChanged();
                 EnsureTransformationHasNotChanged();
                 if (HasInvalidationFlags(InvalidationFlags.ViewProjectionMatrix))
                 {
@@ -270,6 +267,7 @@ namespace Quasar.Rendering
         {
             get
             {
+                EnsureFrameBufferSizeHasNotChanged();
                 EnsureTransformationHasNotChanged();
                 if (HasInvalidationFlags(InvalidationFlags.ViewRotationProjectionMatrix))
                 {
@@ -374,6 +372,19 @@ namespace Quasar.Rendering
         }
 
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void EnsureFrameBufferSizeHasNotChanged()
+        {
+            if (frameBufferSize == frameBuffer.Size)
+            {
+                return;
+            }
+
+            frameBufferSize = frameBuffer.Size;
+            Invalidate(InvalidationFlags.AllProjections);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureTransformationHasNotChanged()
         {
             if (transformationTimestamp == Transform.Timestamp)
