@@ -16,14 +16,14 @@ using System.Text.Json.Serialization;
 
 using Quasar.IO.Serialization.Json;
 
-namespace Quasar.Graphics
+namespace Quasar.UI
 {
     /// <summary>
     /// The border data structure (Immutable).
     /// </summary>
     [JsonConverter(typeof(BorderJsonConverter))]
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public readonly struct Border
+    public readonly struct Border : IEquatable<Border>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Border" /> struct.
@@ -118,13 +118,7 @@ namespace Quasar.Graphics
         }
 
 
-        /// <summary>
-        /// Determines whether the specified <see cref="Object" />, is equal to this instance.
-        /// </summary>
-        /// <param name="obj">The <see cref="Object" /> to compare with this instance.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified <see cref="Object" /> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
+        /// <inheritdoc/>
         public override bool Equals(object obj)
         {
             if (obj is not Border other)
@@ -135,20 +129,19 @@ namespace Quasar.Graphics
             return this == other;
         }
 
-        /// <summary>
-        /// Returns a hash code for this instance.
-        /// </summary>
+        /// <inheritdoc/>
+        public bool Equals(Border other)
+        {
+            return this == other;
+        }
+
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             return HashCode.Combine(Left, Top, Right, Bottom);
         }
 
-        /// <summary>
-        /// Converts to string.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="String" /> that represents this instance.
-        /// </returns>
+        /// <inheritdoc/>
         public override string ToString()
         {
             return $"(L:{Left}, T:{Top}, R:{Right}, B:{Bottom})";
