@@ -76,6 +76,10 @@ namespace Quasar.OpenGL.Graphics
         /// <inheritdoc/>
         public void Reset()
         {
+            GL.UseProgram(0);
+            GL.BindVertexArray(0);
+            lastMeshHandle = 0;
+
             SetBackfaceCulling(true);
             SetDepthTesting(true);
             SetDepthTestMode(DepthTestMode.Less);

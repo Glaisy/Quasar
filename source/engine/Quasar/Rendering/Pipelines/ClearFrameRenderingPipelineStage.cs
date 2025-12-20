@@ -62,6 +62,7 @@ namespace Quasar.Rendering.Pipelines
         {
             applicationWindowSizeChangedSubscription =
                 applicationWindow.SizeChanged.Subscribe(applicationWindowSizeChangedObserver);
+            OnApplicationWindowSizeChanged(applicationWindow.Size);
         }
 
         /// <inheritdoc/>

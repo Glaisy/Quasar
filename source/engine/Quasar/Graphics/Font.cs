@@ -221,7 +221,7 @@ namespace Quasar.Graphics
         /// <param name="length">The length.</param>
         /// <param name="vertices">The vertices.</param>
         /// <param name="indices">The index contrainer.</param>
-        internal void GenerateMeshData(string value, int start, int length, Span<VertexPositionUV> vertices, Span<int> indices)
+        internal void GenerateMeshData(string value, int start, int length, Span<VertexUI> vertices, Span<int> indices)
         {
             // add vertices, uvs. indices
             var bottom = 0.0f;
@@ -267,16 +267,16 @@ namespace Quasar.Graphics
                 indices[index++] = vertexIndex + 3;
 
                 // create new positions and uvs
-                vertices[vertexIndex].Position = new Vector3(left, bottom, 0.0f);             // bottom left
+                vertices[vertexIndex].Position = new Vector2(left, bottom);             // bottom left
                 vertices[vertexIndex++].UV = uvs[uvIndex++];
 
-                vertices[vertexIndex].Position = new Vector3(left, top, 0.0f);                // top left
+                vertices[vertexIndex].Position = new Vector2(left, top);                // top left
                 vertices[vertexIndex++].UV = uvs[uvIndex++];
 
-                vertices[vertexIndex].Position = new Vector3(right, top, 0.0f);               // top right
+                vertices[vertexIndex].Position = new Vector2(right, top);               // top right
                 vertices[vertexIndex++].UV = uvs[uvIndex++];
 
-                vertices[vertexIndex].Position = new Vector3(right, bottom, 0.0f);            // bottom right
+                vertices[vertexIndex].Position = new Vector2(right, bottom);            // bottom right
                 vertices[vertexIndex++].UV = uvs[uvIndex];
 
                 // next character position (letter spacing)

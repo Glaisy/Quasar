@@ -187,8 +187,8 @@ namespace Quasar.Rendering
             {
                 if (projectionSize != frameBuffer.Size)
                 {
-                    Invalidate(InvalidationFlags.AllProjections);
                     projectionSize = frameBuffer.Size;
+                    Invalidate(InvalidationFlags.AllProjections);
                 }
 
                 if (HasInvalidationFlags(InvalidationFlags.ProjectionMatrix))

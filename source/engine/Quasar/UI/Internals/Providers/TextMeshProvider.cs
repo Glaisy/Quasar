@@ -17,7 +17,7 @@ using Space.Core;
 using Space.Core.Collections;
 using Space.Core.DependencyInjection;
 
-namespace Quasar.Rendering.Internals
+namespace Quasar.UI.Internals.Providers
 {
     /// <summary>
     /// Represents an internal mesh provider for text rendering.
@@ -28,7 +28,6 @@ namespace Quasar.Rendering.Internals
     {
         private const int CacheTimeoutSeconds = 15;
         private const int CacheUpdateIntervalSeconds = 5;
-        private const int CacheInitialCapacity = 0;
 
 
         private readonly IMeshFactory meshFactory;
@@ -53,8 +52,7 @@ namespace Quasar.Rendering.Internals
             cachedMeshes = dataCacheFactory.Create<TextMeshKey, IMesh>(
                 CacheTimeoutSeconds,
                 CacheUpdateIntervalSeconds,
-                CacheInitialCapacity,
-                meshPool.Release);
+                automaticRemovalAction: meshPool.Release);
         }
 
 
@@ -92,7 +90,7 @@ namespace Quasar.Rendering.Internals
 
         private IMesh CreateMesh()
         {
-            return meshFactory.Create(PrimitiveType.Triangle, VertexPositionUV.Layout, true);
+            return meshFactory.Create(PrimitiveType.Triangle, VertexUI.Layout, true);
         }
 
         private unsafe IMesh GenerateMesh(Font font, string text, int start, int length)
@@ -100,8 +98,8 @@ namespace Quasar.Rendering.Internals
             var mesh = meshPool.Allocate();
 
             var vertexCount = 4 * length;
-            var vertexData = stackalloc VertexPositionUV[vertexCount];
-            var vertices = new Span<VertexPositionUV>(vertexData, vertexCount);
+            var vertexData = stackalloc VertexUI[vertexCount];
+            var vertices = new Span<VertexUI>(vertexData, vertexCount);
             var indexCount = length * 6;
             var indexData = stackalloc int[indexCount];
             var indices = new Span<int>(indexData, indexCount);

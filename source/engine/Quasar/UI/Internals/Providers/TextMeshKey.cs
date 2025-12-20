@@ -13,7 +13,7 @@ using System;
 
 using Quasar.Graphics;
 
-namespace Quasar.Rendering.Internals
+namespace Quasar.UI.Internals.Providers
 {
     /// <summary>
     /// Represents an internal key for text meshes.

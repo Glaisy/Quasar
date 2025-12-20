@@ -15,9 +15,9 @@ using Quasar.Collections;
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
 using Quasar.Pipelines;
-using Quasar.Rendering.Internals;
 using Quasar.Settings;
 using Quasar.UI.Internals;
+using Quasar.UI.Internals.Providers;
 
 using Space.Core;
 using Space.Core.Collections;

@@ -19,7 +19,6 @@ using Quasar.Rendering;
 using Quasar.Rendering.Pipelines;
 using Quasar.Rendering.Procedurals;
 using Quasar.Rendering.Profiler;
-using Quasar.UI.Pipelines;
 
 using Space.Core.DependencyInjection;
 using Space.Core.Diagnostics;
@@ -32,7 +31,7 @@ namespace DemoApplication.Tutorial01
     /// <seealso cref="RenderingPipelineStageBase" />
     [Export(typeof(RenderingPipelineStageBase), nameof(CustomRenderPipelineStage))]
     [ExecuteAfter(typeof(ClearFrameRenderingPipelineStage))]
-    [ExecuteBefore(typeof(UIRenderingPipelineStage))]
+    [ExecuteBefore(typeof(RenderBatchRenderPipelineStage))]
     internal sealed class CustomRenderPipelineStage : RenderingPipelineStageBase
     {
         private readonly IProceduralMeshGenerator proceduralMeshGenerator;
@@ -100,7 +99,7 @@ namespace DemoApplication.Tutorial01
             {
                 Name = "Main Camera",
             };
-            camera.Transform.LocalPosition = new Vector3(0, 1f, -2f);
+            camera.Transform.LocalPosition = new Vector3(0, 1f, 2f);
             camera.Transform.LocalRotation = Quaternion.LookRotation(camera.Transform.LocalPosition, Vector3.Zero, Vector3.PositiveY, true);
 
             material = new Material("Wireframe");
