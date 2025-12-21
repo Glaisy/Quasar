@@ -12,6 +12,7 @@
 using System;
 
 using Quasar.Graphics;
+using Quasar.UI.VisualElements;
 
 using Space.Core;
 using Space.Core.Collections;

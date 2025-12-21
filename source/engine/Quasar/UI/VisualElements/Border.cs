@@ -16,7 +16,7 @@ using System.Text.Json.Serialization;
 
 using Quasar.IO.Serialization.Json;
 
-namespace Quasar.UI
+namespace Quasar.UI.VisualElements
 {
     /// <summary>
     /// The border data structure (Immutable).

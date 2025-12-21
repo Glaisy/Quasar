@@ -9,7 +9,6 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -55,7 +54,7 @@ namespace Quasar.UI.Internals
                 return;
             }
 
-            throw new InvalidOperationException("UI operations should be executed on the main thread.");
+            throw new UIException("UI operations should be executed on the main thread.");
         }
     }
 }

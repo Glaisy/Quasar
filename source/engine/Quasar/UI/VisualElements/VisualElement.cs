@@ -182,6 +182,10 @@ namespace Quasar.UI.VisualElements
         public void Add(VisualElement visualElement)
         {
             ArgumentNullException.ThrowIfNull(visualElement, nameof(visualElement));
+            if (visualElement.Parent != null)
+            {
+                throw new UIException($"#{visualElement.name} visual element already has a parent visual element: #{visualElement.Parent.name}");
+            }
 
             Context.Validate();
             Container.AddChild(visualElement);
@@ -197,9 +201,7 @@ namespace Quasar.UI.VisualElements
             ArgumentNullException.ThrowIfNull(visualElement, nameof(visualElement));
             if (visualElement.Parent != this)
             {
-                throw new InvalidOperationException(
-                    $"#{visualElement.name} visual element does not belong " +
-                    $"to the visual element #{name}");
+                throw new UIException($"#{visualElement.name} visual element does not belong to the visual element: #{name}");
             }
 
             Context.Validate();

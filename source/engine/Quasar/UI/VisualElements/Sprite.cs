@@ -13,7 +13,7 @@ using System;
 
 using Quasar.Graphics;
 
-namespace Quasar.UI
+namespace Quasar.UI.VisualElements
 {
     /// <summary>
     /// Represents a bordered texture wrapper structure for UI element rendering purposes (Immutable).

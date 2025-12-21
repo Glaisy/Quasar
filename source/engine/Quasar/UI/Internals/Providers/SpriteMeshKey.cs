@@ -11,6 +11,8 @@
 
 using System;
 
+using Quasar.UI.VisualElements;
+
 namespace Quasar.UI.Internals.Providers
 {
     /// <summary>

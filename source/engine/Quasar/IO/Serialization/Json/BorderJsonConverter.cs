@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-using Quasar.UI;
+using Quasar.UI.VisualElements;
 
 namespace Quasar.IO.Serialization.Json
 {
