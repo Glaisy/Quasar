@@ -22,22 +22,6 @@ namespace Quasar.UI.VisualElements
     public interface ICanvas
     {
         /// <summary>
-        /// Gets the offset position relative to the parent (Default: [0, 0]).
-        /// </summary>
-        Vector2 Offset { get; }
-
-        /// <summary>
-        /// Gets the parent canvas.
-        /// </summary>
-        ICanvas Parent { get; }
-
-        /// <summary>
-        /// Gets the rendering area's size.
-        /// </summary>
-        Vector2 Size { get; }
-
-
-        /// <summary>
         /// Draws the sprite by the specified size, position and tint color.
         /// </summary>
         /// <param name="sprite">The sprite.</param>

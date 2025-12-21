@@ -6,12 +6,11 @@ layout (location = 1) in vec2 VertexUV;
 #include <Matrices/Projection.inc>
 
 uniform vec2 Position;
-uniform vec2 Scale = vec2(1);
 
 out vec2 uv;
 
 void main()
 {
-	gl_Position = ProjectionMatrix * vec4(VertexPosition * Scale + Position, 0.0, 1.0);
+	gl_Position = ProjectionMatrix * vec4(VertexPosition + Position, 0.0, 1.0);
 	uv = VertexUV;
 }

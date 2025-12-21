@@ -28,16 +28,21 @@ namespace Quasar.UI.VisualElements.Internals
     [Singleton]
     internal sealed class RootVisualElement : VisualElement, IUIEventProcessor, IUIInputEventProcessor
     {
+        private readonly Canvas canvas = new Canvas();
+
+
         #region IUIEventProcessor
         /// <inheritdoc/>
         void IUIEventProcessor.ProcessUpdateEvent()
         {
+            OnProcessUpdateEvent();
         }
 
         /// <inheritdoc/>
         void IUIEventProcessor.ProcessRenderEvent(IRenderingContext context)
         {
-            OnRender(context);
+            OnProcessRenderEvent(canvas);
+            canvas.Render(context);
         }
         #endregion
 

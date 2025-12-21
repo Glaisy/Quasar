@@ -157,7 +157,7 @@ namespace Quasar.Diagnostics.Pipeline.Internals
                 {
                     var position = new Vector2(Margin.X, y);
                     var mesh = textMeshProvider.Get(font, debugTextEntry.Text, 0, debugTextEntry.Text.Length);
-                    uiElements.Add(new UIElement(position, Vector2.One, mesh, font.Texture, debugTextEntry.Color));
+                    uiElements.Add(new UIElement(position, mesh, font.Texture, debugTextEntry.Color));
 
                     y += debugTextEntry.Height;
                 }

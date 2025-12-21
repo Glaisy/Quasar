@@ -22,14 +22,12 @@ namespace Quasar.UI.Internals
         /// Initializes a new instance of the <see cref="UIElement" /> struct.
         /// </summary>
         /// <param name="position">The position.</param>
-        /// <param name="scale">The scale.</param>
         /// <param name="mesh">The mesh.</param>
         /// <param name="texture">The texture.</param>
         /// <param name="color">The color.</param>
-        public UIElement(in Vector2 position, in Vector2 scale, IMesh mesh, ITexture texture, in Color color)
+        public UIElement(in Vector2 position, IMesh mesh, ITexture texture, in Color color)
         {
             Position = position;
-            Scale = scale;
             RawMesh = new RawMesh(mesh);
             TextureHandle = texture.Handle;
             Color = color;
@@ -50,11 +48,6 @@ namespace Quasar.UI.Internals
         /// The position.
         /// </summary>
         public readonly Vector2 Position;
-
-        /// <summary>
-        /// The scale.
-        /// </summary>
-        public readonly Vector2 Scale;
 
         /// <summary>
         /// The texture handle.

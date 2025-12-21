@@ -32,7 +32,6 @@ namespace Quasar.UI.Internals.Renderers
         private Matrix4 projectionMatrix;
         private ShaderBase shader;
         private int positionIndex;
-        private int scaleIndex;
         private int colorIndex;
         private int textureIndex;
         private int projectionMatrixIndex;
@@ -59,7 +58,6 @@ namespace Quasar.UI.Internals.Renderers
         {
             shader = shaderRepository.GetShader(ShaderName);
             positionIndex = shader["Position"].Index;
-            scaleIndex = shader["Scale"].Index;
             colorIndex = shader["Color"].Index;
             textureIndex = shader["Texture"].Index;
             projectionMatrixIndex = shader["ProjectionMatrix"].Index;
@@ -83,7 +81,6 @@ namespace Quasar.UI.Internals.Renderers
                 ref var uiElement = ref uiElements[i];
 
                 shader.SetVector2(positionIndex, uiElement.Position);
-                shader.SetVector2(scaleIndex, uiElement.Scale);
                 shader.SetColor(colorIndex, uiElement.Color);
 
                 if (lastTextureHandle != uiElement.TextureHandle)
