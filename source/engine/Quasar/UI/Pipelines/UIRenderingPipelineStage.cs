@@ -16,6 +16,7 @@ using Quasar.UI.Internals;
 using Quasar.UI.Internals.Renderers;
 using Quasar.UI.VisualElements;
 using Quasar.UI.VisualElements.Internals;
+using Quasar.UI.VisualElements.Themes;
 
 using Space.Core.DependencyInjection;
 
@@ -31,7 +32,8 @@ namespace Quasar.UI.Pipelines
     public sealed class UIRenderingPipelineStage : RenderingPipelineStageBase
     {
         private readonly IApplicationWindow applicationWindow;
-        private readonly IUIEventProcessor uIEventProcessor;
+        private readonly IThemeService themeService;
+        private readonly IUIEventProcessor uiEventProcessor;
         private readonly UIElementRenderer uiElementRenderer;
 
 
@@ -39,15 +41,18 @@ namespace Quasar.UI.Pipelines
         /// Initializes a new instance of the <see cref="UIRenderingPipelineStage" /> class.
         /// </summary>
         /// <param name="applicationWindow">The application window.</param>
-        /// <param name="uIEventProcessor">The u i event processor.</param>
+        /// <param name="themeService">The theme service.</param>
+        /// <param name="uiEventProcessor">The UI event processor.</param>
         /// <param name="uiElementRenderer">The UI element renderer.</param>
         internal UIRenderingPipelineStage(
             IApplicationWindow applicationWindow,
-            IUIEventProcessor uIEventProcessor,
+            IThemeService themeService,
+            IUIEventProcessor uiEventProcessor,
             UIElementRenderer uiElementRenderer)
         {
             this.applicationWindow = applicationWindow;
-            this.uIEventProcessor = uIEventProcessor;
+            this.themeService = themeService;
+            this.uiEventProcessor = uiEventProcessor;
             this.uiElementRenderer = uiElementRenderer;
         }
 
@@ -55,7 +60,7 @@ namespace Quasar.UI.Pipelines
         /// <inheritdoc/>
         protected override void OnExecute()
         {
-            uIEventProcessor.ProcessRenderEvent(Context);
+            uiEventProcessor.ProcessRenderEvent(Context);
         }
 
         /// <inheritdoc/>
@@ -71,6 +76,8 @@ namespace Quasar.UI.Pipelines
             Canvas.InitializeStaticServices(ServiceProvider);
             VisualElement.InitializeStaticServices(ServiceProvider);
             uiElementRenderer.Initalize();
+
+            themeService.LoadBuiltInThemes();
         }
     }
 }

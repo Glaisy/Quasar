@@ -1,0 +1,5 @@
+<Qxml xmlns:ui="Quasar.UI.VisualElements">
+	<ui:VisualElement Name="root" Class="root" Style="display: none; left: 100px; width:100%;horizontal-alignment: right">
+		<ui:VisualElement Name = "item1" Class="text" />
+	</ui:VisualElement>
+</Qxml>

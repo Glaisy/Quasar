@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="IThemeProvider.cs" company="Space Development">
+// <copyright file="StyleSelectorType.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,16 +9,26 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-namespace Quasar.UI.VisualElements.Styles
+namespace Quasar.UI.VisualElements.Themes.Internals
 {
     /// <summary>
-    /// Represetns the Quasar theme provider component.
+    /// Style selector type enumeration.
     /// </summary>
-    public interface IThemeProvider
+    internal enum StyleSelectorType
     {
         /// <summary>
-        /// Gets the current theme.
+        /// The tag selector type.
         /// </summary>
-        ITheme CurrentTheme { get; }
+        Tag,
+
+        /// <summary>
+        /// The class selector type.
+        /// </summary>
+        Class,
+
+        /// <summary>
+        /// The name selector type.
+        /// </summary>
+        Name
     }
 }

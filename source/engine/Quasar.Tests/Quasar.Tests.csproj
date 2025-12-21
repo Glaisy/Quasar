@@ -21,6 +21,7 @@
     <None Remove="Resources\Styles\Includes\Variables.qss" />
     <None Remove="Resources\Styles\Styles.qss" />
     <None Remove="Resources\Styles\Theme.tss" />
+    <None Remove="Resources\Templates\UITemplateTest.qxml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +30,7 @@
     <EmbeddedResource Include="Resources\Styles\Includes\Variables.qss" />
     <EmbeddedResource Include="Resources\Styles\Styles.qss" />
     <EmbeddedResource Include="Resources\Styles\Theme.tss" />
+    <EmbeddedResource Include="Resources\Templates\UITemplateTest.qxml" />
   </ItemGroup>
 
   <ItemGroup>

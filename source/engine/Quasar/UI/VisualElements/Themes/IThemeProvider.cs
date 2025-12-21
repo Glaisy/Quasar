@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="IUIContext.cs" company="Space Development">
+// <copyright file="IThemeProvider.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,16 +9,16 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-namespace Quasar.UI
+namespace Quasar.UI.VisualElements.Themes
 {
     /// <summary>
-    /// Represents the context object of Quasar's UI system.
+    /// Represetns the Quasar theme provider component.
     /// </summary>
-    public interface IUIContext
+    public interface IThemeProvider
     {
         /// <summary>
-        /// Validates the execution context.
+        /// Gets the current theme.
         /// </summary>
-        void Validate();
+        ITheme CurrentTheme { get; }
     }
 }

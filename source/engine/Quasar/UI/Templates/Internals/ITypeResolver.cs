@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="IUIContext.cs" company="Space Development">
+// <copyright file="ITypeResolver.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,16 +9,20 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-namespace Quasar.UI
+using System;
+
+namespace Quasar.UI.Templates.Internals
 {
     /// <summary>
-    /// Represents the context object of Quasar's UI system.
+    /// Represents an internal type resolver component.
     /// </summary>
-    public interface IUIContext
+    internal interface ITypeResolver
     {
         /// <summary>
-        /// Validates the execution context.
+        /// Resolves a type by the specified name.
         /// </summary>
-        void Validate();
+        /// <param name="name">The name.</param>
+        /// <returns>The resolved type or null if not resolvable.</returns>
+        Type Resolve(string name);
     }
 }

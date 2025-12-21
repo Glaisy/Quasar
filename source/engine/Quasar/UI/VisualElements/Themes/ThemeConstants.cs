@@ -9,7 +9,7 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-namespace Quasar.UI.VisualElements.Styles
+namespace Quasar.UI.VisualElements.Themes
 {
     /// <summary>
     /// Theme related constants.

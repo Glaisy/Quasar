@@ -13,7 +13,7 @@ using System.Collections.Generic;
 
 using Quasar.Utilities;
 
-namespace Quasar.UI.VisualElements.Styles
+namespace Quasar.UI.VisualElements.Themes
 {
     /// <summary>
     /// Represents the Quasar theme service for manipulating UI themes.

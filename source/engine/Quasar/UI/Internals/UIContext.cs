@@ -9,12 +9,8 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Threading;
+using System;
 
-using Quasar.UI.VisualElements;
-
-using Space.Core.Collections;
 using Space.Core.DependencyInjection;
 
 namespace Quasar.UI.Internals
@@ -31,25 +27,18 @@ namespace Quasar.UI.Internals
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UIContext"/> class.
+        /// Initializes a new instance of the <see cref="UIContext" /> class.
         /// </summary>
-        /// <param name="poolFactory">The pool factory.</param>
-        public UIContext(IPoolFactory poolFactory)
+        public UIContext()
         {
-            executionThreadId = Thread.CurrentThread.ManagedThreadId;
-
-            VisualElementListPool = poolFactory.Create(false, () => new List<VisualElement>(), x => x.Clear());
+            executionThreadId = Environment.CurrentManagedThreadId;
         }
-
-
-        /// <inheritdoc/>
-        public IPool<List<VisualElement>> VisualElementListPool { get; }
 
 
         /// <inheritdoc/>
         public void Validate()
         {
-            if (Thread.CurrentThread.ManagedThreadId == executionThreadId)
+            if (Environment.CurrentManagedThreadId == executionThreadId)
             {
                 return;
             }

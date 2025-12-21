@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="IUIContext.cs" company="Space Development">
+// <copyright file="GridLengthType.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,16 +9,21 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-namespace Quasar.UI
+namespace Quasar.UI.VisualElements.Layouts
 {
     /// <summary>
-    /// Represents the context object of Quasar's UI system.
+    /// Grid length type enumeration.
     /// </summary>
-    public interface IUIContext
+    public enum GridLengthType
     {
         /// <summary>
-        /// Validates the execution context.
+        /// The pixel type.
         /// </summary>
-        void Validate();
+        Pixel,
+
+        /// <summary>
+        /// The star type.
+        /// </summary>
+        Star
     }
 }

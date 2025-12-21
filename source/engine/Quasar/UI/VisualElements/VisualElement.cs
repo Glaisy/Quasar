@@ -15,6 +15,7 @@ using System.Runtime.CompilerServices;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Quasar.UI.VisualElements.Internals;
 using Quasar.UI.VisualElements.Styles;
 
 using Space.Core;
@@ -29,7 +30,8 @@ namespace Quasar.UI.VisualElements
     public partial class VisualElement : InvalidatableBase, IDisposable
     {
         private static readonly List<VisualElement> emptyChildren = new List<VisualElement>();
-        private static IUIContext context;
+        private static IUIContext uiContext;
+        private static VisualElementContext context;
 
 
         /// <summary>
@@ -192,6 +194,15 @@ namespace Quasar.UI.VisualElements
         }
 
         /// <summary>
+        /// Adds to style class to the visual element's class list.
+        /// </summary>
+        /// <param name="class">The class.</param>
+        public void AddToClassList(string @class)
+        {
+            // TODO: implement: AddToClassList
+        }
+
+        /// <summary>
         /// Removes the specified visual element from the Container's child controls.
         /// </summary>
         /// <param name="visualElement">The visual element.</param>
@@ -215,15 +226,34 @@ namespace Quasar.UI.VisualElements
         /// <param name="serviceProvider">The service provider.</param>
         internal static void InitializeStaticServices(IServiceProvider serviceProvider)
         {
-            context = serviceProvider.GetRequiredService<IUIContext>();
+            uiContext = serviceProvider.GetRequiredService<IUIContext>();
+            context = serviceProvider.GetRequiredService<VisualElementContext>();
+        }
+
+        /// <summary>
+        /// Sets the inline style from the specified value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        internal void SetInlineStyle(IStyle value)
+        {
+            // TODO: implement this: SetInlineStyle
+        }
+
+        /// <summary>
+        /// Sets the property value by name and string representation.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        internal void SetProperty(string name, string value)
+        {
+            // TODO: implement this: SetProperty
         }
 
 
         /// <summary>
         /// Gets the context.
         /// </summary>
-        protected IUIContext Context => context;
-
+        protected IUIContext Context => uiContext;
 
 
         /// <summary>

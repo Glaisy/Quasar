@@ -9,9 +9,11 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using Quasar.UI.VisualElements.Styles;
+
 using Space.Core;
 
-namespace Quasar.UI.VisualElements.Styles
+namespace Quasar.UI.VisualElements.Themes
 {
     /// <summary>
     /// Represents a Quasar UI theme object.

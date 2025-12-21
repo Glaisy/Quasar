@@ -16,6 +16,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Themes\Quasar\Theme.tss" />
+    <None Remove="Resources\Themes\Quasar\Variables.qss" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="..\..\AssemblyInfo.Suppressions.shared.cs" Link="Properties\AssemblyInfo.Suppressions.shared.cs" />
     <Compile Include="..\..\AssemblyInfo.shared.cs" Link="Properties\AssemblyInfo.shared.cs" />
   </ItemGroup>
@@ -29,6 +34,8 @@
     <EmbeddedResource Include="Resources\FontFamilies\Conthrax.fnt" />
     <EmbeddedResource Include="Resources\Textures\Fallback.png" />
     <EmbeddedResource Include="Resources\Textures\FallbackNormalMap.png" />
+    <EmbeddedResource Include="Resources\Themes\Quasar\Theme.tss" />
+    <EmbeddedResource Include="Resources\Themes\Quasar\Variables.qss" />
   </ItemGroup>
 
   <ItemGroup>
