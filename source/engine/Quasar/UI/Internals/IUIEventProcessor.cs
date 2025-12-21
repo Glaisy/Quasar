@@ -9,6 +9,7 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using Quasar.Graphics;
 using Quasar.Rendering;
 
 namespace Quasar.UI.Internals
@@ -28,6 +29,12 @@ namespace Quasar.UI.Internals
         /// </summary>
         /// <param name="context">The context.</param>
         void ProcessRenderEvent(IRenderingContext context);
+
+        /// <summary>
+        /// Processes the rendering surface's size changed event.
+        /// </summary>
+        /// <param name="size">The size.</param>
+        void ProcessSizeChangedEvent(in Size size);
 
         /// <summary>
         /// Processes the event when UI update happens.

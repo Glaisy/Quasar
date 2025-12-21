@@ -67,6 +67,7 @@ namespace Quasar.UI.Pipelines
         protected override void OnSizeChanged(in Size size)
         {
             uiElementRenderer.Update(size);
+            uiEventProcessor.ProcessSizeChangedEvent(size);
         }
 
         /// <inheritdoc/>
@@ -76,6 +77,7 @@ namespace Quasar.UI.Pipelines
             Canvas.InitializeStaticServices(ServiceProvider);
             VisualElement.InitializeStaticServices(ServiceProvider);
             uiElementRenderer.Initalize();
+            uiEventProcessor.Initialize();
 
             themeService.LoadBuiltInThemes();
         }

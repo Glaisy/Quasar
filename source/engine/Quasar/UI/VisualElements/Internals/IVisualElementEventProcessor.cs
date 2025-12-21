@@ -40,8 +40,9 @@ namespace Quasar.UI.VisualElements.Internals
         void ProcessUpdate();
 
         /// <summary>
-        /// Resets the internal state.
+        /// Processes the root visual element changed event.
         /// </summary>
-        void Reset();
+        /// <param name="visualElement">The visual element.</param>
+        void ProcessRootVisualElementChanged(VisualElement visualElement);
     }
 }

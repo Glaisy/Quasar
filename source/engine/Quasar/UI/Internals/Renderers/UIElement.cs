@@ -11,7 +11,7 @@
 
 using Quasar.Graphics;
 
-namespace Quasar.UI.Internals
+namespace Quasar.UI.Internals.Renderers
 {
     /// <summary>
     /// UI element data structure.

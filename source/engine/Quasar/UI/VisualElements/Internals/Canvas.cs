@@ -17,7 +17,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Quasar.Collections;
 using Quasar.Graphics;
 using Quasar.Rendering;
-using Quasar.UI.Internals;
 using Quasar.UI.Internals.Providers;
 using Quasar.UI.Internals.Providers.Internals;
 using Quasar.UI.Internals.Renderers;

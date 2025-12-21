@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="EventProcessor.cs" company="Space Development">
+// <copyright file="UIEventProcessor.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,13 +9,18 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System.Runtime.CompilerServices;
+
+using Quasar.Graphics;
 using Quasar.Inputs;
 using Quasar.Rendering;
-using Quasar.UI.Internals;
+using Quasar.UI.VisualElements;
+using Quasar.UI.VisualElements.Internals;
 
+using Space.Core;
 using Space.Core.DependencyInjection;
 
-namespace Quasar.UI.VisualElements.Internals
+namespace Quasar.UI.Internals
 {
     /// <summary>
     /// Internal component to process all UI events.
@@ -27,8 +32,13 @@ namespace Quasar.UI.VisualElements.Internals
     [Export(typeof(IUIInputEventProcessor))]
     [Export(typeof(IVisualElementEventProcessor))]
     [Singleton]
-    internal sealed class EventProcessor : IUIEventProcessor, IUIInputEventProcessor, IVisualElementEventProcessor
+    internal sealed class UIEventProcessor : IUIEventProcessor, IUIInputEventProcessor, IVisualElementEventProcessor
     {
+        private VisualElement rootVisualElement;
+        private VisualElement focusedVisualElement;
+        private VisualElement keyDownVisualElement;
+
+
         #region IUIEventProcessor
         /// <inheritdoc/>
         void IUIEventProcessor.Initialize()
@@ -37,6 +47,11 @@ namespace Quasar.UI.VisualElements.Internals
 
         /// <inheritdoc/>
         void IUIEventProcessor.ProcessRenderEvent(IRenderingContext context)
+        {
+        }
+
+        /// <inheritdoc/>
+        void IUIEventProcessor.ProcessSizeChangedEvent(in Size size)
         {
         }
 
@@ -50,6 +65,13 @@ namespace Quasar.UI.VisualElements.Internals
         /// <inheritdoc/>
         void IUIInputEventProcessor.ProcessKeyDownEvent(in KeyEventArgs args)
         {
+            if (!EnsureKeyboardFocusIsAssigned())
+            {
+                return;
+            }
+
+            keyDownVisualElement = focusedVisualElement;
+            ////keyDownVisualElement.ProcessKeyDownEvent(args);
         }
 
         /// <inheritdoc/>
@@ -110,9 +132,23 @@ namespace Quasar.UI.VisualElements.Internals
         }
 
         /// <inheritdoc/>
-        void IVisualElementEventProcessor.Reset()
+        void IVisualElementEventProcessor.ProcessRootVisualElementChanged(VisualElement visualElement)
         {
+            rootVisualElement = visualElement;
         }
         #endregion
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool EnsureKeyboardFocusIsAssigned()
+        {
+            if (focusedVisualElement != null)
+            {
+                return true;
+            }
+
+            Assertion.ThrowIfNotEqual(keyDownVisualElement == null, true, $"{nameof(keyDownVisualElement)} should have been null.");
+            focusedVisualElement = rootVisualElement;
+            return focusedVisualElement != null;
+        }
     }
 }
