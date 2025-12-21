@@ -52,7 +52,7 @@ namespace Quasar.UI.Pipelines
         /// <inheritdoc/>
         protected override void OnExecute()
         {
-            testElement.ProcessRenderEvent();
+            testElement.ProcessRenderEvent(Context);
         }
 
         /// <inheritdoc/>
@@ -66,6 +66,7 @@ namespace Quasar.UI.Pipelines
         {
             // initialize internal components
             Canvas.InitializeStaticServices(ServiceProvider);
+            VisualElement.InitializeStaticServices(ServiceProvider);
             uiElementRenderer.Initalize();
         }
     }

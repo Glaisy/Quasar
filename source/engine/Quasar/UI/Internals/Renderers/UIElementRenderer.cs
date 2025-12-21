@@ -26,6 +26,7 @@ namespace Quasar.UI.Internals.Renderers
     {
         private const string ShaderName = "UI/UIElement";
 
+
         private readonly IShaderRepository shaderRepository;
         private readonly IMatrixFactory matrixFactory;
         private Matrix4 projectionMatrix;

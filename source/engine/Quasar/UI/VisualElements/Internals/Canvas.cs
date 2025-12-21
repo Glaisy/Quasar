@@ -13,9 +13,13 @@ using System;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Quasar.Collections;
 using Quasar.Graphics;
+using Quasar.Rendering;
+using Quasar.UI.Internals;
 using Quasar.UI.Internals.Providers;
 using Quasar.UI.Internals.Providers.Internals;
+using Quasar.UI.Internals.Renderers;
 
 using Space.Core;
 
@@ -30,6 +34,8 @@ namespace Quasar.UI.VisualElements.Internals
     {
         private static SpriteMeshProvider spriteMeshProvider;
         private static TextMeshProvider textMeshProvider;
+        private static UIElementRenderer uiElementRenderer;
+        private readonly ValueTypeCollection<UIElement> uiElements = new ValueTypeCollection<UIElement>();
 
 
         /// <inheritdoc/>
@@ -45,7 +51,8 @@ namespace Quasar.UI.VisualElements.Internals
         /// <inheritdoc/>
         public void DrawSprite(in Sprite sprite, in Vector2 position, in Vector2 size, in Color tintColor)
         {
-            throw new System.NotImplementedException();
+            var mesh = spriteMeshProvider.Get(sprite, size);
+            uiElements.Add(new UIElement(position, Vector2.One, mesh, sprite.Texture, tintColor));
         }
 
         /// <inheritdoc/>
@@ -69,6 +76,17 @@ namespace Quasar.UI.VisualElements.Internals
         {
             spriteMeshProvider = serviceProvider.GetRequiredService<SpriteMeshProvider>();
             textMeshProvider = serviceProvider.GetRequiredService<TextMeshProvider>();
+            uiElementRenderer = serviceProvider.GetRequiredService<UIElementRenderer>();
+        }
+
+        /// <summary>
+        /// Renders the canvas by the specified context.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        internal void Render(IRenderingContext context)
+        {
+            uiElementRenderer.Render(context.CommandProcessor, uiElements);
+            uiElements.Clear();
         }
     }
 }
