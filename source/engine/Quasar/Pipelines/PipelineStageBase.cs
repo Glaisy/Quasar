@@ -21,21 +21,21 @@ namespace Quasar.Pipelines
     public abstract class PipelineStageBase<TContext>
     {
         /// <summary>
-        /// Executes the pipeline stage.
+        /// Invokes the execute event handler for the current the pipeline stage.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void Execute()
+        internal void InvokeExecute()
         {
             OnExecute();
         }
 
         /// <summary>
-        /// Starts the pipeline stage.
+        /// Invokes the start event handler for the current the pipeline stage.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
         /// <param name="context">The pipeline context.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void Start(IServiceProvider serviceProvider, TContext context)
+        internal void InvokeStart(IServiceProvider serviceProvider, TContext context)
         {
             ServiceProvider = serviceProvider;
             Context = context;
@@ -44,10 +44,10 @@ namespace Quasar.Pipelines
         }
 
         /// <summary>
-        /// Shuts down the pipeline stage.
+        /// Invokes the shutdown event handler for the current the pipeline stage.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void Shutdown()
+        internal void InvokeShutdown()
         {
             OnShutdown();
         }

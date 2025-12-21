@@ -11,6 +11,7 @@
 
 using System;
 
+using Quasar.Graphics;
 using Quasar.Graphics.Internals.Factories;
 using Quasar.Pipelines.Internals;
 using Quasar.Rendering.Profiler.Internals;
@@ -34,7 +35,9 @@ namespace Quasar.Rendering.Pipelines.Internals
         private readonly IRenderingProfiler renderingProfiler;
         private readonly IServiceLoader serviceLoader;
         private readonly ActionBasedObserver<IRenderingSettings> settingsObserver;
+        private readonly ActionBasedObserver<Size> sizeChangedObserver;
         private IDisposable settingsSubscription;
+        private IDisposable sizeChangedSubscription;
 
 
         /// <summary>
@@ -63,6 +66,7 @@ namespace Quasar.Rendering.Pipelines.Internals
             Context = renderingContext;
 
             settingsObserver = new ActionBasedObserver<IRenderingSettings>(OnSettingsChanged);
+            sizeChangedObserver = new ActionBasedObserver<Size>(OnSizeChanged);
         }
 
 
@@ -83,12 +87,17 @@ namespace Quasar.Rendering.Pipelines.Internals
             // subscribe for settings changes and auto apply settings
             settingsSubscription = SettingsProvider.Subscribe(settingsObserver);
             OnSettingsChanged(renderingSettings);
+
+            // subscribe for application window size change event
+            sizeChangedSubscription = applicationWindow.SizeChanged.Subscribe(sizeChangedObserver);
+            OnSizeChanged(applicationWindow.Size);
         }
 
         /// <inheritdoc/>
         protected override void OnShutdown()
         {
             settingsSubscription?.Dispose();
+            sizeChangedSubscription?.Dispose();
 
             base.OnShutdown();
         }
@@ -103,6 +112,7 @@ namespace Quasar.Rendering.Pipelines.Internals
             renderingProfiler.EndFrame();
         }
 
+
         private void InitializeRenderingContext(IRenderingSettings renderingSettings)
         {
             var graphicsDeviceContext = graphicsContextFactory.Create(renderingSettings.Platform, applicationWindow);
@@ -115,7 +125,15 @@ namespace Quasar.Rendering.Pipelines.Internals
         {
             foreach (var stage in Stages)
             {
-                stage.ApplySettings(renderingSettings);
+                stage.InvokeApplySettings(renderingSettings);
+            }
+        }
+
+        private void OnSizeChanged(Size size)
+        {
+            foreach (var stage in Stages)
+            {
+                stage.InvokeSizeChanged(size);
             }
         }
     }

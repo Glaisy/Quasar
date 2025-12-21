@@ -9,8 +9,6 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System.Diagnostics.CodeAnalysis;
-
 using Quasar.Collections;
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
@@ -71,7 +69,6 @@ namespace Quasar.UI.Internals.Renderers
         /// </summary>
         /// <param name="commandProcessor">The command processor.</param>
         /// <param name="uiElements">The UI elements.</param>
-        [SuppressMessage("Style", "IDE0007:Use implicit type", Justification = "Reviewed.")]
         public void Render(IGraphicsCommandProcessor commandProcessor, ValueTypeCollection<UIElement> uiElements)
         {
             var wasDepthTestingEnabled = commandProcessor.SetDepthTesting(false);
@@ -82,7 +79,7 @@ namespace Quasar.UI.Internals.Renderers
             var count = uiElements.Count;
             for (var i = 0; i < count; i++)
             {
-                ref UIElement uiElement = ref uiElements[i];
+                ref var uiElement = ref uiElements[i];
 
                 shader.SetVector2(positionIndex, uiElement.Position);
                 shader.SetVector2(scaleIndex, uiElement.Scale);

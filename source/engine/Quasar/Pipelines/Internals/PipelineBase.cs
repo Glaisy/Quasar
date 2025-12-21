@@ -138,7 +138,7 @@ namespace Quasar.Pipelines.Internals
         {
             foreach (var stage in Stages)
             {
-                stage.Execute();
+                stage.InvokeExecute();
             }
         }
 
@@ -151,7 +151,7 @@ namespace Quasar.Pipelines.Internals
 
             foreach (var stage in Stages)
             {
-                stage.Start(serviceProvider, Context);
+                stage.InvokeStart(serviceProvider, Context);
             }
         }
 
@@ -167,7 +167,7 @@ namespace Quasar.Pipelines.Internals
 
             for (var i = Stages.Count - 1; i >= 0; i--)
             {
-                Stages[i].Shutdown();
+                Stages[i].InvokeShutdown();
             }
         }
 

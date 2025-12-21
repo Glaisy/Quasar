@@ -11,6 +11,7 @@
 
 using System.Runtime.CompilerServices;
 
+using Quasar.Graphics;
 using Quasar.Pipelines;
 
 namespace Quasar.Rendering.Pipelines
@@ -22,13 +23,23 @@ namespace Quasar.Rendering.Pipelines
     public abstract class RenderingPipelineStageBase : PipelineStageBase<IRenderingContext>
     {
         /// <summary>
-        /// Applies the rendering settings for the current stage.
+        /// Invokes the apply settings event handler for the current stage.
         /// </summary>
         /// <param name="renderingSettings">The rendering settings.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void ApplySettings(IRenderingSettings renderingSettings)
+        internal void InvokeApplySettings(IRenderingSettings renderingSettings)
         {
             OnApplySettings(renderingSettings);
+        }
+
+        /// <summary>
+        /// Invokes the render surface size changed event handler for the current stage.
+        /// </summary>
+        /// <param name="size">The size.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void InvokeSizeChanged(in Size size)
+        {
+            OnSizeChanged(size);
         }
 
 
@@ -37,6 +48,14 @@ namespace Quasar.Rendering.Pipelines
         /// </summary>
         /// <param name="renderingSettings">The rendering settings.</param>
         protected virtual void OnApplySettings(IRenderingSettings renderingSettings)
+        {
+        }
+
+        /// <summary>
+        /// Rendering surface size changed event handler.
+        /// </summary>
+        /// <param name="size">The size.</param>
+        protected virtual void OnSizeChanged(in Size size)
         {
         }
     }

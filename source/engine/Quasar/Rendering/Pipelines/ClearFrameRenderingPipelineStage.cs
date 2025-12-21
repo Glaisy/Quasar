@@ -9,12 +9,9 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System;
-
 using Quasar.Graphics;
 using Quasar.Pipelines;
 using Quasar.UI;
-using Quasar.Utilities;
 
 using Space.Core.DependencyInjection;
 
@@ -29,8 +26,6 @@ namespace Quasar.Rendering.Pipelines
     public sealed class ClearFrameRenderingPipelineStage : RenderingPipelineStageBase
     {
         private readonly IApplicationWindow applicationWindow;
-        private readonly ActionBasedObserver<Size> applicationWindowSizeChangedObserver;
-        private IDisposable applicationWindowSizeChangedSubscription;
 
 
         /// <summary>
@@ -40,8 +35,6 @@ namespace Quasar.Rendering.Pipelines
         internal ClearFrameRenderingPipelineStage(IApplicationWindow applicationWindow)
         {
             this.applicationWindow = applicationWindow;
-
-            applicationWindowSizeChangedObserver = new ActionBasedObserver<Size>(OnApplicationWindowSizeChanged);
         }
 
 
@@ -58,22 +51,7 @@ namespace Quasar.Rendering.Pipelines
         }
 
         /// <inheritdoc/>
-        protected override void OnStart()
-        {
-            applicationWindowSizeChangedSubscription =
-                applicationWindow.SizeChanged.Subscribe(applicationWindowSizeChangedObserver);
-            OnApplicationWindowSizeChanged(applicationWindow.Size);
-        }
-
-        /// <inheritdoc/>
-        protected override void OnShutdown()
-        {
-            applicationWindowSizeChangedSubscription?.Dispose();
-            applicationWindowSizeChangedSubscription = null;
-        }
-
-
-        private void OnApplicationWindowSizeChanged(Size size)
+        protected override void OnSizeChanged(in Size size)
         {
             Context.CommandProcessor.SetViewport(Point.Empty, size);
         }

@@ -9,15 +9,12 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System;
-
-using Quasar.Collections;
 using Quasar.Graphics;
 using Quasar.Pipelines;
 using Quasar.Rendering.Pipelines;
-using Quasar.UI.Internals;
 using Quasar.UI.Internals.Renderers;
-using Quasar.Utilities;
+using Quasar.UI.VisualElements;
+using Quasar.UI.VisualElements.Internals;
 
 using Space.Core.DependencyInjection;
 
@@ -28,14 +25,12 @@ namespace Quasar.UI.Pipelines
     /// </summary>
     /// <seealso cref="RenderingPipelineStageBase" />
     [Export(typeof(RenderingPipelineStageBase), nameof(UIRenderingPipelineStage))]
-    [ExecuteAfter(typeof(ClearFrameRenderingPipelineStage))]
+    [ExecuteAfter(typeof(RenderBatchRenderPipelineStage))]
     [ExecuteBefore(typeof(FrameBufferSwapperRenderingPipelineStage))]
     public sealed class UIRenderingPipelineStage : RenderingPipelineStageBase
     {
         private readonly IApplicationWindow applicationWindow;
         private readonly UIElementRenderer uiElementRenderer;
-        private readonly ActionBasedObserver<Size> applicationWindowSizeChangedObserver;
-        private IDisposable applicationWindowSizeChangedSubscription;
 
 
         /// <summary>
@@ -49,43 +44,29 @@ namespace Quasar.UI.Pipelines
         {
             this.applicationWindow = applicationWindow;
             this.uiElementRenderer = uiElementRenderer;
-
-            applicationWindowSizeChangedObserver = new ActionBasedObserver<Size>(OnApplicationWindowSizeChanged);
         }
 
 
-        // TODO: remove this
-        private readonly ValueTypeCollection<UIElement> uiElements = new ValueTypeCollection<UIElement>();
-
+        private VisualElement testElement = new VisualElement();
 
         /// <inheritdoc/>
         protected override void OnExecute()
         {
-            uiElementRenderer.Render(Context.CommandProcessor, uiElements);
+            testElement.ProcessRenderEvent();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnSizeChanged(in Size size)
+        {
+            uiElementRenderer.Update(size);
         }
 
         /// <inheritdoc/>
         protected override void OnStart()
         {
+            // initialize internal components
+            Canvas.InitializeStaticServices(ServiceProvider);
             uiElementRenderer.Initalize();
-
-            applicationWindowSizeChangedSubscription =
-                applicationWindow.SizeChanged.Subscribe(applicationWindowSizeChangedObserver);
-
-            OnApplicationWindowSizeChanged(applicationWindow.Size);
-        }
-
-        /// <inheritdoc/>
-        protected override void OnShutdown()
-        {
-            applicationWindowSizeChangedSubscription?.Dispose();
-            applicationWindowSizeChangedSubscription = null;
-        }
-
-
-        private void OnApplicationWindowSizeChanged(Size size)
-        {
-            uiElementRenderer.Update(size);
         }
     }
 }

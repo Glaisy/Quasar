@@ -10,9 +10,6 @@
 //-----------------------------------------------------------------------
 
 #if DEBUG
-using Microsoft.Extensions.DependencyInjection;
-
-using Quasar.Diagnostics.Pipeline.Internals;
 #endif
 
 using Quasar.Graphics;
@@ -75,17 +72,10 @@ namespace Quasar.Rendering.Pipelines
             fontFamilyRepository.LoadBuiltInFontFamilies();
 
             // initialize internal rendering/graphics related components
-            Debug.InitializeStaticServices(ServiceProvider);
             MeshGeneratorBase.InitializeStaticServices(ServiceProvider);
             Material.InitializeStaticServices(ServiceProvider);
             Camera.InitializeStaticServices(ServiceProvider);
             RenderModel.InitializeStaticServices(ServiceProvider);
-
-            // initialize late-started rendering services (due to dependency on GraphicsContext)
-#if DEBUG
-            var debugTextService = ServiceProvider.GetRequiredService<DebugTextService>();
-            debugTextService.Initialize();
-#endif
         }
     }
 }
