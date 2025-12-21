@@ -12,6 +12,7 @@
 using Quasar.Graphics;
 using Quasar.Pipelines;
 using Quasar.Rendering.Pipelines;
+using Quasar.UI.Internals;
 using Quasar.UI.Internals.Renderers;
 using Quasar.UI.VisualElements;
 using Quasar.UI.VisualElements.Internals;
@@ -21,7 +22,7 @@ using Space.Core.DependencyInjection;
 namespace Quasar.UI.Pipelines
 {
     /// <summary>
-    /// Render pipeline's UI visual element rendering stage implementation.
+    /// Rendering pipeline's UI rendering stage implementation.
     /// </summary>
     /// <seealso cref="RenderingPipelineStageBase" />
     [Export(typeof(RenderingPipelineStageBase), nameof(UIRenderingPipelineStage))]
@@ -30,6 +31,7 @@ namespace Quasar.UI.Pipelines
     public sealed class UIRenderingPipelineStage : RenderingPipelineStageBase
     {
         private readonly IApplicationWindow applicationWindow;
+        private readonly IUIEventProcessor uIEventProcessor;
         private readonly UIElementRenderer uiElementRenderer;
 
 
@@ -37,22 +39,23 @@ namespace Quasar.UI.Pipelines
         /// Initializes a new instance of the <see cref="UIRenderingPipelineStage" /> class.
         /// </summary>
         /// <param name="applicationWindow">The application window.</param>
+        /// <param name="uIEventProcessor">The u i event processor.</param>
         /// <param name="uiElementRenderer">The UI element renderer.</param>
         internal UIRenderingPipelineStage(
             IApplicationWindow applicationWindow,
+            IUIEventProcessor uIEventProcessor,
             UIElementRenderer uiElementRenderer)
         {
             this.applicationWindow = applicationWindow;
+            this.uIEventProcessor = uIEventProcessor;
             this.uiElementRenderer = uiElementRenderer;
         }
 
 
-        private VisualElement testElement = new VisualElement();
-
         /// <inheritdoc/>
         protected override void OnExecute()
         {
-            testElement.ProcessRenderEvent(Context);
+            uIEventProcessor.ProcessRenderEvent(Context);
         }
 
         /// <inheritdoc/>

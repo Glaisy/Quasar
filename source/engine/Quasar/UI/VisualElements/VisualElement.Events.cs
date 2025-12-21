@@ -9,8 +9,6 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System.Runtime.CompilerServices;
-
 using Quasar.Graphics;
 using Quasar.Rendering;
 
@@ -22,11 +20,10 @@ namespace Quasar.UI.VisualElements
     public partial class VisualElement
     {
         /// <summary>
-        /// Executes the render event processing.
+        /// The render event handler.
         /// </summary>
         /// <param name="context">The context.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void ProcessRenderEvent(IRenderingContext context)
+        protected virtual void OnRender(IRenderingContext context)
         {
             ////if (Visibility != Visibility.Visible ||
             ////    Display != DisplayStyle.Display)
@@ -34,12 +31,8 @@ namespace Quasar.UI.VisualElements
             ////    return;
             ////}
 
-            // invoke internal render event handler
             var sprite = new Sprite(textureRepository.FallbackTexture);
             canvas.DrawSprite(sprite, new Vector2(100, 500), new Vector2(320, 180), Color.Yellow);
-
-            ////Canvas.Offset = CanvasPosition;
-            ////OnRender(Canvas);
             canvas.Render(context);
 
             ////// propagate render event through the hierarchy

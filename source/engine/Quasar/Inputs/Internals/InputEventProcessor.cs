@@ -151,7 +151,7 @@ namespace Quasar.Inputs.Internals
             EvaluateHotkeys();
 
             var args = new KeyEventArgs(keyCode, character, activeModifiers);
-            uiInputEventProcessor.ProcessKeyDown(args);
+            uiInputEventProcessor.ProcessKeyDownEvent(args);
         }
 
         /// <inheritdoc/>
@@ -161,7 +161,7 @@ namespace Quasar.Inputs.Internals
             activeModifiers &= ~GetKeyModifierForKey(keyCode);
 
             var args = new KeyEventArgs(keyCode, character, activeModifiers);
-            uiInputEventProcessor.ProcessKeyUp(args);
+            uiInputEventProcessor.ProcessKeyUpEvent(args);
         }
 
         /// <inheritdoc/>
@@ -170,7 +170,7 @@ namespace Quasar.Inputs.Internals
             pointerButtonDownStates[(int)button] = true;
 
             var args = new PointerButtonEventArgs(button, activeModifiers, pointerPosition);
-            uiInputEventProcessor.ProcessPointerButtonDown(args);
+            uiInputEventProcessor.ProcessPointerButtonDownEvent(args);
         }
 
         /// <inheritdoc/>
@@ -179,7 +179,7 @@ namespace Quasar.Inputs.Internals
             pointerButtonDownStates[(int)button] = false;
 
             var args = new PointerButtonEventArgs(button, activeModifiers, pointerPosition);
-            uiInputEventProcessor.ProcessPointerButtonUp(args);
+            uiInputEventProcessor.ProcessPointerButtonUpEvent(args);
         }
 
         /// <inheritdoc/>
@@ -190,7 +190,7 @@ namespace Quasar.Inputs.Internals
             pointerMovementFiltered = Vector2.Zero;
             cummulatedPointerMovement = Vector2.Zero;
 
-            uiInputEventProcessor.ProcessPointerEnter(new PointerMoveEventArgs(pointerPosition));
+            uiInputEventProcessor.ProcessPointerEnterEvent(new PointerMoveEventArgs(pointerPosition));
         }
 
         /// <inheritdoc/>
@@ -201,7 +201,7 @@ namespace Quasar.Inputs.Internals
             pointerMovementFiltered = Vector2.Zero;
             cummulatedPointerMovement = Vector2.Zero;
 
-            uiInputEventProcessor.ProcessPointerLeave();
+            uiInputEventProcessor.ProcessPointerLeaveEvent();
         }
 
         /// <inheritdoc/>
@@ -211,7 +211,7 @@ namespace Quasar.Inputs.Internals
             cummulatedPointerMovement += delta;
             pointerPosition = position;
 
-            uiInputEventProcessor.ProcessPointerMove(new PointerMoveEventArgs(pointerPosition));
+            uiInputEventProcessor.ProcessPointerMoveEvent(new PointerMoveEventArgs(pointerPosition));
         }
 
         /// <inheritdoc/>
@@ -219,7 +219,7 @@ namespace Quasar.Inputs.Internals
         {
             cummulatedPointerWheelMovement += delta;
 
-            uiInputEventProcessor.ProcessPointerWheel(new PointerWheelEventArgs(delta));
+            uiInputEventProcessor.ProcessPointerWheelEvent(new PointerWheelEventArgs(delta));
         }
         #endregion
 
