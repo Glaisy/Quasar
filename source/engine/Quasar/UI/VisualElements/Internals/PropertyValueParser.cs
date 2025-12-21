@@ -26,9 +26,9 @@ namespace Quasar.UI.VisualElements.Internals
     /// <summary>
     /// Property value parser implementation.
     /// </summary>
-    [Export]
+    [Export(typeof(IPropertyValueParser))]
     [Singleton]
-    internal sealed class PropertyValueParser
+    internal sealed class PropertyValueParser : IPropertyValueParser
     {
         private const char PercentageSuffix = '%';
         private const string PixelSuffix = "px";
@@ -56,10 +56,7 @@ namespace Quasar.UI.VisualElements.Internals
         }
 
 
-        /// <summary>
-        /// Parses the boolean value from the input string value.
-        /// </summary>
-        /// <param name="value">The value.</param>
+        /// <inheritdoc/>
         public bool ParseBoolean(string value)
         {
             ArgumentException.ThrowIfNullOrEmpty(value, nameof(value));
@@ -76,10 +73,7 @@ namespace Quasar.UI.VisualElements.Internals
             return Boolean.Parse(value);
         }
 
-        /// <summary>
-        /// Parses the color value from the input string value.
-        /// </summary>
-        /// <param name="value">The value.</param>
+        /// <inheritdoc/>
         public Color ParseColor(string value)
         {
             ArgumentException.ThrowIfNullOrEmpty(value, nameof(value));
@@ -94,21 +88,14 @@ namespace Quasar.UI.VisualElements.Internals
             return new Color(rgba);
         }
 
-        /// <summary>
-        /// Parses the double precision floating point value from the input string value.
-        /// </summary>
-        /// <param name="value">The value.</param>
+        /// <inheritdoc/>
         public double ParseDouble(string value)
         {
             ArgumentException.ThrowIfNullOrEmpty(value, nameof(value));
             return Double.Parse(value, CultureInfo.InvariantCulture);
         }
 
-        /// <summary>
-        /// Parses the enumeration value from the input string value.
-        /// </summary>
-        /// <typeparam name="T">The enumeration type.</typeparam>
-        /// <param name="value">The value.</param>
+        /// <inheritdoc/>
         public T ParseEnum<T>(string value)
             where T : struct, IConvertible
         {
@@ -116,11 +103,7 @@ namespace Quasar.UI.VisualElements.Internals
             return Enum.Parse<T>(value, false);
         }
 
-        /// <summary>
-        /// Parses the grid column values from the string value to the grid column list.
-        /// </summary>
-        /// <param name="gridColumns">The grid columns.</param>
-        /// <param name="value">The string value.</param>
+        /// <inheritdoc/>
         public void ParseGridColumns(List<GridColumn> gridColumns, string value)
         {
             ArgumentNullException.ThrowIfNull(gridColumns, nameof(gridColumns));
@@ -162,11 +145,7 @@ namespace Quasar.UI.VisualElements.Internals
             }
         }
 
-        /// <summary>
-        /// Parses the grid row values from the string value to the grid row list.
-        /// </summary>
-        /// <param name="gridRows">The grid rows.</param>
-        /// <param name="value">The string value.</param>
+        /// <inheritdoc/>
         public void ParseGridRows(List<GridRow> gridRows, string value)
         {
             gridRows.Clear();
@@ -206,51 +185,35 @@ namespace Quasar.UI.VisualElements.Internals
             }
         }
 
-        /// <summary>
-        /// Parses the Int16 value from the input string value.
-        /// </summary>
-        /// <param name="value">The value.</param>
+        /// <inheritdoc/>
         public short ParseInt16(string value)
         {
             ArgumentException.ThrowIfNullOrEmpty(value, nameof(value));
             return Int16.Parse(value, CultureInfo.InvariantCulture);
         }
 
-        /// <summary>
-        /// Parses the Int32 value from the input string value.
-        /// </summary>
-        /// <param name="value">The value.</param>
+        /// <inheritdoc/>
         public int ParseInt32(string value)
         {
             ArgumentException.ThrowIfNullOrEmpty(value, nameof(value));
             return Int32.Parse(value, CultureInfo.InvariantCulture);
         }
 
-        /// <summary>
-        /// Parses the Int64 value from the input string value.
-        /// </summary>
-        /// <param name="value">The value.</param>
+        /// <inheritdoc/>
         public long ParseInt64(string value)
         {
             ArgumentException.ThrowIfNullOrEmpty(value, nameof(value));
             return Int64.Parse(value, CultureInfo.InvariantCulture);
         }
 
-        /// <summary>
-        /// Parses the single precision floating point value from the input string value.
-        /// </summary>
-        /// <param name="value">The value.</param>
+        /// <inheritdoc/>
         public float ParseSingle(string value)
         {
             ArgumentException.ThrowIfNullOrEmpty(value, nameof(value));
             return Single.Parse(value, CultureInfo.InvariantCulture);
         }
 
-        /// <summary>
-        /// Parses the unit value from the input string value.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="allowPercentage">Allow percentage flag. Percentage value is allowed when set to true; otherwise not.</param>
+        /// <inheritdoc/>
         public Unit ParseUnit(string value, bool allowPercentage)
         {
             ArgumentException.ThrowIfNullOrEmpty(value, nameof(value));

@@ -45,5 +45,11 @@ namespace Quasar.UI.Pipelines
         {
             uiEventProcessor.ProcessUpdateEvent();
         }
+
+        /// <inheritdoc/>
+        protected override void OnStart()
+        {
+            uiEventProcessor.Initialize();
+        }
     }
 }

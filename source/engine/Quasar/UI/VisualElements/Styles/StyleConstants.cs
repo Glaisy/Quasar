@@ -22,6 +22,11 @@ namespace Quasar.UI.VisualElements.Styles
         public const char ClassPrefix = '.';
 
         /// <summary>
+        /// The class separator.
+        /// </summary>
+        public const char ClassSeparator = ' ';
+
+        /// <summary>
         /// The custom property prefix.
         /// </summary>
         public const string CustomPropertyPrefix = "--";

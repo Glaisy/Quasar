@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="RootVisualElement.cs" company="Space Development">
+// <copyright file="EventProcessor.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -18,31 +18,31 @@ using Space.Core.DependencyInjection;
 namespace Quasar.UI.VisualElements.Internals
 {
     /// <summary>
-    /// Represents the root element of the Quasar UI system.
+    /// Internal component to process all UI events.
     /// </summary>
-    /// <seealso cref="VisualElement" />
     /// <seealso cref="IUIEventProcessor" />
     /// <seealso cref="IUIInputEventProcessor" />
+    /// <seealso cref="IVisualElementEventProcessor" />
     [Export(typeof(IUIEventProcessor))]
     [Export(typeof(IUIInputEventProcessor))]
+    [Export(typeof(IVisualElementEventProcessor))]
     [Singleton]
-    internal sealed class RootVisualElement : VisualElement, IUIEventProcessor, IUIInputEventProcessor
+    internal sealed class EventProcessor : IUIEventProcessor, IUIInputEventProcessor, IVisualElementEventProcessor
     {
-        private readonly Canvas canvas = new Canvas();
-
-
         #region IUIEventProcessor
         /// <inheritdoc/>
-        void IUIEventProcessor.ProcessUpdateEvent()
+        void IUIEventProcessor.Initialize()
         {
-            OnProcessUpdateEvent();
         }
 
         /// <inheritdoc/>
         void IUIEventProcessor.ProcessRenderEvent(IRenderingContext context)
         {
-            OnProcessRenderEvent(canvas);
-            canvas.Render(context);
+        }
+
+        /// <inheritdoc/>
+        void IUIEventProcessor.ProcessUpdateEvent()
+        {
         }
         #endregion
 
@@ -84,6 +84,33 @@ namespace Quasar.UI.VisualElements.Internals
 
         /// <inheritdoc/>
         void IUIInputEventProcessor.ProcessPointerWheelEvent(in PointerWheelEventArgs args)
+        {
+        }
+        #endregion
+
+        #region IVisualElementEventProcessor
+        /// <inheritdoc/>
+        void IVisualElementEventProcessor.AddToLoadList(VisualElement visualElement)
+        {
+        }
+
+        /// <inheritdoc/>
+        void IVisualElementEventProcessor.RemoveFromLoadList(VisualElement visualElement)
+        {
+        }
+
+        /// <inheritdoc/>
+        void IVisualElementEventProcessor.ProcessFocusChanged(VisualElement visualElement)
+        {
+        }
+
+        /// <inheritdoc/>
+        void IVisualElementEventProcessor.ProcessUpdate()
+        {
+        }
+
+        /// <inheritdoc/>
+        void IVisualElementEventProcessor.Reset()
         {
         }
         #endregion

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="IUIEventProcessor.cs" company="Space Development">
+// <copyright file="LayoutType.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,29 +9,26 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using Quasar.Rendering;
-
-namespace Quasar.UI.Internals
+namespace Quasar.UI.VisualElements.Layouts
 {
     /// <summary>
-    /// Represent a UI component to process general events.
+    /// Visual element layout type enumeration.
     /// </summary>
-    internal interface IUIEventProcessor
+    public enum LayoutType
     {
         /// <summary>
-        /// Executes the initialization process.
+        /// The vertical stack layout.
         /// </summary>
-        void Initialize();
+        VerticalStack = 0,
 
         /// <summary>
-        /// Processes the event when UI rendering happens.
+        /// The horizontal stack layout.
         /// </summary>
-        /// <param name="context">The context.</param>
-        void ProcessRenderEvent(IRenderingContext context);
+        HorizontalStack = 1,
 
         /// <summary>
-        /// Processes the event when UI update happens.
+        /// The grid layout.
         /// </summary>
-        void ProcessUpdateEvent();
+        Grid = 2
     }
 }
