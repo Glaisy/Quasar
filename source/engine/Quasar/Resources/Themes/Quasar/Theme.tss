@@ -1,4 +1,5 @@
 @import url("Variables.qss");
+@import url("BaseStyles.qss");
 
 :theme {
 	--name: "Quasar Default";
