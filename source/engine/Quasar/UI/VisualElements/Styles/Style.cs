@@ -59,11 +59,11 @@ namespace Quasar.UI.VisualElements.Styles
         /// </summary>
         public StyleColor Color { get; set; }
 
-        private Dictionary<string, string> customProperties;
+        private StyleProperties customProperties;
         /// <summary>
         /// Gets or sets the custom properties.
         /// </summary>
-        public Dictionary<string, string> CustomProperties
+        public StyleProperties CustomProperties
         {
             get
             {
@@ -110,9 +110,7 @@ namespace Quasar.UI.VisualElements.Styles
             }
         }
 
-        /// <summary>
-        /// Gets the custom properties.
-        /// </summary>
+        /// <inheritdoc/>
         IReadOnlyDictionary<string, string> IStyle.CustomProperties => customProperties;
 
         /// <summary>
@@ -286,8 +284,8 @@ namespace Quasar.UI.VisualElements.Styles
         private void InitializeCustomProperties(IReadOnlyDictionary<string, string> source)
         {
             customProperties = source == null ?
-                new Dictionary<string, string>() :
-                new Dictionary<string, string>(source);
+                new StyleProperties() :
+                new StyleProperties(source);
             inheritedCustomProperties = null;
         }
 

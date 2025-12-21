@@ -1,0 +1,11 @@
+// comment
+@import url("./Includes/Variables.qss"); /*
+ comment
+*/
+@import url("Styles.qss");
+
+.class-theme1 {
+	attr1: 2px;
+	attr2: Color.Red;
+	attr3: "Hello World!";
+}

@@ -1,0 +1,9 @@
+#name1 {
+	name-attr1: "string"; name-attr2: 20.1%;          name-attr3: var(--Font);
+}
+
+.class1 > class1-child {
+	class1-atttr: None;
+}
+
+@import url("/Includes/ImportDir/Dummy2.qss");

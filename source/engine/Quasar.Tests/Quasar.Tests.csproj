@@ -17,6 +17,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Styles\Includes\ImportDir\Dummy.qss" />
+    <None Remove="Resources\Styles\Includes\Variables.qss" />
+    <None Remove="Resources\Styles\Styles.qss" />
+    <None Remove="Resources\Styles\Theme.tss" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Styles\Includes\ImportDir\Dummy2.qss" />
+    <EmbeddedResource Include="Resources\Styles\Includes\ImportDir\Dummy.qss" />
+    <EmbeddedResource Include="Resources\Styles\Includes\Variables.qss" />
+    <EmbeddedResource Include="Resources\Styles\Styles.qss" />
+    <EmbeddedResource Include="Resources\Styles\Theme.tss" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 

@@ -1,0 +1,27 @@
+// test style sheet
+
+:root { /*comment*/
+	--Font-Family: "Conthrax64";
+
+	--Font-Size: 12px; 
+
+	--Color: rgb(128, 224, 255)  ;
+	--Color-Highlighted:      Color.White;
+	--Color-Inverted: rgba(#002440FF);
+
+	/*
+	 Multi line comment
+	*/--Border-Width: 1px;
+
+	--Padding: 5.2%; /*
+
+	        /* /* /*/
+
+	// comment
+	
+	--Font-Family: "Conthrax";
+	
+	--Dummy: "Dummy";
+}
+
+@import url("ImportDir/Dummy.qss");

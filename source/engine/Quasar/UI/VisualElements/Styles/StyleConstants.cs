@@ -37,6 +37,11 @@ namespace Quasar.UI.VisualElements.Styles
         public const string RootStyleName = ":root";
 
         /// <summary>
+        /// The root URL prefix.
+        /// </summary>
+        public const char RootUrlPrefix = '/';
+
+        /// <summary>
         /// The theme style name.
         /// </summary>
         public const string ThemeStyleName = ":theme";
