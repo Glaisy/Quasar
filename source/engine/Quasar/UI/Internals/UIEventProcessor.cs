@@ -90,10 +90,7 @@ namespace Quasar.UI.Internals
                 return;
             }
 
-            rootVisualElement.ProcessStyleAnPseudoClassChanges();
-            rootVisualElement.ProcessPreferredSizeChanges();
-            rootVisualElement.ProcessLayoutChanges();
-            rootVisualElement.ProcessUpdateEvent();
+            rootVisualElement.ProcessOptimizedUpdateEvents();
         }
         #endregion
 

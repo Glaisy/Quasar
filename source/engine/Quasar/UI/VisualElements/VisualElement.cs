@@ -56,6 +56,7 @@ namespace Quasar.UI.VisualElements
         private Vector2 textPosition;
         private PseudoClass pseudoClass;
         private Style mergedStyle;
+        private int mergedInvalidationFlags;
 
 
         /// <summary>
@@ -1061,6 +1062,17 @@ namespace Quasar.UI.VisualElements
 
             children.Add(visualElement);
             visualElement.Parent = this;
+        }
+
+        /// <summary>
+        /// Invalidates the object by the specified invalidation flags.
+        /// </summary>
+        /// <param name="invalidationFlags">The invalidation flags.</param>
+        protected new void Invalidate(int invalidationFlags)
+        {
+            base.Invalidate(invalidationFlags);
+
+            mergedInvalidationFlags |= invalidationFlags;
         }
 
         /// <summary>

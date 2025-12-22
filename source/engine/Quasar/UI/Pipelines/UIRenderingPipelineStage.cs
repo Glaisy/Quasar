@@ -9,6 +9,8 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Quasar.Graphics;
 using Quasar.Pipelines;
 using Quasar.Rendering.Pipelines;
@@ -16,6 +18,7 @@ using Quasar.UI.Internals;
 using Quasar.UI.Internals.Renderers;
 using Quasar.UI.VisualElements;
 using Quasar.UI.VisualElements.Internals;
+using Quasar.UI.VisualElements.Styles;
 using Quasar.UI.VisualElements.Themes;
 
 using Space.Core.DependencyInjection;
@@ -79,6 +82,22 @@ namespace Quasar.UI.Pipelines
             uiElementRenderer.Initalize();
 
             themeService.LoadBuiltInThemes();
+
+            //// TODO: remove this test code
+            var label = new Label
+            {
+                Text = "This is the first label!"
+            };
+            label.SetInlineStyle(new Style
+            {
+                Position = new StyleEnum<Position>(Position.Absolute),
+                MarginLeft = new StyleFloat(12),
+                MarginTop = new StyleFloat(12),
+            });
+
+            var uiService = ServiceProvider.GetRequiredService<IUIService>();
+            uiService.RootVisualElement = label;
+            //// TODO: remove this test code
         }
     }
 }
