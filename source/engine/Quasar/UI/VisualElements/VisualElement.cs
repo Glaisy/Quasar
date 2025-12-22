@@ -17,10 +17,13 @@ using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 
 using Quasar.Graphics;
+using Quasar.Graphics.Internals;
 using Quasar.UI.VisualElements.Internals;
 using Quasar.UI.VisualElements.Layouts;
 using Quasar.UI.VisualElements.Layouts.Internals;
 using Quasar.UI.VisualElements.Styles;
+using Quasar.UI.VisualElements.Styles.Internals;
+using Quasar.UI.VisualElements.Themes;
 using Quasar.Utilities;
 
 using Space.Core;
@@ -45,9 +48,13 @@ namespace Quasar.UI.VisualElements
         private static IUIContext uiContext;
         private static IPropertyValueParser propertyValueParser;
         private static IVisualElementEventProcessor eventProcessor;
+        private static IThemeProvider themeProvider;
+        private static IStyleBuilder styleBuilder;
         private static VisualElementContext context;
+        private static Font defaultFont;
         private ILayoutManager layoutManager;
         private Vector2 textPosition;
+        private PseudoClass pseudoClass;
         private Style mergedStyle;
 
 
@@ -96,6 +103,8 @@ namespace Quasar.UI.VisualElements
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
+            eventProcessor.RemoveFromLoadList(this);
+
             // invoke unload event handler
             OnUnload();
 
@@ -275,11 +284,11 @@ namespace Quasar.UI.VisualElements
         /// </summary>
         public Rectangle ContentBox { get; private set; }
 
-        private DisplayMode display;
+        private DisplayStyle display;
         /// <summary>
-        /// Gets the display mode.
+        /// Gets the display style.
         /// </summary>
-        public DisplayMode Display
+        public DisplayStyle Display
         {
             get => display;
             private set
@@ -384,7 +393,7 @@ namespace Quasar.UI.VisualElements
         /// <summary>
         /// Gets a value indicating whether this <see cref="VisualElement"/> is visible.
         /// </summary>
-        public bool IsVisible => visibility == Visibility.Visible && display == DisplayMode.Display;
+        public bool IsVisible => visibility == Visibility.Visible && display == DisplayStyle.Display;
 
         private Vector2 itemSpacing;
         /// <summary>
@@ -992,10 +1001,14 @@ namespace Quasar.UI.VisualElements
             uiContext = serviceProvider.GetRequiredService<IUIContext>();
             propertyValueParser = serviceProvider.GetRequiredService<IPropertyValueParser>();
             eventProcessor = serviceProvider.GetRequiredService<IVisualElementEventProcessor>();
+            themeProvider = serviceProvider.GetRequiredService<IThemeProvider>();
+            styleBuilder = serviceProvider.GetRequiredService<IStyleBuilder>();
 
             layoutManagers = serviceProvider.GetServices<ILayoutManager>()
                 .OrderBy(x => x.LayoutType)
                 .ToArray();
+
+            defaultFont = new Font(FontFamilyConstants.DefaultName, FontFamilyConstants.DefaultFontSize);
         }
 
         /// <summary>
@@ -1017,6 +1030,11 @@ namespace Quasar.UI.VisualElements
             SetProperty(name, value, propertyValueParser);
         }
 
+
+        /// <summary>
+        /// Gets the element name selector.
+        /// </summary>
+        protected virtual string ElementTagSelector { get; } = ElementTagSelectors.VisualElement;
 
         /// <summary>
         /// Gets a value indicating whether this control is focusable.

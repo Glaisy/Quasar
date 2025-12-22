@@ -9,9 +9,12 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System.Runtime.CompilerServices;
+
 using Quasar.Inputs;
 using Quasar.UI.VisualElements.Internals;
 using Quasar.UI.VisualElements.Styles;
+using Quasar.UI.VisualElements.Themes;
 
 namespace Quasar.UI.VisualElements
 {
@@ -21,30 +24,238 @@ namespace Quasar.UI.VisualElements
     public partial class VisualElement
     {
         /// <summary>
-        /// The process render event handler.
+        /// Executes the got focus event processing.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessGotFocusEvent()
+        {
+            OnGotFocus();
+        }
+
+        /// <summary>
+        /// Executes the key down event processing.
+        /// </summary>
+        /// <param name="args">The <see cref="KeyEventArgs"/> instance containing the event data.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessKeyDownEvent(in KeyEventArgs args)
+        {
+            OnKeyDown(args);
+        }
+
+        /// <summary>
+        /// Executes the key press event processing.
+        /// </summary>
+        /// <param name="args">The <see cref="KeyEventArgs"/> instance containing the event data.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessKeyPressEvent(in KeyEventArgs args)
+        {
+            OnKeyPress(args);
+        }
+
+        /// <summary>
+        /// Executes the key up event processing.
+        /// </summary>
+        /// <param name="args">The <see cref="KeyEventArgs"/> instance containing the event data.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessKeyUpEvent(in KeyEventArgs args)
+        {
+            OnKeyUp(args);
+        }
+
+        /// <summary>
+        /// Executes the layout change processing.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessLayoutChanges()
+        {
+            // update visual layou
+            if (HasInvalidationFlags(InvalidationFlags.Layout))
+            {
+                layoutManager.Arrange(this);
+                ClearInvalidationFlags(InvalidationFlags.Layout);
+            }
+
+            // update content alignment
+            if (HasInvalidationFlags(InvalidationFlags.ContentAlignment))
+            {
+                UpdateContentAlignment();
+                ClearInvalidationFlags(InvalidationFlags.ContentAlignment);
+            }
+
+            // propagate layout change processing through the hierarchy
+            foreach (var child in children)
+            {
+                child.ProcessLayoutChanges();
+            }
+        }
+
+        /// <summary>
+        /// Executes the load event processing.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessLoadEvent()
+        {
+            OnLoad();
+        }
+
+        /// <summary>
+        /// Executes the lost focus event processing.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessLostFocusEvent()
+        {
+            OnLostFocus();
+        }
+
+        /// <summary>
+        /// Executes the pointer button down event processing.
+        /// </summary>
+        /// <param name="args">The <see cref="PointerButtonEventArgs"/> instance containing the event data.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessPointerButtonDownEvent(in PointerButtonEventArgs args)
+        {
+            OnPointerButtonDown(args);
+        }
+
+        /// <summary>
+        /// Executes the pointer button up event processing.
+        /// </summary>
+        /// <param name="args">The <see cref="PointerButtonEventArgs"/> instance containing the event data.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessPointerButtonUpEvent(in PointerButtonEventArgs args)
+        {
+            OnPointerButtonUp(args);
+        }
+
+        /// <summary>
+        /// Executes the pointer click event processing.
+        /// </summary>
+        /// <param name="args">The <see cref="PointerButtonEventArgs"/> instance containing the event data.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessPointerClickEvent(in PointerButtonEventArgs args)
+        {
+            OnPointerClick(args);
+        }
+
+        /// <summary>
+        /// Executes the pointer double click event processing.
+        /// </summary>
+        /// <param name="args">The <see cref="PointerButtonEventArgs"/> instance containing the event data.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessPointerDoubleClickEvent(in PointerButtonEventArgs args)
+        {
+            OnPointerDoubleClick(args);
+        }
+
+        /// <summary>
+        /// Executes the pointer move event processing.
+        /// </summary>
+        /// <param name="args">The <see cref="PointerButtonEventArgs"/> instance containing the event data.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessPointerMoveEvent(in PointerMoveEventArgs args)
+        {
+            OnPointerMove(args);
+        }
+
+        /// <summary>
+        /// Executes the pointer wheel event processing.
+        /// </summary>
+        /// <param name="args">The <see cref="PointerWheelEventArgs"/> instance containing the event data.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessPointerWheelEvent(in PointerWheelEventArgs args)
+        {
+            OnPointerWheel(args);
+        }
+
+        /// <summary>
+        /// Executes the style and pseudo class change processing.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessStyleAnPseudoClassChanges()
+        {
+            ITheme theme = null;
+            var shouldResolve = false;
+
+            // update styles
+            if (HasInvalidationFlags(InvalidationFlags.Styles))
+            {
+                theme = themeProvider.CurrentTheme;
+                MergeStyles(theme);
+                ClearInvalidationFlags(InvalidationFlags.Styles);
+                shouldResolve = true;
+            }
+
+            // update pseudo class
+            if (HasInvalidationFlags(InvalidationFlags.PseudoClass))
+            {
+                pseudoClass = GetPseudoClass();
+                theme ??= themeProvider.CurrentTheme;
+                MergePseudoClassStyle(theme);
+                shouldResolve = true;
+                ClearInvalidationFlags(InvalidationFlags.PseudoClass);
+            }
+
+            // resolve style
+            if (shouldResolve)
+            {
+                ResolveStyleProperties();
+            }
+
+            // propagate update event through the hierarchy
+            foreach (var child in children)
+            {
+                child.ProcessStyleAnPseudoClassChanges();
+            }
+        }
+
+        /// <summary>
+        /// Executes the render event processing.
         /// </summary>
         /// <param name="canvas">The canvas.</param>
-        internal void OnProcessRenderEvent(Canvas canvas)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessRenderEvent(Canvas canvas)
         {
             if (Visibility != Visibility.Visible ||
-                Display != DisplayMode.Display)
+                Display != DisplayStyle.Display)
             {
                 return;
             }
 
+            canvas.Offset = CanvasPosition;
             OnRender(canvas);
 
             // propagate render event through the hierarchy
             foreach (var child in children)
             {
-                child.OnProcessRenderEvent(canvas);
+                child.ProcessRenderEvent(canvas);
             }
         }
 
         /// <summary>
-        /// The process update event handler.
+        /// Executes the size change processing.
         /// </summary>
-        internal void OnProcessUpdateEvent()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessSizeChanges()
+        {
+            // propagate size change processing through the hierarchy
+            foreach (var child in children)
+            {
+                child.ProcessSizeChanges();
+            }
+
+            // update preferred size of this visual element
+            if (HasInvalidationFlags(InvalidationFlags.PreferredSize))
+            {
+                PreferredSize = layoutManager.CalculatePreferredBoundingBoxSize(this);
+                ClearInvalidationFlags(InvalidationFlags.PreferredSize);
+            }
+        }
+
+        /// <summary>
+        /// Executes the update event processing.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessUpdateEvent()
         {
             // invoke custom update event handler
             OnUpdate();
@@ -52,8 +263,17 @@ namespace Quasar.UI.VisualElements
             // propagate update event through the hierarchy
             foreach (var child in children)
             {
-                child.OnProcessUpdateEvent();
+                child.ProcessUpdateEvent();
             }
+        }
+
+        /// <summary>
+        /// Executes the viewport changed event processing (NOTE: root visual element only).
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessViewportSizeChangedEvent()
+        {
+            Invalidate(InvalidationFlags.Layout);
         }
 
 

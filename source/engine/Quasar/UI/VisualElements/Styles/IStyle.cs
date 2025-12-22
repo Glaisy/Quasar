@@ -52,9 +52,9 @@ namespace Quasar.UI.VisualElements.Styles
         IReadOnlyDictionary<string, string> CustomProperties { get; }
 
         /// <summary>
-        /// Gets the display mode.
+        /// Gets the display style.
         /// </summary>
-        StyleEnum<DisplayMode> Display { get; }
+        StyleEnum<DisplayStyle> Display { get; }
 
         /// <summary>
         /// Gets the font family name.

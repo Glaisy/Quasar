@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="DisplayMode.cs" company="Space Development">
+// <copyright file="DisplayStyle.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -12,9 +12,9 @@
 namespace Quasar.UI.VisualElements.Styles
 {
     /// <summary>
-    /// Display enumeration.
+    /// Display style enumeration.
     /// </summary>
-    public enum DisplayMode
+    public enum DisplayStyle
     {
         /// <summary>
         /// The normal display mode.

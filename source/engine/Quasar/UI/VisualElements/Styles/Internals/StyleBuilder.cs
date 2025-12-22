@@ -332,8 +332,8 @@ namespace Quasar.UI.VisualElements.Styles.Internals
                             break;
 
                         case StyleConstants.PropertyNames.Display:
-                            var display = valueParser.ParseEnum<DisplayMode>(property.Value, style.CustomProperties);
-                            style.Display = new StyleEnum<DisplayMode>(display);
+                            var display = valueParser.ParseEnum<DisplayStyle>(property.Value, style.CustomProperties);
+                            style.Display = new StyleEnum<DisplayStyle>(display);
                             break;
 
                         case StyleConstants.PropertyNames.FontFamily:

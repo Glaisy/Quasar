@@ -153,7 +153,7 @@ namespace Quasar.UI.VisualElements.Layouts.Internals
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsInLayout(VisualElement visualElement)
         {
-            return visualElement.Position == Position.Relative && visualElement.Display == DisplayMode.Display;
+            return visualElement.Position == Position.Relative && visualElement.Display == DisplayStyle.Display;
         }
 
         /// <summary>

@@ -23,12 +23,6 @@ namespace Quasar.UI.VisualElements.Internals
         void AddToLoadList(VisualElement visualElement);
 
         /// <summary>
-        /// Removes the visual element from the load list.
-        /// </summary>
-        /// <param name="visualElement">The visual element.</param>
-        void RemoveFromLoadList(VisualElement visualElement);
-
-        /// <summary>
         /// Processes the focus changed event.
         /// </summary>
         /// <param name="visualElement">The visual element.</param>
@@ -44,5 +38,11 @@ namespace Quasar.UI.VisualElements.Internals
         /// </summary>
         /// <param name="visualElement">The visual element.</param>
         void ProcessRootVisualElementChanged(VisualElement visualElement);
+
+        /// <summary>
+        /// Removes the visual element from the load list.
+        /// </summary>
+        /// <param name="visualElement">The visual element.</param>
+        void RemoveFromLoadList(VisualElement visualElement);
     }
 }

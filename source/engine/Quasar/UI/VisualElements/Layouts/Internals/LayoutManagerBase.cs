@@ -52,7 +52,7 @@ namespace Quasar.UI.VisualElements.Layouts.Internals
             Vector2 availableSize;
 
             // displayed?
-            if (visualElement.Display == DisplayMode.None)
+            if (visualElement.Display == DisplayStyle.None)
             {
                 // no, done.
                 return;

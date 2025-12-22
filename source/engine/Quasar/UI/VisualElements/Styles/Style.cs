@@ -114,9 +114,9 @@ namespace Quasar.UI.VisualElements.Styles
         IReadOnlyDictionary<string, string> IStyle.CustomProperties => customProperties;
 
         /// <summary>
-        /// Gets or sets the display mode.
+        /// Gets or sets the display style.
         /// </summary>
-        public StyleEnum<DisplayMode> Display { get; set; }
+        public StyleEnum<DisplayStyle> Display { get; set; }
 
         /// <summary>
         /// Gets or sets the font family name.
@@ -298,7 +298,7 @@ namespace Quasar.UI.VisualElements.Styles
                 BackgroundSlicing = new StyleBorder(StyleFlag.NotSet),
                 Bottom = new StyleUnit(StyleFlag.Auto),
                 Color = new StyleColor(Graphics.Color.White, StyleFlag.Initial),
-                Display = new StyleEnum<DisplayMode>(DisplayMode.Display, StyleFlag.Initial),
+                Display = new StyleEnum<DisplayStyle>(DisplayStyle.Display, StyleFlag.Initial),
                 FontFamily = new StyleString(StyleFlag.NotSet),
                 FontSize = new StyleFloat(StyleFlag.NotSet),
                 FontStyle = new StyleEnum<FontStyle>(StyleFlag.NotSet),
