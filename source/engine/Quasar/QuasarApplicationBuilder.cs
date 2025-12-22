@@ -17,8 +17,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Quasar.Internals;
 using Quasar.Settings;
-using Quasar.UI;
-using Quasar.UI.Internals;
 
 using Space.Core;
 using Space.Core.DependencyInjection;
@@ -33,8 +31,6 @@ namespace Quasar
     {
         private const string CriticalErrorTitle = $"{nameof(Quasar)} critical error...";
         private const string PlatformSpecificAssemblyNameFormatStringP1 = $"{nameof(Quasar)}.{{0}}.dll";
-        private static readonly Range<float> ScreenRatioRange = new Range<float>(0.1f, 1.0f);
-
 
         private readonly OperatingSystemPlatform operatingSystemPlatform;
         private readonly IServiceProvider serviceProvider;
@@ -84,7 +80,6 @@ namespace Quasar
             try
             {
                 serviceProvider.InitializeStaticServices();
-                CreateApplicationWindow();
                 return serviceProvider.GetRequiredService<QuasarApplication>();
             }
             catch (Exception exception)
@@ -96,12 +91,12 @@ namespace Quasar
         }
 
         /// <summary>
-        /// Configures the application window.
+        /// Configures the application.
         /// </summary>
         /// <param name="configureAction">The configure action.</param>
-        public QuasarApplicationBuilder ConfigureApplicationWindow(Action<ApplicationWindowConfiguration> configureAction)
+        public QuasarApplicationBuilder ConfigureApplication(Action<ApplicationConfiguration> configureAction)
         {
-            var applicationWindowConfiguration = new ApplicationWindowConfiguration();
+            var applicationWindowConfiguration = new ApplicationConfiguration();
             configureAction(applicationWindowConfiguration);
             ServiceLoader.AddSingleton(applicationWindowConfiguration);
 
@@ -149,35 +144,6 @@ namespace Quasar
             }
 
             ServiceLoader.AddExportedServices(platformSpecificAssembly);
-        }
-
-        private void CreateApplicationWindow()
-        {
-            string title = null;
-            ApplicationWindowType applicationWindowType;
-            float screenRatio;
-            var applicationWindowConfiguration = serviceProvider.GetService<ApplicationWindowConfiguration>();
-            if (applicationWindowConfiguration == null)
-            {
-                applicationWindowType = ApplicationWindowConfiguration.DefaultType;
-                screenRatio = ApplicationWindowConfiguration.DefaultScreenRatio;
-            }
-            else
-            {
-                applicationWindowType = applicationWindowConfiguration.Type;
-                screenRatio = ScreenRatioRange.Clamp(applicationWindowConfiguration.ScreenRatio);
-                title = applicationWindowConfiguration.Title;
-            }
-
-            if (String.IsNullOrEmpty(title))
-            {
-                var environmentInformation = serviceProvider.GetRequiredService<IEnvironmentInformation>();
-                title = environmentInformation.Title;
-            }
-
-            var nativeWindowFactory = serviceProvider.GetRequiredService<INativeWindowFactory>();
-            var applicationWindow = nativeWindowFactory.CreateApplicationWindow(applicationWindowType, title, screenRatio);
-            ServiceLoader.AddSingleton(applicationWindow);
         }
 
         private static OperatingSystemPlatform DetectOperatingSystemPlatform()

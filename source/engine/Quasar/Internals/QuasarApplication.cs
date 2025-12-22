@@ -11,12 +11,16 @@
 
 using System;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Quasar.Physics.Pipelines.Internals;
 using Quasar.Pipelines.Internals;
 using Quasar.Rendering.Pipelines.Internals;
 using Quasar.Settings;
 using Quasar.UI;
+using Quasar.UI.Internals;
 
+using Space.Core;
 using Space.Core.DependencyInjection;
 using Space.Core.Diagnostics;
 
@@ -31,12 +35,13 @@ namespace Quasar.Internals
     internal sealed class QuasarApplication : IQuasarApplication
     {
         private readonly ICriticalErrorHandler criticalErrorHandler;
-        private readonly ILoggerService loggerService;
-        private readonly ISettingsService settingsService;
-        private readonly TimeService timeService;
-        private readonly UpdatePipeline updatePipeline;
-        private readonly PhysicsPipeline physicsPipeline;
-        private readonly RenderingPipeline renderingPipeline;
+        private readonly ApplicationConfiguration applicationConfiguration;
+        private ILoggerService loggerService;
+        private ISettingsService settingsService;
+        private TimeService timeService;
+        private UpdatePipeline updatePipeline;
+        private PhysicsPipeline physicsPipeline;
+        private RenderingPipeline renderingPipeline;
         private ILogger logger;
 
 
@@ -45,34 +50,15 @@ namespace Quasar.Internals
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
         /// <param name="criticalErrorHandler">The critical error handler.</param>
-        /// <param name="applicationWindow">The application window.</param>
-        /// <param name="loggerService">The logger service.</param>
-        /// <param name="settingsService">The settings service.</param>
-        /// <param name="timeService">The time service.</param>
-        /// <param name="updatePipeline">The update pipeline.</param>
-        /// <param name="physicsPipeline">The physics pipeline.</param>
-        /// <param name="renderingPipeline">The rendering pipeline.</param>
         public QuasarApplication(
             IServiceProvider serviceProvider,
-            ICriticalErrorHandler criticalErrorHandler,
-            IApplicationWindow applicationWindow,
-            ILoggerService loggerService,
-            ISettingsService settingsService,
-            TimeService timeService,
-            UpdatePipeline updatePipeline,
-            PhysicsPipeline physicsPipeline,
-            RenderingPipeline renderingPipeline)
+            ICriticalErrorHandler criticalErrorHandler)
         {
             this.criticalErrorHandler = criticalErrorHandler;
-            this.loggerService = loggerService;
-            this.settingsService = settingsService;
-            this.timeService = timeService;
-            this.updatePipeline = updatePipeline;
-            this.physicsPipeline = physicsPipeline;
-            this.renderingPipeline = renderingPipeline;
-
             ServiceProvider = serviceProvider;
-            ApplicationWindow = applicationWindow;
+
+            applicationConfiguration = serviceProvider.GetService<ApplicationConfiguration>();
+            ApplicationWindow = CreateApplicationWindow();
         }
 
 
@@ -93,7 +79,6 @@ namespace Quasar.Internals
 
                 // run the main application loop
                 ApplicationWindow.Show();
-                timeService.Initialize();
                 while (ApplicationWindow.Visible)
                 {
                     timeService.UpdateDeltaTime();
@@ -111,20 +96,67 @@ namespace Quasar.Internals
             }
         }
 
+
+        private IApplicationWindow CreateApplicationWindow()
+        {
+            string title = null;
+            ApplicationWindowType applicationWindowType;
+            float screenRatio;
+            if (applicationConfiguration == null)
+            {
+                applicationWindowType = ApplicationWindowType.Default;
+                screenRatio = ApplicationConfiguration.DefaultScreenRatio;
+            }
+            else
+            {
+                applicationWindowType = applicationConfiguration.ApplicationWindowType;
+                screenRatio = Ranges.FloatUnit.Clamp(applicationConfiguration.ScreenRatio);
+                title = applicationConfiguration.Title;
+            }
+
+            if (String.IsNullOrEmpty(title))
+            {
+                var environmentInformation = ServiceProvider.GetRequiredService<IEnvironmentInformation>();
+                title = environmentInformation.Title;
+            }
+
+            var nativeWindowFactory = ServiceProvider.GetRequiredService<INativeWindowFactory>();
+            var applicationWindow = nativeWindowFactory.CreateApplicationWindow(applicationWindowType, title, screenRatio);
+
+            var serviceLoader = ServiceProvider.GetRequiredService<IServiceLoader>();
+            serviceLoader.AddSingleton(applicationWindow);
+            return applicationWindow;
+        }
+
         private void StartApplicationInternals()
         {
             // initialize internal services
+            loggerService = ServiceProvider.GetRequiredService<ILoggerService>();
             loggerService.Start();
             logger = loggerService.Factory.Create<QuasarApplication>();
             logger.Info("Initializing the application.");
 
-            logger.Info("Loading application settings.");
+            settingsService = ServiceProvider.GetRequiredService<ISettingsService>();
             settingsService.Load();
 
+            timeService = ServiceProvider.GetRequiredService<TimeService>();
+            timeService.Initialize();
+
             // initialize pipelines
+            renderingPipeline = ServiceProvider.GetRequiredService<RenderingPipeline>();
             renderingPipeline.Start();
+            updatePipeline = ServiceProvider.GetRequiredService<UpdatePipeline>();
             updatePipeline.Start();
+            physicsPipeline = ServiceProvider.GetRequiredService<PhysicsPipeline>();
             physicsPipeline.Start();
+
+            // execute custom bootstrapper process
+            var bootstrapperFactory = applicationConfiguration?.BootstrapperFactory;
+            if (bootstrapperFactory != null)
+            {
+                var bootstrapper = bootstrapperFactory(ServiceProvider);
+                bootstrapper?.Execute();
+            }
 
             logger?.Info("Application initialization is completed.");
         }

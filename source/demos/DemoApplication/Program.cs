@@ -46,21 +46,14 @@ namespace DemoApplication
                 configuration.SettingsFilePath = "demo.cfg";
             });
 
-            builder.ConfigureApplicationWindow(configuration =>
+            builder.ConfigureApplication(configuration =>
             {
-                configuration.Type = ApplicationWindowType.Resizable;
+                configuration.ApplicationWindowType = ApplicationWindowType.Resizable;
                 configuration.ScreenRatio = 0.75f;
+                configuration.BootstrapperFactory = serviceProvider => serviceProvider.GetRequiredService<Bootstrapper>();
             });
 
-
             var application = builder.Build();
-
-            // TODO: add configurability option for default icon and cursor or startup action?
-            var iconRepository = application.ServiceProvider.GetRequiredService<IIconRepository>();
-            application.ApplicationWindow.Icon = iconRepository.Load("Demo", "./Contents/Logo.png");
-            var cursorRepository = application.ServiceProvider.GetRequiredService<ICursorRepository>();
-            application.ApplicationWindow.Cursor = cursorRepository.Load("Demo", "./Contents/Cursor.png", default);
-
             application.Run();
         }
     }

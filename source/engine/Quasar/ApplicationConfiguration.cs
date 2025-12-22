@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="ApplicationWindowConfiguration.cs" company="Space Development">
+// <copyright file="ApplicationConfiguration.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,26 +9,30 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-namespace Quasar.UI
+using System;
+
+using Quasar.UI;
+
+namespace Quasar
 {
     /// <summary>
-    /// Application window configuration object to provide customization in application build time.
+    /// Application configuration object to provide customization during the application build process.
     /// </summary>
-    public sealed class ApplicationWindowConfiguration
+    public sealed class ApplicationConfiguration
     {
         /// <summary>
         /// The default screen ratio.
         /// </summary>
-        public const float DefaultScreenRatio = 0.8f;
+        public const float DefaultScreenRatio = 0.75f;
+
 
         /// <summary>
-        /// The default application window type.
+        /// Gets or sets the application window's type.
         /// </summary>
-        public const ApplicationWindowType DefaultType = ApplicationWindowType.Default;
-
+        public ApplicationWindowType ApplicationWindowType { get; set; } = ApplicationWindowType.Default;
 
         /// <summary>
-        /// Gets or sets the ratio of window size relative to the screen.
+        /// Gets or sets the ratio of application window's size relative to the screen.
         /// </summary>
         public float ScreenRatio { get; set; } = DefaultScreenRatio;
 
@@ -38,8 +42,8 @@ namespace Quasar.UI
         public string Title { get; set; }
 
         /// <summary>
-        /// Gets or sets the application window's type.
+        /// Gets or sets the bootstrapper factory function.
         /// </summary>
-        public ApplicationWindowType Type { get; set; } = DefaultType;
+        public Func<IServiceProvider, IBootstrapper> BootstrapperFactory { get; set; }
     }
 }
