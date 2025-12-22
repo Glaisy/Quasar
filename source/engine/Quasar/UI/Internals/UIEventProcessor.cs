@@ -40,6 +40,7 @@ namespace Quasar.UI.Internals
 
         private readonly ITimeProvider timeProvider;
         private readonly List<VisualElement> loadList = new List<VisualElement>();
+        private readonly Canvas canvas = new Canvas();
         private VisualElement rootVisualElement;
         private VisualElement focusedVisualElement;
         private VisualElement keyDownVisualElement;
@@ -64,7 +65,13 @@ namespace Quasar.UI.Internals
         /// <inheritdoc/>
         void IUIEventProcessor.ProcessRenderEvent(IRenderingContext context)
         {
-            rootVisualElement?.ProcessUpdateEvent();
+            if (rootVisualElement == null)
+            {
+                return;
+            }
+
+            rootVisualElement.ProcessRenderEvent(canvas);
+            canvas.Render(context);
         }
 
         /// <inheritdoc/>
@@ -76,7 +83,17 @@ namespace Quasar.UI.Internals
         /// <inheritdoc/>
         void IUIEventProcessor.ProcessUpdateEvent()
         {
-            rootVisualElement?.ProcessUpdateEvent();
+            ProcessLoadList();
+
+            if (rootVisualElement == null)
+            {
+                return;
+            }
+
+            rootVisualElement.ProcessStyleAnPseudoClassChanges();
+            rootVisualElement.ProcessPreferredSizeChanges();
+            rootVisualElement.ProcessLayoutChanges();
+            rootVisualElement.ProcessUpdateEvent();
         }
         #endregion
 
@@ -299,22 +316,6 @@ namespace Quasar.UI.Internals
 
             focusedVisualElement = visualElement;
             focusedVisualElement.ProcessGotFocusEvent();
-        }
-
-        /// <inheritdoc/>
-        void IVisualElementEventProcessor.ProcessUpdate()
-        {
-            ProcessLoadList();
-
-            if (rootVisualElement == null)
-            {
-                return;
-            }
-
-            rootVisualElement.ProcessStyleAnPseudoClassChanges();
-            rootVisualElement.ProcessSizeChanges();
-            rootVisualElement.ProcessLayoutChanges();
-            rootVisualElement.ProcessUpdateEvent();
         }
 
         /// <inheritdoc/>

@@ -9,6 +9,7 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Runtime.CompilerServices;
 
 using Quasar.Inputs;
@@ -232,15 +233,15 @@ namespace Quasar.UI.VisualElements
         }
 
         /// <summary>
-        /// Executes the size change processing.
+        /// Executes the preferred size change processing.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void ProcessSizeChanges()
+        internal void ProcessPreferredSizeChanges()
         {
             // propagate size change processing through the hierarchy
             foreach (var child in children)
             {
-                child.ProcessSizeChanges();
+                child.ProcessPreferredSizeChanges();
             }
 
             // update preferred size of this visual element
@@ -390,6 +391,15 @@ namespace Quasar.UI.VisualElements
         /// <param name="canvas">The canvas.</param>
         protected virtual void OnRender(ICanvas canvas)
         {
+            if (background.Texture != null)
+            {
+                canvas.DrawSprite(background, Vector2.Zero, PaddingBox.Size, backgroundColor);
+            }
+
+            if (!String.IsNullOrEmpty(text))
+            {
+                canvas.DrawText(text, font, textPosition, Color);
+            }
         }
 
         /// <summary>

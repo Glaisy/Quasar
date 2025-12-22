@@ -137,7 +137,7 @@ namespace Quasar.UI.VisualElements
                     break;
             }
 
-            return new Vector2(x, y);
+            return new Vector2(MathF.Round(x), MathF.Round(y));
         }
 
         /// <summary>

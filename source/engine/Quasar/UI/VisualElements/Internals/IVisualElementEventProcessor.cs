@@ -29,11 +29,6 @@ namespace Quasar.UI.VisualElements.Internals
         void ProcessFocusChanged(VisualElement visualElement);
 
         /// <summary>
-        /// Processes the visual elements' update events.
-        /// </summary>
-        void ProcessUpdate();
-
-        /// <summary>
         /// Processes the root visual element changed event.
         /// </summary>
         /// <param name="visualElement">The visual element.</param>

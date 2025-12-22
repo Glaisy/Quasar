@@ -810,16 +810,15 @@ namespace Quasar.UI.VisualElements
         /// <returns>True if the control got the input focus; otherwise false.</returns>
         public bool Focus()
         {
-            throw new NotImplementedException();
-            ////if (!Focusable ||
-            ////    !Visible ||
-            ////    !enabled)
-            ////{
-            ////    return false;
-            ////}
+            if (!IsFocusable ||
+                !IsVisible ||
+                !isEnabled)
+            {
+                return false;
+            }
 
-            ////visualElementEventProcessor.ProcessFocusChanged(this);
-            ////return true;
+            eventProcessor.ProcessFocusChanged(this);
+            return true;
         }
 
         /// <summary>
@@ -1070,7 +1069,8 @@ namespace Quasar.UI.VisualElements
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void InvalidateParentGridLayout()
         {
-            if (Parent.LayoutType != LayoutType.Grid)
+            if (Parent == null ||
+                Parent.LayoutType != LayoutType.Grid)
             {
                 return;
             }
@@ -1084,7 +1084,7 @@ namespace Quasar.UI.VisualElements
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void InvalidateParentLayout()
         {
-            Parent.Invalidate(InvalidationFlags.Layout);
+            Parent?.Invalidate(InvalidationFlags.Layout);
         }
 
         /// <summary>
