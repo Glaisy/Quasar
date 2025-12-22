@@ -9,7 +9,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <ApplicationIcon>Demos.ico</ApplicationIcon>
+    <ApplicationIcon>Properties\Demos.ico</ApplicationIcon>
     <OutputType>WinExe</OutputType>
     <StartupObject>DemoApplication.Program</StartupObject>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
@@ -26,6 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Properties\Demos.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -34,7 +38,6 @@
 
   <ItemGroup>
     <Folder Include="Contents\" />
-    <Folder Include="Properties\" />
   </ItemGroup>
 
   <ItemGroup>
