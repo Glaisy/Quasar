@@ -25,32 +25,6 @@ namespace Quasar.UI.VisualElements
     public partial class VisualElement
     {
         /// <summary>
-        /// Executes the optimized update events processing.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void ProcessOptimizedUpdateEvents()
-        {
-            if ((mergedInvalidationFlags & (InvalidationFlags.Styles | InvalidationFlags.PseudoClass)) != 0)
-            {
-                ProcessStyleAnPseudoClassChanges();
-            }
-
-            if ((mergedInvalidationFlags & InvalidationFlags.PreferredSize) != 0)
-            {
-                ProcessPreferredSizeChanges();
-            }
-
-            if ((mergedInvalidationFlags & InvalidationFlags.Layout) != 0)
-            {
-                ProcessLayoutChanges();
-            }
-
-            mergedInvalidationFlags = 0;
-
-            ProcessUpdateEvent();
-        }
-
-        /// <summary>
         /// Executes the got focus event processing.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -132,6 +106,32 @@ namespace Quasar.UI.VisualElements
         internal void ProcessLostFocusEvent()
         {
             OnLostFocus();
+        }
+
+        /// <summary>
+        /// Executes the optimized update events processing.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ProcessOptimizedUpdateEvents()
+        {
+            if ((mergedInvalidationFlags & (InvalidationFlags.Styles | InvalidationFlags.PseudoClass)) != 0)
+            {
+                ProcessStyleAnPseudoClassChanges();
+            }
+
+            if ((mergedInvalidationFlags & InvalidationFlags.PreferredSize) != 0)
+            {
+                ProcessPreferredSizeChanges();
+            }
+
+            if ((mergedInvalidationFlags & InvalidationFlags.Layout) != 0)
+            {
+                ProcessLayoutChanges();
+            }
+
+            mergedInvalidationFlags = 0;
+
+            ProcessUpdateEvent();
         }
 
         /// <summary>
