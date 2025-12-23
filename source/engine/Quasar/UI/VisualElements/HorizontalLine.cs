@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Label.cs" company="Space Development">
+// <copyright file="HorizontalLine.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -12,15 +12,15 @@
 namespace Quasar.UI.VisualElements
 {
     /// <summary>
-    /// Generic label (string literal) rendering visual element.
+    /// Horizontal line rendering visual element.
     /// </summary>
     /// <seealso cref="VisualElement" />
-    public class Label : VisualElement
+    public sealed class HorizontalLine : VisualElement
     {
         /// <inheritdoc/>
         protected override bool IsFocusable => false;
 
         /// <inheritdoc/>
-        protected override string TagSelector => TagSelectors.Label;
+        protected override string TagSelector => TagSelectors.HorizontalLine;
     }
 }

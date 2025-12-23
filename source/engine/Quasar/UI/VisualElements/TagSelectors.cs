@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="ElementTagSelectors.cs" company="Space Development">
+// <copyright file="TagSelectors.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -14,7 +14,7 @@ namespace Quasar.UI.VisualElements
     /// <summary>
     /// Built-n UI element tag selectors.
     /// </summary>
-    public static class ElementTagSelectors
+    public static class TagSelectors
     {
         /// <summary>
         /// The button tag selector.

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="Label.cs" company="Space Development">
+// <copyright file="IView.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -9,18 +9,12 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-namespace Quasar.UI.VisualElements
+namespace Quasar.UI.Mvp
 {
     /// <summary>
-    /// Generic label (string literal) rendering visual element.
+    /// Represents a general marker interface for UI views.
     /// </summary>
-    /// <seealso cref="VisualElement" />
-    public class Label : VisualElement
+    public interface IView
     {
-        /// <inheritdoc/>
-        protected override bool IsFocusable => false;
-
-        /// <inheritdoc/>
-        protected override string TagSelector => TagSelectors.Label;
     }
 }

@@ -1032,14 +1032,14 @@ namespace Quasar.UI.VisualElements
 
 
         /// <summary>
-        /// Gets the element name selector.
-        /// </summary>
-        protected virtual string ElementTagSelector { get; } = ElementTagSelectors.VisualElement;
-
-        /// <summary>
         /// Gets a value indicating whether this control is focusable.
         /// </summary>
         protected virtual bool IsFocusable => true;
+
+        /// <summary>
+        /// Gets the element name selector.
+        /// </summary>
+        protected virtual string TagSelector { get; } = TagSelectors.VisualElement;
 
         /// <summary>
         /// Gets the UI context.

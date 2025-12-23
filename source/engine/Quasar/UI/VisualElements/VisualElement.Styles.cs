@@ -62,7 +62,7 @@ namespace Quasar.UI.VisualElements
             styleBuilder.Copy(mergedStyle, theme.RootStyle);
 
             // element name selector
-            var themeStyle = theme.GetStyleByTag(ElementTagSelector, PseudoClass.Default);
+            var themeStyle = theme.GetStyleByTag(TagSelector, PseudoClass.Default);
             if (themeStyle != null)
             {
                 styleBuilder.Merge(mergedStyle, themeStyle);
@@ -111,7 +111,7 @@ namespace Quasar.UI.VisualElements
             }
 
             // element name selector
-            var themeStyle = theme.GetStyleByTag(ElementTagSelector, pseudoClass);
+            var themeStyle = theme.GetStyleByTag(TagSelector, pseudoClass);
             if (themeStyle != null)
             {
                 styleBuilder.Merge(style, themeStyle);

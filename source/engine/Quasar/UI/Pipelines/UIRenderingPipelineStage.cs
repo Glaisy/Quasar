@@ -14,6 +14,7 @@ using Quasar.Pipelines;
 using Quasar.Rendering.Pipelines;
 using Quasar.UI.Internals;
 using Quasar.UI.Internals.Renderers;
+using Quasar.UI.Mvp;
 using Quasar.UI.VisualElements;
 using Quasar.UI.VisualElements.Internals;
 using Quasar.UI.VisualElements.Themes;
@@ -76,6 +77,7 @@ namespace Quasar.UI.Pipelines
             // initialize internal components
             Canvas.InitializeStaticServices(ServiceProvider);
             VisualElement.InitializeStaticServices(ServiceProvider);
+            ViewBase.InitializeStaticServices(ServiceProvider);
             uiElementRenderer.Initalize();
 
             themeService.LoadBuiltInThemes();
