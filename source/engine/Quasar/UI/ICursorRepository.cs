@@ -30,7 +30,7 @@ namespace Quasar.UI
         List<Cursor> List();
 
         /// <summary>
-        /// Loads a cursor from the specified file path.
+        /// Creates a cursor from the specified file path.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="filePath">The image file path.</param>
@@ -38,10 +38,10 @@ namespace Quasar.UI
         /// <returns>
         /// The loaded cursor.
         /// </returns>
-        Cursor Load(string id, string filePath, in Point hotspot);
+        Cursor Create(string id, string filePath, in Point hotspot);
 
         /// <summary>
-        /// Loads a cursor from the specified image stream.
+        /// Creates a cursor from the specified image stream.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="stream">The stream.</param>
@@ -49,6 +49,6 @@ namespace Quasar.UI
         /// <returns>
         /// The loaded cursor.
         /// </returns>
-        Cursor Load(string id, Stream stream, in Point hotspot);
+        Cursor Create(string id, Stream stream, in Point hotspot);
     }
 }

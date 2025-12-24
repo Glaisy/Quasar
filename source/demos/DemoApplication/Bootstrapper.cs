@@ -26,7 +26,6 @@ namespace DemoApplication
     {
         private readonly IApplicationWindow applicationWindow;
         private readonly IIconRepository iconRepository;
-        private readonly ICursorRepository cursorRepository;
 
 
         /// <summary>
@@ -34,22 +33,18 @@ namespace DemoApplication
         /// </summary>
         /// <param name="applicationWindow">The application window.</param>
         /// <param name="iconRepository">The icon repository.</param>
-        /// <param name="cursorRepository">The cursor repository.</param>
         public Bootstrapper(
             IApplicationWindow applicationWindow,
-            IIconRepository iconRepository,
-            ICursorRepository cursorRepository)
+            IIconRepository iconRepository)
         {
             this.applicationWindow = applicationWindow;
             this.iconRepository = iconRepository;
-            this.cursorRepository = cursorRepository;
         }
 
         /// <inheritdoc/>
         public void Execute()
         {
-            applicationWindow.Icon = iconRepository.Load("Demo", "./Contents/Logo.png");
-            applicationWindow.Cursor = cursorRepository.Load("Demo", "./Contents/Cursor.png", default);
+            applicationWindow.Icon = iconRepository.Create("Demo", "./Contents/Logo.png");
         }
     }
 }

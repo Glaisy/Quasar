@@ -49,7 +49,7 @@ namespace Quasar.Windows.UI
         }
 
         /// <inheritdoc/>
-        public Quasar.UI.Icon Load(string id, string filePath)
+        public Quasar.UI.Icon Create(string id, string filePath)
         {
             ArgumentException.ThrowIfNullOrEmpty(id, nameof(id));
             ArgumentException.ThrowIfNullOrEmpty(filePath, nameof(filePath));
@@ -81,7 +81,7 @@ namespace Quasar.Windows.UI
         }
 
         /// <inheritdoc/>
-        public Quasar.UI.Icon Load(string id, Stream stream)
+        public Quasar.UI.Icon Create(string id, Stream stream)
         {
             ArgumentException.ThrowIfNullOrEmpty(id, nameof(id));
             ArgumentNullException.ThrowIfNull(stream, nameof(stream));

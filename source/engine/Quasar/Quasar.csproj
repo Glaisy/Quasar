@@ -17,6 +17,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Resources\Cubemaps\**" />
+      <Compile Remove="Resources\Textures\**" />
+      <EmbeddedResource Remove="Resources\Cubemaps\**" />
+      <EmbeddedResource Remove="Resources\Textures\**" />
+      <None Remove="Resources\Cubemaps\**" />
+      <None Remove="Resources\Textures\**" />
+    </ItemGroup>
+
+    <ItemGroup>
         <None Remove="Resources\Themes\Quasar\BaseStyles.qss" />
         <None Remove="Resources\Themes\Quasar\Textures\Border.png" />
         <None Remove="Resources\Themes\Quasar\Textures\Button.png" />
@@ -39,10 +48,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Resources\Cubemaps\Fallback.png" />
         <EmbeddedResource Include="Resources\FontFamilies\Conthrax.fnt" />
-        <EmbeddedResource Include="Resources\Textures\Fallback.png" />
-        <EmbeddedResource Include="Resources\Textures\FallbackNormalMap.png" />
         <EmbeddedResource Include="Resources\Themes\Quasar\BaseStyles.qss" />
         <EmbeddedResource Include="Resources\Themes\Quasar\Textures\Border.png" />
         <EmbeddedResource Include="Resources\Themes\Quasar\Textures\Button.png" />

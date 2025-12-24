@@ -36,7 +36,6 @@ namespace DemoApplication
 
             builder.ConfigureLoggerService(configuration =>
             {
-                configuration.LogDirectory = "./logs";
                 configuration.FileNamePattern = "demo_{0}.log";
                 configuration.LogLevel = LogLevel.Info;
             });

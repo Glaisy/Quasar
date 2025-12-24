@@ -49,7 +49,7 @@ namespace Quasar.Windows.UI
         }
 
         /// <inheritdoc/>
-        public Quasar.UI.Cursor Load(string id, string filePath, in Quasar.Graphics.Point hotspot)
+        public Cursor Create(string id, string filePath, in Quasar.Graphics.Point hotspot)
         {
             ArgumentException.ThrowIfNullOrEmpty(id, nameof(id));
             ArgumentException.ThrowIfNullOrEmpty(filePath, nameof(filePath));
@@ -80,7 +80,7 @@ namespace Quasar.Windows.UI
         }
 
         /// <inheritdoc/>
-        public Quasar.UI.Cursor Load(string id, Stream stream, in Quasar.Graphics.Point hotspot)
+        public Cursor Create(string id, Stream stream, in Quasar.Graphics.Point hotspot)
         {
             ArgumentException.ThrowIfNullOrEmpty(id, nameof(id));
             ArgumentNullException.ThrowIfNull(stream, nameof(stream));

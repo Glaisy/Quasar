@@ -29,23 +29,23 @@ namespace Quasar.UI
         List<Icon> List();
 
         /// <summary>
-        /// Loads an icon from the specified file path.
+        /// Creates an icon from the specified file path.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="filePath">The image file path.</param>
         /// <returns>
         /// The loaded icon.
         /// </returns>
-        Icon Load(string id, string filePath);
+        Icon Create(string id, string filePath);
 
         /// <summary>
-        /// Loads an icon from the specified image stream.
+        /// Creates an icon from the specified image stream.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="stream">The stream.</param>
         /// <returns>
         /// The loaded icon.
         /// </returns>
-        Icon Load(string id, Stream stream);
+        Icon Create(string id, Stream stream);
     }
 }
