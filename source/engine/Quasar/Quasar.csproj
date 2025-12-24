@@ -1,72 +1,73 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>disable</Nullable>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+        <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>$(DefineConstants);QUASAR_BOUNDS_CHECKS</DefineConstants>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DefineConstants>$(DefineConstants);QUASAR_BOUNDS_CHECKS</DefineConstants>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Resources\Themes\Quasar\BaseStyles.qss" />
-    <None Remove="Resources\Themes\Quasar\Textures\Border.png" />
-    <None Remove="Resources\Themes\Quasar\Textures\Button.png" />
-    <None Remove="Resources\Themes\Quasar\Textures\ButtonActive.png" />
-    <None Remove="Resources\Themes\Quasar\Textures\ButtonHover.png" />
-    <None Remove="Resources\Themes\Quasar\Textures\HorizontalLine.png" />
-    <None Remove="Resources\Themes\Quasar\Textures\LinearProgressBar.png" />
-    <None Remove="Resources\Themes\Quasar\Textures\Panel.png" />
-    <None Remove="Resources\Themes\Quasar\Theme.tss" />
-    <None Remove="Resources\Themes\Quasar\Variables.qss" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Remove="Resources\Themes\Quasar\BaseStyles.qss" />
+        <None Remove="Resources\Themes\Quasar\Textures\Border.png" />
+        <None Remove="Resources\Themes\Quasar\Textures\Button.png" />
+        <None Remove="Resources\Themes\Quasar\Textures\ButtonActive.png" />
+        <None Remove="Resources\Themes\Quasar\Textures\ButtonHover.png" />
+        <None Remove="Resources\Themes\Quasar\Textures\HorizontalLine.png" />
+        <None Remove="Resources\Themes\Quasar\Textures\LinearProgressBar.png" />
+        <None Remove="Resources\Themes\Quasar\Textures\Panel.png" />
+        <None Remove="Resources\Themes\Quasar\Theme.tss" />
+        <None Remove="Resources\Themes\Quasar\Variables.qss" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="..\..\AssemblyInfo.Suppressions.shared.cs" Link="Properties\AssemblyInfo.Suppressions.shared.cs" />
-    <Compile Include="..\..\AssemblyInfo.shared.cs" Link="Properties\AssemblyInfo.shared.cs" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Include="..\..\AssemblyInfo.Suppressions.shared.cs" Link="Properties\AssemblyInfo.Suppressions.shared.cs" />
+        <Compile Include="..\..\AssemblyInfo.shared.cs" Link="Properties\AssemblyInfo.shared.cs" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <AdditionalFiles Include="..\..\stylecop.json" Link="Properties\stylecop.json" />
-  </ItemGroup>
+    <ItemGroup>
+        <AdditionalFiles Include="..\..\stylecop.json" Link="Properties\stylecop.json" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Cubemaps\Fallback.png" />
-    <EmbeddedResource Include="Resources\FontFamilies\Conthrax.fnt" />
-    <EmbeddedResource Include="Resources\Textures\Fallback.png" />
-    <EmbeddedResource Include="Resources\Textures\FallbackNormalMap.png" />
-    <EmbeddedResource Include="Resources\Themes\Quasar\BaseStyles.qss" />
-    <EmbeddedResource Include="Resources\Themes\Quasar\Textures\Border.png" />
-    <EmbeddedResource Include="Resources\Themes\Quasar\Textures\Button.png" />
-    <EmbeddedResource Include="Resources\Themes\Quasar\Textures\ButtonActive.png" />
-    <EmbeddedResource Include="Resources\Themes\Quasar\Textures\ButtonHover.png" />
-    <EmbeddedResource Include="Resources\Themes\Quasar\Textures\HorizontalLine.png" />
-    <EmbeddedResource Include="Resources\Themes\Quasar\Textures\LinearProgressBar.png" />
-    <EmbeddedResource Include="Resources\Themes\Quasar\Textures\Panel.png" />
-    <EmbeddedResource Include="Resources\Themes\Quasar\Theme.tss" />
-    <EmbeddedResource Include="Resources\Themes\Quasar\Variables.qss" />
-  </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\Cubemaps\Fallback.png" />
+        <EmbeddedResource Include="Resources\FontFamilies\Conthrax.fnt" />
+        <EmbeddedResource Include="Resources\Textures\Fallback.png" />
+        <EmbeddedResource Include="Resources\Textures\FallbackNormalMap.png" />
+        <EmbeddedResource Include="Resources\Themes\Quasar\BaseStyles.qss" />
+        <EmbeddedResource Include="Resources\Themes\Quasar\Textures\Border.png" />
+        <EmbeddedResource Include="Resources\Themes\Quasar\Textures\Button.png" />
+        <EmbeddedResource Include="Resources\Themes\Quasar\Textures\ButtonActive.png" />
+        <EmbeddedResource Include="Resources\Themes\Quasar\Textures\ButtonHover.png" />
+        <EmbeddedResource Include="Resources\Themes\Quasar\Textures\HorizontalLine.png" />
+        <EmbeddedResource Include="Resources\Themes\Quasar\Textures\LinearProgressBar.png" />
+        <EmbeddedResource Include="Resources\Themes\Quasar\Textures\Panel.png" />
+        <EmbeddedResource Include="Resources\Themes\Quasar\Theme.tss" />
+        <EmbeddedResource Include="Resources\Themes\Quasar\Variables.qss" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Space.Core" Version="1.0.0" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Space.Core" Version="1.0.0" />
+        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\..\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Include="..\..\.editorconfig" Link=".editorconfig" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Pipelines\Profiler\" />
-  </ItemGroup>
+    <Target Name="PushNuGetPackage" AfterTargets="GenerateNuspec">
+        <Exec Command="dotnet nuget push $(OutputPath)$(MSBuildProjectName).$(VersionPrefix).nupkg -s Local"></Exec>
+    </Target>
 </Project>
