@@ -18,10 +18,13 @@
 
     <ItemGroup>
       <Compile Remove="Resources\Cubemaps\**" />
+      <Compile Remove="Resources\FontFamilies\**" />
       <Compile Remove="Resources\Textures\**" />
       <EmbeddedResource Remove="Resources\Cubemaps\**" />
+      <EmbeddedResource Remove="Resources\FontFamilies\**" />
       <EmbeddedResource Remove="Resources\Textures\**" />
       <None Remove="Resources\Cubemaps\**" />
+      <None Remove="Resources\FontFamilies\**" />
       <None Remove="Resources\Textures\**" />
     </ItemGroup>
 
@@ -49,7 +52,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Resources\FontFamilies\Conthrax.fnt" />
         <EmbeddedResource Include="Resources\Quasar.assets" />
         <EmbeddedResource Include="Resources\Themes\Quasar\BaseStyles.qss" />
         <EmbeddedResource Include="Resources\Themes\Quasar\Textures\Border.png" />
