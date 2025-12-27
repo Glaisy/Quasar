@@ -68,16 +68,16 @@ namespace Quasar.UI.Templates.Internals
         /// Creates and initializes a visual element by the template.
         /// </summary>
         /// <param name="template">The template.</param>
-        /// <param name="templateLoader">The template loader.</param>
+        /// <param name="templateRepository">The template reposiory.</param>
         /// <param name="typeResolver">The type resolver.</param>
         /// <returns>
         /// The created visual element (and child hierarchy).
         /// </returns>
-        public VisualElement Create(in UITemplate template, IUITemplateLoader templateLoader, ITypeResolver typeResolver)
+        public VisualElement Create(in UITemplate template, IUITemplateRepository templateRepository, ITypeResolver typeResolver)
         {
-            Assertion.ThrowIfNull(templateLoader, nameof(templateLoader));
+            Assertion.ThrowIfNull(templateRepository, nameof(templateRepository));
 
-            return CreateVisualElement(template.RootNode, template, templateLoader, typeResolver);
+            return CreateVisualElement(template.RootNode, template, templateRepository, typeResolver);
         }
 
 
@@ -89,7 +89,7 @@ namespace Quasar.UI.Templates.Internals
             }
             catch
             {
-                // regular instancing does not work, try to export
+                // regular instancing does not work, try to get as exported service
                 var @object = serviceProvider.GetService(visualElementType);
                 if (@object == null)
                 {
@@ -102,20 +102,21 @@ namespace Quasar.UI.Templates.Internals
 
         private VisualElement CreateVisualElement(
             XmlNode node,
-            in UITemplate template,
-            IUITemplateLoader templateLoader,
+            in UITemplate uiTemplate,
+            IUITemplateRepository templateRepository,
             ITypeResolver typeResolver)
         {
             // create visual element instance
             VisualElement visualElement;
             UITemplateAttribute templateAttribute;
-            var visualElementType = GetVisualElementType(node, template, typeResolver);
+            var visualElementType = GetVisualElementType(node, uiTemplate, typeResolver);
 
-            if (node != template.RootNode &&
+            if (node != uiTemplate.RootNode &&
                 (templateAttribute = visualElementType.GetCustomAttribute<UITemplateAttribute>()) != null)
             {
                 // yes, load from the template
-                visualElement = templateLoader.Load(templateAttribute.TemplatePath);
+                var nestedUITemplate = templateRepository.Get(templateAttribute.TemplateId);
+                visualElement = CreateVisualElement(nestedUITemplate.RootNode, nestedUITemplate, templateRepository, typeResolver);
             }
             else
             {
@@ -133,7 +134,7 @@ namespace Quasar.UI.Templates.Internals
                         break;
 
                     case "Style":
-                        ProcessStyleAttribute(visualElement, attribute.Value, template.Path);
+                        ProcessStyleAttribute(visualElement, attribute.Value, uiTemplate.Id);
                         break;
 
                     case "Class":
@@ -154,7 +155,7 @@ namespace Quasar.UI.Templates.Internals
                     continue;
                 }
 
-                var childVisualElement = CreateVisualElement(childNode, template, templateLoader, typeResolver);
+                var childVisualElement = CreateVisualElement(childNode, uiTemplate, templateRepository, typeResolver);
                 visualElement.Add(childVisualElement);
             }
 
@@ -170,7 +171,7 @@ namespace Quasar.UI.Templates.Internals
                 var namespaceName = node.Name.Substring(0, namespaceSeparatorIndex);
                 if (!template.Namespaces.TryGetValue(namespaceName, out var @namespace))
                 {
-                    throw new UITemplateException($"Unknown namespace '{namespaceName}' in '{template.Path}' template.");
+                    throw new UITemplateException($"Unknown namespace '{namespaceName}' in '{template.Id}' template.");
                 }
 
                 var className = node.Name.Substring(namespaceSeparatorIndex + 1);
@@ -184,12 +185,12 @@ namespace Quasar.UI.Templates.Internals
             var type = typeResolver.Resolve(typeName);
             if (type == null)
             {
-                throw new UITemplateException($"Unresolved type '{typeName}' in {template.Path}' template.");
+                throw new UITemplateException($"Unresolved type '{typeName}' in {template.Id}' template.");
             }
 
             if (!typeof(VisualElement).IsAssignableFrom(type))
             {
-                throw new UITemplateException($"'{typeName}' type must be a descendant of '{typeof(VisualElement).FullName}' in '{template.Path}' template.");
+                throw new UITemplateException($"'{typeName}' type must be a descendant of '{typeof(VisualElement).FullName}' in '{template.Id}' template.");
             }
 
             return type;

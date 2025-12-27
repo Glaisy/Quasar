@@ -9,6 +9,8 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System.Reflection;
+
 using Quasar.UI.VisualElements;
 
 namespace Quasar.UI
@@ -32,5 +34,11 @@ namespace Quasar.UI
         /// The loaded visual elements.
         /// </returns>
         VisualElement Load(string templatePath);
+
+        /// <summary>
+        /// Registers the templated visual element types from the specified assembly.
+        /// </summary>
+        /// <param name="assembly">The assembly.</param>
+        void RegisterTemplatedVisualElements(Assembly assembly);
     }
 }

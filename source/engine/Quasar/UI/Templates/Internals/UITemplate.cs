@@ -12,36 +12,37 @@
 using System.Collections.Generic;
 using System.Xml;
 
+using Space.Core;
+
 namespace Quasar.UI.Templates.Internals
 {
     /// <summary>
-    /// UI template data structure.
+    /// UI template object.
     /// </summary>
-    internal readonly struct UITemplate
+    /// <seealso cref="IIdentifierProvider{String}" />
+    internal class UITemplate : IIdentifierProvider<string>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="UITemplate" /> struct.
+        /// Initializes a new instance of the <see cref="UITemplate" /> class.
         /// </summary>
-        /// <param name="path">The template path.</param>
+        /// <param name="id">The identifier.</param>
         /// <param name="rootNode">The QXml root node.</param>
         /// <param name="namespaces">The namespaces.</param>
-        public UITemplate(string path, XmlNode rootNode, IReadOnlyDictionary<string, string> namespaces)
+        public UITemplate(string id, XmlNode rootNode, IReadOnlyDictionary<string, string> namespaces)
         {
-            Path = path;
+            Id = id;
             RootNode = rootNode;
             Namespaces = namespaces;
         }
 
 
+        /// <inheritdoc/>
+        public string Id { get; }
+
         /// <summary>
         /// The namespaces.
         /// </summary>
         public readonly IReadOnlyDictionary<string, string> Namespaces;
-
-        /// <summary>
-        /// The template path.
-        /// </summary>
-        public readonly string Path;
 
         /// <summary>
         /// The QXml root node.

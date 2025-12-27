@@ -54,7 +54,7 @@ namespace Quasar.Assets
         /// <summary>
         /// The UI template asset type.
         /// </summary>
-        Template,
+        UITemplate,
 
         /// <summary>
         /// The custom asset type.

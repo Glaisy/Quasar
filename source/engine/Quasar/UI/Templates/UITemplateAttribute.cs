@@ -23,18 +23,18 @@ namespace Quasar.UI.Templates
         /// <summary>
         /// Initializes a new instance of the <see cref="UITemplateAttribute" /> class.
         /// </summary>
-        /// <param name="templatePath">The template path.</param>
-        public UITemplateAttribute(string templatePath)
+        /// <param name="templateId">The template identifier.</param>
+        public UITemplateAttribute(string templateId)
         {
-            ArgumentException.ThrowIfNullOrEmpty(templatePath, nameof(templatePath));
+            ArgumentException.ThrowIfNullOrEmpty(templateId, nameof(templateId));
 
-            TemplatePath = templatePath;
+            TemplateId = templateId;
         }
 
 
         /// <summary>
-        /// The template path.
+        /// The template identifier.
         /// </summary>
-        public readonly string TemplatePath;
+        public readonly string TemplateId;
     }
 }

@@ -42,7 +42,8 @@ namespace Quasar.Assets.Internals
                 { AssetType.Cursor, AssetConstants.Directories.Cursors },
                 { AssetType.FontFamily, AssetConstants.Directories.FontFamilies },
                 { AssetType.Icon, AssetConstants.Directories.Icons },
-                { AssetType.Texture, AssetConstants.Directories.Textures }
+                { AssetType.Texture, AssetConstants.Directories.Textures },
+                { AssetType.UITemplate, AssetConstants.Directories.UITemplates }
             };
 
 

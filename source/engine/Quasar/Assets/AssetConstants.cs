@@ -57,6 +57,11 @@ namespace Quasar.Assets
             /// The textures directory.
             /// </summary>
             public const string Textures = nameof(Textures);
+
+            /// <summary>
+            /// The UI templates directory.
+            /// </summary>
+            public const string UITemplates = nameof(UITemplates);
         }
     }
 }

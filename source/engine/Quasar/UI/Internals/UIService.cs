@@ -10,8 +10,9 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Reflection;
 
-using Quasar.UI.Templates;
+using Quasar.UI.Templates.Internals;
 using Quasar.UI.VisualElements;
 using Quasar.UI.VisualElements.Internals;
 
@@ -30,7 +31,7 @@ namespace Quasar.UI.Internals
     internal sealed class UIService : IUIService, IUIProvider
     {
         private readonly IUIContext context;
-        private readonly IUITemplateLoader templateLoader;
+        private readonly IUITemplateRepository templateRepository;
         private readonly IVisualElementEventProcessor visualElementEventProcessor;
 
 
@@ -38,15 +39,15 @@ namespace Quasar.UI.Internals
         /// Initializes a new instance of the <see cref="UIService" /> class.
         /// </summary>
         /// <param name="context">The context.</param>
-        /// <param name="templateLoader">The template loader.</param>
+        /// <param name="templateRepository">The UI template repository.</param>
         /// <param name="visualElementEventProcessor">The visual element event processor.</param>
         public UIService(
             IUIContext context,
-            IUITemplateLoader templateLoader,
+            IUITemplateRepository templateRepository,
             IVisualElementEventProcessor visualElementEventProcessor)
         {
             this.context = context;
-            this.templateLoader = templateLoader;
+            this.templateRepository = templateRepository;
             this.visualElementEventProcessor = visualElementEventProcessor;
         }
 
@@ -75,15 +76,19 @@ namespace Quasar.UI.Internals
             ArgumentException.ThrowIfNullOrEmpty(templatePath, nameof(templatePath));
             context.Validate();
 
-            var visualElement = templateLoader.Load(templatePath);
-            if (visualElement == null)
-            {
-                throw new UIException($"Unable to load the view by the '{templatePath}' template path.");
-            }
-
+            var visualElement = templateRepository.Instantiate(templatePath);
             SetRootVisualElement(visualElement);
 
             return visualElement;
+        }
+
+        /// <inheritdoc/>
+        public void RegisterTemplatedVisualElements(Assembly assembly)
+        {
+            ArgumentNullException.ThrowIfNull(assembly, nameof(assembly));
+            context.Validate();
+
+            templateRepository.RegisterTemplatedVisualElements(assembly);
         }
 
 
