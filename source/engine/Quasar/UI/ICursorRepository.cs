@@ -24,6 +24,12 @@ namespace Quasar.UI
     public interface ICursorRepository : IRepository<string, Cursor>
     {
         /// <summary>
+        /// Gets the default Quasar cursor.
+        /// </summary>
+        Cursor DefaultCursor { get; }
+
+
+        /// <summary>
         /// Gets the list of cursors.
         /// </summary>
         /// <returns>The list of cursors.</returns>
@@ -50,5 +56,11 @@ namespace Quasar.UI
         /// The loaded cursor.
         /// </returns>
         Cursor Create(string id, Stream stream, in Point hotspot);
+
+
+        /// <summary>
+        /// Validates the built-in assets.
+        /// </summary>
+        internal void ValidateBuiltInAssets();
     }
 }

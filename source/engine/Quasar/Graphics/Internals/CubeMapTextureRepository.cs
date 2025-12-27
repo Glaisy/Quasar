@@ -140,15 +140,12 @@ namespace Quasar.Graphics.Internals
         }
 
         /// <inheritdoc/>
-        public void LoadBuiltInCubeMapTextures()
+        public void ValidateBuiltInAssets()
         {
             try
             {
                 RepositoryLock.EnterWriteLock();
 
-                LoadBuiltInCubeMapTexturesInternal();
-
-                // make sure fallback textures are loaded
                 fallbackTexture = GetItemById(TextureConstants.FallbackTextureId);
                 if (fallbackTexture == null)
                 {
@@ -181,35 +178,6 @@ namespace Quasar.Graphics.Internals
             ArgumentException.ThrowIfNullOrEmpty(id, nameof(id));
         }
 
-
-        private void LoadBuiltInCubeMapTexturesInternal()
-        {
-            var resourcePaths = resourceProvider.EnumerateResources(BuiltInCubemapTextureSearchPath, true);
-            foreach (var resourcePath in resourcePaths)
-            {
-                var id = resourceProvider.GetRelativePathWithoutExtension(resourcePath);
-                id = id.Substring(BuiltInCubemapIdPrefix.Length);
-
-                // create texture
-                Stream stream = null;
-                CubeMapTextureBase texture = null;
-                try
-                {
-                    stream = resourceProvider.GetResourceStream(resourcePath);
-
-                    CreateCubeMapTexture(id, stream, null);
-                }
-                catch
-                {
-                    texture?.Dispose();
-                    throw;
-                }
-                finally
-                {
-                    stream?.Dispose();
-                }
-            }
-        }
 
         private CubeMapTextureBase CreateCubeMapTexture(string id, Stream stream, string tag)
         {

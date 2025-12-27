@@ -30,13 +30,13 @@ namespace Quasar.Graphics
         List<IFontFamily> List();
 
         /// <summary>
-        /// Loads the font family from the specified stream.
+        /// Creates the font family from the specified stream.
         /// </summary>
         /// <param name="stream">The stream.</param>
         /// <returns>
         /// The loaded font family.
         /// </returns>
-        IFontFamily Load(Stream stream);
+        IFontFamily Create(Stream stream);
 
         /// <summary>
         /// Loads the font family by the specified resource path.
@@ -46,12 +46,12 @@ namespace Quasar.Graphics
         /// <returns>
         /// The loaded font family.
         /// </returns>
-        IFontFamily Load(IResourceProvider resourceProvider, string resourcePath);
+        IFontFamily Create(IResourceProvider resourceProvider, string resourcePath);
 
 
         /// <summary>
-        /// Loads the built-in font families.
+        /// Validates the built-in assets.
         /// </summary>
-        internal void LoadBuiltInFontFamilies();
+        internal void ValidateBuiltInAssets();
     }
 }

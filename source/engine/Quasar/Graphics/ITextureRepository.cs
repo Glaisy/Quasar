@@ -85,8 +85,8 @@ namespace Quasar.Graphics
 
 
         /// <summary>
-        /// Load the built-in textures into the repository.
+        /// Validates the built-in assets.
         /// </summary>
-        internal void LoadBuiltInTextures();
+        internal void ValidateBuiltInAssets();
     }
 }

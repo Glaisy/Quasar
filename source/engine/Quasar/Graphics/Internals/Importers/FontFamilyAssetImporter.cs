@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="TextureAssetImporter.cs" company="Space Development">
+// <copyright file="FontFamilyAssetImporter.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -21,34 +21,33 @@ using Space.Core.Diagnostics;
 namespace Quasar.Graphics.Internals.Importers
 {
     /// <summary>
-    /// Quasar texture asset importer implementation.
+    /// Quasar font asset importer implementation..
     /// </summary>
     /// <seealso cref="AssetImporterBase" />
-    [Export(typeof(IAssetImporter), AssetType.Texture)]
-    [Singleton]
-    internal sealed class TextureAssetImporter : AssetImporterBase
+    [Export(typeof(IAssetImporter), AssetType.FontFamily)]
+    internal sealed class FontFamilyAssetImporter : AssetImporterBase
     {
-        private readonly ITextureRepository textureRepository;
+        private readonly IFontFamilyRepository fontFamilyRepository;
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TextureAssetImporter" /> class.
+        /// Initializes a new instance of the <see cref="FontFamilyAssetImporter" /> class.
         /// </summary>
         /// <param name="loggerFactory">The logger factory.</param>
-        /// <param name="textureRepository">The texture repository.</param>
-        public TextureAssetImporter(
+        /// <param name="fontFamilyRepository">The font family repository.</param>
+        public FontFamilyAssetImporter(
             ILoggerFactory loggerFactory,
-            ITextureRepository textureRepository)
-            : base(loggerFactory, AssetType.Texture)
+            IFontFamilyRepository fontFamilyRepository)
+            : base(loggerFactory, AssetType.FontFamily)
         {
-            this.textureRepository = textureRepository;
+            this.fontFamilyRepository = fontFamilyRepository;
         }
 
 
         /// <inheritdoc/>
         protected override void OnImport(string id, string tag, Stream stream)
         {
-            textureRepository.Create(id, stream, tag);
+            fontFamilyRepository.Create(stream);
         }
     }
 }

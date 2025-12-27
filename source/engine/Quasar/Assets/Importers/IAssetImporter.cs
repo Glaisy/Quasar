@@ -9,7 +9,6 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System;
 using System.IO;
 
 namespace Quasar.Assets.Importers
@@ -26,13 +25,11 @@ namespace Quasar.Assets.Importers
 
 
         /// <summary>
-        /// Begins the importing process of the asset from the specified stream.
-        /// The completed event handler action is called when the importing is finished.
+        /// Executes the importing process of an asset from the specified stream.
         /// </summary>
-        /// <param name="stream">The stream.</param>
         /// <param name="id">The asset identifier.</param>
         /// <param name="tag">The tag.</param>
-        /// <param name="onCompleted">The completed event handler action.</param>
-        void BeginImport(Stream stream, string id, string tag, Action<string, bool> onCompleted);
+        /// <param name="stream">The stream.</param>
+        void Import(string id, string tag, Stream stream);
     }
 }

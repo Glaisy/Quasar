@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -36,9 +35,20 @@ namespace Quasar.Assets.Internals
     [Export]
     internal sealed class AssetPackage : DisposableBase, IAssetPackage
     {
+        private static readonly Dictionary<AssetType, string> assetDirectoryNames =
+            new Dictionary<AssetType, string>
+            {
+                { AssetType.CubeMapTexture, AssetConstants.Directories.CubeMapTextures },
+                { AssetType.Cursor, AssetConstants.Directories.Cursors },
+                { AssetType.FontFamily, AssetConstants.Directories.FontFamilies },
+                { AssetType.Icon, AssetConstants.Directories.Icons },
+                { AssetType.Texture, AssetConstants.Directories.Textures }
+            };
+
+
         private static readonly List<string> emptyCustomAssets = new List<string>();
         private static IQuasarContext context;
-        private static Dictionary<AssetType, IAssetImporter> assetImporters;
+        private static Dictionary<string, IAssetImporter> assetImportersByDirectoryName;
         private readonly ILogger logger;
         private readonly List<string> customAssets = emptyCustomAssets;
         private ZipArchive zipArchive;
@@ -63,9 +73,10 @@ namespace Quasar.Assets.Internals
         /// <inheritdoc/>
         public string Name { get; private set; }
 
-        /// <summary>
-        /// Gets the version.
-        /// </summary>
+        /// <inheritdoc/>
+        public string Tag { get; private set; }
+
+        /// <inheritdoc/>
         public Version Version { get; private set; }
 
 
@@ -120,9 +131,11 @@ namespace Quasar.Assets.Internals
         /// Initializes the package by the specified zip archive.
         /// </summary>
         /// <param name="zipArchive">The zip archive.</param>
-        internal void Initialize(ZipArchive zipArchive)
+        /// <param name="tag">The tag.</param>
+        internal void Initialize(ZipArchive zipArchive, string tag)
         {
             this.zipArchive = zipArchive;
+            Tag = tag;
 
             LoadMetadata();
         }
@@ -135,22 +148,55 @@ namespace Quasar.Assets.Internals
         {
             context = serviceProvider.GetRequiredService<IQuasarContext>();
 
-            assetImporters = serviceProvider
-                .GetServices<IAssetImporter>()
-                .ToDictionary(x => x.Type, x => x);
+            assetImportersByDirectoryName = new Dictionary<string, IAssetImporter>();
+            foreach (var assetImporter in serviceProvider.GetServices<IAssetImporter>())
+            {
+                var assetDirectoryName = assetDirectoryNames[assetImporter.Type];
+                assetImportersByDirectoryName.Add(assetDirectoryName, assetImporter);
+            }
         }
 
 
-        private static AssetType DetermineAssetType(string name)
+        private static IAssetImporter GetAssetImporter(string assetDirectoryName)
         {
-            throw new NotImplementedException();
+            if (assetImportersByDirectoryName.TryGetValue(assetDirectoryName, out var assetImporter))
+            {
+                return assetImporter;
+            }
+
+            return null;
         }
 
         private void ImportAssetFromEntry(ZipArchiveEntry zipEntry)
         {
-            var assetType = DetermineAssetType(zipEntry.Name);
+            if (zipEntry.Name == AssetConstants.MetaDataAssetName ||
+                String.IsNullOrEmpty(zipEntry.Name))
+            {
+                return;
+            }
 
-            throw new NotImplementedException();
+            var directoryIndex = zipEntry.FullName.IndexOf(context.ResourceProvider.PathResolver.PathSeparator);
+            if (directoryIndex <= 1)
+            {
+                logger.Warning($"Unable to determine asset type for '{zipEntry.Name}'. Skipped.");
+                return;
+            }
+
+            var directoryName = zipEntry.FullName.Substring(0, directoryIndex);
+            var assetId = zipEntry.FullName.Substring(directoryIndex + 1);
+            assetId = Path.GetFileNameWithoutExtension(assetId);
+
+            var assetImporter = GetAssetImporter(directoryName);
+            if (assetImporter == null)
+            {
+                logger.Warning($"Unhandled asset type for '{zipEntry.Name}'. Skipped.");
+                return;
+            }
+
+            using (var stream = zipEntry.Open())
+            {
+                assetImporter.Import(assetId, Tag, stream);
+            }
         }
 
         private void ImportAssetsTaskFunction(object state)

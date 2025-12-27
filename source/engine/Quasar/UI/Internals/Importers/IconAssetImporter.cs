@@ -17,17 +17,16 @@ using Quasar.Assets.Importers.Internals;
 
 using Space.Core.DependencyInjection;
 using Space.Core.Diagnostics;
-using Space.Core.Threading;
 
 namespace Quasar.UI.Internals.Importers
 {
     /// <summary>
     /// Quasar icon asset importer implementation.
     /// </summary>
-    /// <seealso cref="AssetImporterBase{Object}" />
+    /// <seealso cref="AssetImporterBase" />
     [Export(typeof(IAssetImporter), AssetType.Icon)]
     [Singleton]
-    internal sealed class IconAssetImporter : AssetImporterBase<object>
+    internal sealed class IconAssetImporter : AssetImporterBase
     {
         private readonly IIconRepository iconRepository;
 
@@ -35,24 +34,20 @@ namespace Quasar.UI.Internals.Importers
         /// <summary>
         /// Initializes a new instance of the <see cref="IconAssetImporter"/> class.
         /// </summary>
-        /// <param name="dispatcher">The dispatcher.</param>
         /// <param name="loggerFactory">The logger factory.</param>
         /// <param name="iconRepository">The icon repository.</param>
         public IconAssetImporter(
-            IDispatcher dispatcher,
             ILoggerFactory loggerFactory,
             IIconRepository iconRepository)
-            : base(dispatcher, loggerFactory, AssetType.Icon, false)
+            : base(loggerFactory, AssetType.Icon)
         {
             this.iconRepository = iconRepository;
         }
 
         /// <inheritdoc/>
-        protected override object OnBeginImport(Stream stream, string id, string tag)
+        protected override void OnImport(string id, string tag, Stream stream)
         {
             iconRepository.Create(id, stream);
-
-            return null;
         }
     }
 }

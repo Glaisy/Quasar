@@ -32,10 +32,6 @@ namespace Quasar.Graphics.Internals
     [Singleton]
     internal sealed class FontFamilyRepository : RepositoryBase<string, IFontFamily, FontFamily>, IFontFamilyRepository
     {
-        private const string BuiltInFontFamilySearchPath = "FontFamilies";
-
-
-        private readonly IResourceProvider resourceProvider;
         private readonly ITextureRepository textureRepository;
         private readonly TextureDescriptor textureDescriptor =
             new TextureDescriptor(0, TextureRepeatMode.Clamped, TextureRepeatMode.Clamped);
@@ -44,15 +40,10 @@ namespace Quasar.Graphics.Internals
         /// <summary>
         /// Initializes a new instance of the <see cref="FontFamilyRepository" /> class.
         /// </summary>
-        /// <param name="context">The context.</param>
         /// <param name="textureRepository">The texture repository.</param>
-        public FontFamilyRepository(
-            IQuasarContext context,
-            ITextureRepository textureRepository)
+        public FontFamilyRepository(ITextureRepository textureRepository)
         {
             this.textureRepository = textureRepository;
-
-            resourceProvider = context.ResourceProvider;
         }
 
 
@@ -72,7 +63,7 @@ namespace Quasar.Graphics.Internals
         }
 
         /// <inheritdoc/>
-        public IFontFamily Load(Stream stream)
+        public IFontFamily Create(Stream stream)
         {
             ArgumentNullException.ThrowIfNull(stream, nameof(stream));
 
@@ -89,7 +80,7 @@ namespace Quasar.Graphics.Internals
         }
 
         /// <inheritdoc/>
-        public IFontFamily Load(IResourceProvider resourceProvider, string resourcePath)
+        public IFontFamily Create(IResourceProvider resourceProvider, string resourcePath)
         {
             ArgumentNullException.ThrowIfNull(resourceProvider, nameof(resourceProvider));
             ArgumentException.ThrowIfNullOrEmpty(resourcePath, nameof(resourcePath));
@@ -115,24 +106,20 @@ namespace Quasar.Graphics.Internals
         }
 
         /// <inheritdoc/>
-        public void LoadBuiltInFontFamilies()
+        public void ValidateBuiltInAssets()
         {
             try
             {
-                RepositoryLock.EnterWriteLock();
+                RepositoryLock.EnterReadLock();
 
-                var resourcePaths = resourceProvider.EnumerateResources(BuiltInFontFamilySearchPath, true);
-                foreach (var resourcePath in resourcePaths)
+                if (GetItemById(FontFamilyConstants.DefaultName) == null)
                 {
-                    using (var stream = resourceProvider.GetResourceStream(resourcePath))
-                    {
-                        LoadFontFamilyInternal(stream);
-                    }
+                    throw new InvalidOperationException($"Unable to resolve default font family: '{FontFamilyConstants.DefaultName}'.");
                 }
             }
             finally
             {
-                RepositoryLock.ExitWriteLock();
+                RepositoryLock.ExitReadLock();
             }
         }
 

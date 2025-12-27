@@ -12,8 +12,10 @@
 #if DEBUG
 #endif
 
+using Quasar.Assets;
 using Quasar.Graphics;
 using Quasar.Rendering.Procedurals;
+using Quasar.Utilities;
 
 using Space.Core.DependencyInjection;
 
@@ -26,29 +28,41 @@ namespace Quasar.Rendering.Pipelines
     [Export(typeof(RenderingPipelineStageBase), nameof(InitializeRenderingPipelineStage))]
     public sealed class InitializeRenderingPipelineStage : RenderingPipelineStageBase
     {
+        private const string BuiltInAssetPackResourcePath = nameof(Quasar) + ".assets";
+
+
+        private readonly IResourceProvider builtInResourceProvider;
         private readonly IShaderRepository shaderRepository;
         private readonly ITextureRepository textureRepository;
         private readonly ICubeMapTextureRepository cubeMapTextureRepository;
         private readonly IFontFamilyRepository fontFamilyRepository;
+        private readonly IAssetPackageFactory assetPackageFactory;
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InitializeRenderingPipelineStage" /> class.
         /// </summary>
+        /// <param name="quasarContext">The Quasar context.</param>
         /// <param name="shaderRepository">The shader repository.</param>
         /// <param name="textureRepository">The texture repository.</param>
         /// <param name="cubeMapTextureRepository">The cube map texture repository.</param>
         /// <param name="fontFamilyRepository">The font family repository.</param>
+        /// <param name="assetPackageFactory">The asset package factory.</param>
         internal InitializeRenderingPipelineStage(
+            IQuasarContext quasarContext,
             IShaderRepository shaderRepository,
             ITextureRepository textureRepository,
             ICubeMapTextureRepository cubeMapTextureRepository,
-            IFontFamilyRepository fontFamilyRepository)
+            IFontFamilyRepository fontFamilyRepository,
+            IAssetPackageFactory assetPackageFactory)
         {
             this.shaderRepository = shaderRepository;
             this.textureRepository = textureRepository;
             this.cubeMapTextureRepository = cubeMapTextureRepository;
             this.fontFamilyRepository = fontFamilyRepository;
+            this.assetPackageFactory = assetPackageFactory;
+
+            builtInResourceProvider = quasarContext.ResourceProvider;
         }
 
 
@@ -61,21 +75,27 @@ namespace Quasar.Rendering.Pipelines
         /// <inheritdoc/>
         protected override void OnStart()
         {
-            // initialize internal graphics components
+            // initialize internal graphics/rendering components
             GraphicsResourceBase.InitializeStaticServices(ServiceProvider);
             Font.InitializeStaticServices(ServiceProvider);
-
-            // load built-in resources
-            shaderRepository.LoadBuiltInShaders();
-            textureRepository.LoadBuiltInTextures();
-            cubeMapTextureRepository.LoadBuiltInCubeMapTextures();
-            fontFamilyRepository.LoadBuiltInFontFamilies();
-
-            // initialize internal rendering/graphics related components
             MeshGeneratorBase.InitializeStaticServices(ServiceProvider);
             Material.InitializeStaticServices(ServiceProvider);
             Camera.InitializeStaticServices(ServiceProvider);
             RenderModel.InitializeStaticServices(ServiceProvider);
+
+            LoadBuiltInAssets();
+        }
+
+        private void LoadBuiltInAssets()
+        {
+            shaderRepository.LoadBuiltInShaders();
+
+            var assetPackage = assetPackageFactory.Create(builtInResourceProvider, BuiltInAssetPackResourcePath);
+            assetPackage.ImportAssets();
+
+            textureRepository.ValidateBuiltInAssets();
+            cubeMapTextureRepository.ValidateBuiltInAssets();
+            fontFamilyRepository.ValidateBuiltInAssets();
         }
     }
 }

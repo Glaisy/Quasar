@@ -27,9 +27,9 @@ namespace Quasar.Assets
         CubeMapTexture,
 
         /// <summary>
-        /// The font asset type.
+        /// The font family asset type.
         /// </summary>
-        Font,
+        FontFamily,
 
         /// <summary>
         /// The icon asset type.

@@ -26,6 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Remove="Resources\Quasar.assets" />
         <None Remove="Resources\Themes\Quasar\BaseStyles.qss" />
         <None Remove="Resources\Themes\Quasar\Textures\Border.png" />
         <None Remove="Resources\Themes\Quasar\Textures\Button.png" />
@@ -49,6 +50,7 @@
 
     <ItemGroup>
         <EmbeddedResource Include="Resources\FontFamilies\Conthrax.fnt" />
+        <EmbeddedResource Include="Resources\Quasar.assets" />
         <EmbeddedResource Include="Resources\Themes\Quasar\BaseStyles.qss" />
         <EmbeddedResource Include="Resources\Themes\Quasar\Textures\Border.png" />
         <EmbeddedResource Include="Resources\Themes\Quasar\Textures\Button.png" />

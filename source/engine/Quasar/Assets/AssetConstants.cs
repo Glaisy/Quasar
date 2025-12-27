@@ -44,6 +44,11 @@ namespace Quasar.Assets
             public const string Cursors = nameof(Cursors);
 
             /// <summary>
+            /// The font families directory.
+            /// </summary>
+            public const string FontFamilies = nameof(FontFamilies);
+
+            /// <summary>
             /// The icons directory.
             /// </summary>
             public const string Icons = nameof(Icons);

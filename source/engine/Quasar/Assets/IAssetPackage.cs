@@ -26,6 +26,11 @@ namespace Quasar.Assets
     public interface IAssetPackage : INameProvider, IDisposable
     {
         /// <summary>
+        /// Gets the tag.
+        /// </summary>
+        string Tag { get; }
+
+        /// <summary>
         /// Gets the version.
         /// </summary>
         Version Version { get; }

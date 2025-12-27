@@ -70,8 +70,8 @@ namespace Quasar.Graphics
 
 
         /// <summary>
-        /// Load the built-in cube map textures into the repository.
+        /// Validates the built-in assets.
         /// </summary>
-        internal void LoadBuiltInCubeMapTextures();
+        internal void ValidateBuiltInAssets();
     }
 }

@@ -33,6 +33,7 @@ namespace Quasar.UI.Pipelines
     public sealed class UIRenderingPipelineStage : RenderingPipelineStageBase
     {
         private readonly IApplicationWindow applicationWindow;
+        private readonly ICursorRepository cursorRepository;
         private readonly IThemeService themeService;
         private readonly IUIEventProcessor uiEventProcessor;
         private readonly UIElementRenderer uiElementRenderer;
@@ -42,16 +43,19 @@ namespace Quasar.UI.Pipelines
         /// Initializes a new instance of the <see cref="UIRenderingPipelineStage" /> class.
         /// </summary>
         /// <param name="applicationWindow">The application window.</param>
+        /// <param name="cursorRepository">The cursor repository.</param>
         /// <param name="themeService">The theme service.</param>
         /// <param name="uiEventProcessor">The UI event processor.</param>
         /// <param name="uiElementRenderer">The UI element renderer.</param>
         internal UIRenderingPipelineStage(
             IApplicationWindow applicationWindow,
+            ICursorRepository cursorRepository,
             IThemeService themeService,
             IUIEventProcessor uiEventProcessor,
             UIElementRenderer uiElementRenderer)
         {
             this.applicationWindow = applicationWindow;
+            this.cursorRepository = cursorRepository;
             this.themeService = themeService;
             this.uiEventProcessor = uiEventProcessor;
             this.uiElementRenderer = uiElementRenderer;
@@ -81,6 +85,7 @@ namespace Quasar.UI.Pipelines
             uiElementRenderer.Initalize();
 
             themeService.LoadBuiltInThemes();
+            cursorRepository.ValidateBuiltInAssets();
         }
     }
 }

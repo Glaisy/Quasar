@@ -29,24 +29,14 @@ namespace Quasar.Windows.UI
     /// <seealso cref="ICursorRepository" />
     [Export(typeof(ICursorRepository))]
     [Singleton]
-    internal sealed partial class CursorRepository : RepositoryBase<string, Quasar.UI.Cursor, WindowsCursor>, ICursorRepository
+    internal sealed partial class CursorRepository : RepositoryBase<string, Cursor, WindowsCursor>, ICursorRepository
     {
-        /// <inheritdoc/>
-        public List<Quasar.UI.Cursor> List()
-        {
-            try
-            {
-                RepositoryLock.EnterReadLock();
+        private const string DefaultCursorId = nameof(Quasar);
 
-                return FindItems(cursor => true)
-                    .OfType<Quasar.UI.Cursor>()
-                    .ToList();
-            }
-            finally
-            {
-                RepositoryLock.ExitReadLock();
-            }
-        }
+
+        /// <inheritdoc/>
+        public Cursor DefaultCursor { get; private set; }
+
 
         /// <inheritdoc/>
         public Cursor Create(string id, string filePath, in Quasar.Graphics.Point hotspot)
@@ -104,6 +94,42 @@ namespace Quasar.Windows.UI
             finally
             {
                 stream?.Dispose();
+                RepositoryLock.ExitWriteLock();
+            }
+        }
+
+        /// <inheritdoc/>
+        public List<Cursor> List()
+        {
+            try
+            {
+                RepositoryLock.EnterReadLock();
+
+                return FindItems(cursor => true)
+                    .OfType<Cursor>()
+                    .ToList();
+            }
+            finally
+            {
+                RepositoryLock.ExitReadLock();
+            }
+        }
+
+        /// <inheritdoc/>
+        public void ValidateBuiltInAssets()
+        {
+            try
+            {
+                RepositoryLock.EnterWriteLock();
+
+                DefaultCursor = GetItemById(DefaultCursorId);
+                if (DefaultCursor == null)
+                {
+                    throw new InvalidOperationException($"Unable to resolve default cursor '{DefaultCursorId}'.");
+                }
+            }
+            finally
+            {
                 RepositoryLock.ExitWriteLock();
             }
         }

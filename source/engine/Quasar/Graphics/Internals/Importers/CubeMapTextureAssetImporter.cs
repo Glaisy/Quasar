@@ -17,52 +17,38 @@ using Quasar.Assets.Importers.Internals;
 
 using Space.Core.DependencyInjection;
 using Space.Core.Diagnostics;
-using Space.Core.Threading;
 
 namespace Quasar.Graphics.Internals.Importers
 {
     /// <summary>
     /// Quasar cube map texture asset importer implementation.
     /// </summary>
-    /// <seealso cref="AssetImporterBase{IImageData}" />
+    /// <seealso cref="AssetImporterBase" />
     [Export(typeof(IAssetImporter), AssetType.CubeMapTexture)]
     [Singleton]
-    internal sealed class CubeMapTextureAssetImporter : AssetImporterBase<IImageData>
+    internal sealed class CubeMapTextureAssetImporter : AssetImporterBase
     {
         private readonly ICubeMapTextureRepository cubeMapTextureRepository;
-        private readonly ITextureImageDataLoader textureImageDataLoader;
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CubeMapTextureAssetImporter" /> class.
         /// </summary>
-        /// <param name="dispatcher">The dispatcher.</param>
         /// <param name="loggerFactory">The logger factory.</param>
         /// <param name="cubeMapTextureRepository">The cube map texture repository.</param>
-        /// <param name="textureImageDataLoader">The texture image data loader.</param>
         public CubeMapTextureAssetImporter(
-            IDispatcher dispatcher,
             ILoggerFactory loggerFactory,
-            ICubeMapTextureRepository cubeMapTextureRepository,
-            ITextureImageDataLoader textureImageDataLoader)
-            : base(dispatcher, loggerFactory, AssetType.Texture, true)
+            ICubeMapTextureRepository cubeMapTextureRepository)
+            : base(loggerFactory, AssetType.CubeMapTexture)
         {
             this.cubeMapTextureRepository = cubeMapTextureRepository;
-            this.textureImageDataLoader = textureImageDataLoader;
         }
 
 
         /// <inheritdoc/>
-        protected override IImageData OnBeginImport(Stream stream, string id, string tag)
+        protected override void OnImport(string id, string tag, Stream stream)
         {
-            return textureImageDataLoader.Load(stream);
-        }
-
-        /// <inheritdoc/>
-        protected override void OnEndImport(in AssetImportState<IImageData> state)
-        {
-            cubeMapTextureRepository.Create(state.Id, state.AssetData, state.Tag);
-            state.OnCompleted(state.Id, true);
+            cubeMapTextureRepository.Create(id, stream, tag);
         }
     }
 }

@@ -145,31 +145,23 @@ namespace Quasar.Graphics.Internals
             }
         }
 
-        /// <summary>
-        /// Load the built-in textures into the repository.
-        /// </summary>
-        public void LoadBuiltInTextures()
+        /// <inheritdoc/>
+        public void ValidateBuiltInAssets()
         {
             try
             {
                 RepositoryLock.EnterWriteLock();
 
-                // loads built-in textures
-                LoadBuiltInTexturesInternal();
-
-                // make sure fallback textures are loaded
                 fallbackTexture = GetItemById(TextureConstants.FallbackTextureId);
                 if (fallbackTexture == null)
                 {
-                    throw new InvalidOperationException($"Unable to resolve fallback texture '" +
-                        $"{TextureConstants.FallbackTextureId}'.");
+                    throw new InvalidOperationException($"Unable to resolve fallback texture '{TextureConstants.FallbackTextureId}'.");
                 }
 
                 fallbackNormalMapTexture = GetItemById(TextureConstants.FallbackNormalMapTextureId);
                 if (fallbackNormalMapTexture == null)
                 {
-                    throw new InvalidOperationException($"Unable to resolve fallback normal texture " +
-                        $"{TextureConstants.FallbackNormalMapTextureId}'.");
+                    throw new InvalidOperationException($"Unable to resolve fallback normal map texture '{TextureConstants.FallbackNormalMapTextureId}'.");
                 }
             }
             finally
@@ -190,34 +182,6 @@ namespace Quasar.Graphics.Internals
         }
 
 
-        private void LoadBuiltInTexturesInternal()
-        {
-            var resourcePaths = resourceProvider.EnumerateResources(BuiltInTextureSearchPath, true);
-            var textureDescriptor = new TextureDescriptor(
-                0,
-                TextureRepeatMode.Repeat,
-                TextureRepeatMode.Repeat);
-
-            foreach (var resourcePath in resourcePaths)
-            {
-                // extract texture identifier from resource path
-                var id = resourceProvider.GetRelativePathWithoutExtension(resourcePath);
-                id = id.Substring(BuiltInTextureIdPrefix.Length);
-
-                // create texture
-                Stream stream = null;
-                try
-                {
-                    stream = resourceProvider.GetResourceStream(resourcePath);
-                    CreateTexture(id, stream, null, textureDescriptor);
-                }
-                finally
-                {
-                    stream?.Dispose();
-                }
-            }
-        }
-
         private TextureBase CreateTexture(string id, Stream stream, string tag, in TextureDescriptor textureDescriptor)
         {
             TextureBase texture = null;
@@ -227,6 +191,15 @@ namespace Quasar.Graphics.Internals
                 if (texture == null)
                 {
                     throw new GraphicsException($"Unable to load texture: {id}");
+                }
+
+                if (id == TextureConstants.FallbackNormalMapTextureId)
+                {
+                    fallbackNormalMapTexture = texture;
+                }
+                else if (id == TextureConstants.FallbackTextureId)
+                {
+                    fallbackTexture = texture;
                 }
 
                 AddItem(texture);

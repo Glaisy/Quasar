@@ -24,29 +24,32 @@ namespace Quasar.Assets
         /// Creates an asset package by the specified file path.
         /// </summary>
         /// <param name="filePath">The file path.</param>
+        /// <param name="tag">The tag.</param>
         /// <returns>
         /// The created asset package instance.
         /// </returns>
-        IAssetPackage Create(string filePath);
+        IAssetPackage Create(string filePath, string tag = null);
 
         /// <summary>
         /// Creates an asset package the specified stream.
         /// </summary>
         /// <param name="stream">The stream.</param>
         /// <param name="leaveOpen">The stream is left open when the package is disposed if this flag is true; otherwise stream is disposed.</param>
+        /// <param name="tag">The tag.</param>
         /// <returns>
         /// The created asset package instance.
         /// </returns>
-        IAssetPackage Create(Stream stream, bool leaveOpen = true);
+        IAssetPackage Create(Stream stream, bool leaveOpen = true, string tag = null);
 
         /// <summary>
         /// Creates an asset package the specified resource provider and resource path.
         /// </summary>
         /// <param name="resourceProvider">The resource provider.</param>
         /// <param name="resourcePath">The resource path.</param>
+        /// <param name="tag">The tag.</param>
         /// <returns>
         /// The created asset package instance.
         /// </returns>
-        IAssetPackage Create(IResourceProvider resourceProvider, string resourcePath);
+        IAssetPackage Create(IResourceProvider resourceProvider, string resourcePath, string tag = null);
     }
 }

@@ -45,7 +45,7 @@ namespace Quasar.Assets.Internals
 
 
         /// <inheritdoc/>
-        public IAssetPackage Create(string filePath)
+        public IAssetPackage Create(string filePath, string tag = null)
         {
             ArgumentException.ThrowIfNullOrEmpty(filePath, nameof(filePath));
 
@@ -55,19 +55,19 @@ namespace Quasar.Assets.Internals
                 throw new AssetException($"Asset package not found: {filePath}");
             }
 
-            return CreateInternal(stream, false);
+            return CreateInternal(stream, false, tag);
         }
 
         /// <inheritdoc/>
-        public IAssetPackage Create(Stream stream, bool leaveOpen = true)
+        public IAssetPackage Create(Stream stream, bool leaveOpen = true, string tag = null)
         {
             ArgumentNullException.ThrowIfNull(stream, nameof(stream));
 
-            return CreateInternal(stream, leaveOpen);
+            return CreateInternal(stream, leaveOpen, tag);
         }
 
         /// <inheritdoc/>
-        public IAssetPackage Create(IResourceProvider resourceProvider, string resourcePath)
+        public IAssetPackage Create(IResourceProvider resourceProvider, string resourcePath, string tag = null)
         {
             ArgumentNullException.ThrowIfNull(resourceProvider, nameof(resourceProvider));
             ArgumentException.ThrowIfNullOrEmpty(resourcePath, nameof(resourcePath));
@@ -78,11 +78,11 @@ namespace Quasar.Assets.Internals
                 throw new AssetException($"Asset package not found: {resourcePath}");
             }
 
-            return CreateInternal(stream, false);
+            return CreateInternal(stream, false, tag);
         }
 
 
-        private AssetPackage CreateInternal(Stream stream, bool leaveOpen)
+        private AssetPackage CreateInternal(Stream stream, bool leaveOpen, string tag)
         {
             ZipArchive zipArchive = null;
             AssetPackage assetPackage = null;
@@ -90,7 +90,7 @@ namespace Quasar.Assets.Internals
             {
                 zipArchive = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen);
                 assetPackage = serviceProvider.GetRequiredService<AssetPackage>();
-                assetPackage.Initialize(zipArchive);
+                assetPackage.Initialize(zipArchive, tag);
                 return assetPackage;
             }
             catch
