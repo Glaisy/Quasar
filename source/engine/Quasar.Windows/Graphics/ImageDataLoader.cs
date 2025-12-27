@@ -13,7 +13,6 @@ using System;
 using System.IO;
 
 using Quasar.Graphics;
-using Quasar.Graphics.Internals;
 
 using Space.Core.DependencyInjection;
 

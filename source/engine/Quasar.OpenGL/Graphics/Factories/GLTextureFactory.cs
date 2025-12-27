@@ -10,6 +10,8 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.IO;
+using System.Threading;
 
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
@@ -17,7 +19,10 @@ using Quasar.Graphics.Internals.Factories;
 using Quasar.OpenGL.Api;
 using Quasar.OpenGL.Extensions;
 
+using Space.Core;
 using Space.Core.DependencyInjection;
+using Space.Core.Diagnostics;
+using Space.Core.Threading;
 
 namespace Quasar.OpenGL.Graphics.Factories
 {
@@ -30,6 +35,11 @@ namespace Quasar.OpenGL.Graphics.Factories
     internal sealed class GLTextureFactory : ITextureFactory
     {
         private const float MipmappingLOD = -1.0f;
+
+
+        private readonly IDispatcher dispatcher;
+        private readonly IImageDataLoader imageDataLoader;
+        private readonly ILogger logger;
         private readonly float maxAnisotropy;
         private GraphicsResourceDescriptor defaultResourceDescriptor;
 
@@ -37,8 +47,19 @@ namespace Quasar.OpenGL.Graphics.Factories
         /// <summary>
         /// Initializes a new instance of the <see cref="GLTextureFactory" /> class.
         /// </summary>
-        public unsafe GLTextureFactory()
+        /// <param name="dispatcher">The dispatcher.</param>
+        /// <param name="imageDataLoader">The image data loader.</param>
+        /// <param name="loggerFactory">The logger factory.</param>
+        public unsafe GLTextureFactory(
+            IDispatcher dispatcher,
+            IImageDataLoader imageDataLoader,
+            ILoggerFactory loggerFactory)
         {
+            this.dispatcher = dispatcher;
+            this.imageDataLoader = imageDataLoader;
+
+            logger = loggerFactory.Create<GLTextureFactory>();
+
             // get max level of anisotropic filtering
             fixed (float* ptrMaxAnisotropy = &maxAnisotropy)
             {
@@ -48,11 +69,52 @@ namespace Quasar.OpenGL.Graphics.Factories
 
 
         /// <inheritdoc/>
-        public TextureBase Create(string key, IImageData imageData, string tag, in TextureDescriptor textureDescriptor)
+        public TextureBase Create(string id, Stream stream, string tag, in TextureDescriptor textureDescriptor)
         {
-            var id = 0;
+            Assertion.ThrowIfNullOrEmpty(id, nameof(id));
+            Assertion.ThrowIfNull(stream, nameof(stream));
+
+            IImageData imageData = null;
             try
             {
+                imageData = imageDataLoader.Load(stream, true);
+                var createData = new TextureCreateData<TextureBase>(imageData, id, tag, textureDescriptor);
+                lock (imageData)
+                {
+                    var taskId = dispatcher.Dispatch(CreateTexture, createData);
+                    if (taskId > 0)
+                    {
+                        Monitor.Wait(imageData);
+                    }
+                }
+
+                return createData.Texture;
+            }
+            finally
+            {
+                imageData?.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Executes the texture factory initialization.
+        /// </summary>
+        /// <param name="graphicsContext">The graphics context.</param>
+        public void Initialize(IGraphicsContext graphicsContext)
+        {
+            defaultResourceDescriptor = new GraphicsResourceDescriptor(graphicsContext.Device, GraphicsResourceUsage.Default);
+        }
+
+
+        private void CreateTexture(TextureCreateData<TextureBase> createData)
+        {
+            var id = 0;
+            var textureSize = createData.ImageData.Size;
+
+            try
+            {
+                createData.Texture = null;
+
                 // create and bind texture
                 id = GL.GenTexture();
                 GL.BindTexture(TextureTarget.Texture2D, id);
@@ -62,30 +124,33 @@ namespace Quasar.OpenGL.Graphics.Factories
                     TextureTarget.Texture2D,
                     0,
                     PixelInternalFormat.Rgba,
-                    imageData.Size.Width,
-                    imageData.Size.Height,
+                    textureSize.Width,
+                    textureSize.Height,
                     0,
                     PixelFormat.Bgra,
                     PixelType.UnsignedByte,
-                    imageData.Data);
+                    createData.ImageData.Data);
 
                 // set texture wrapping
                 GL.TexParameterInteger(
                     TextureTarget.Texture2D,
                     TextureParameterName.TextureWrapS,
-                    (int)textureDescriptor.RepeatX.ToTextureWrapMode());
+                    (int)createData.TextureDescriptor.RepeatX.ToTextureWrapMode());
                 GL.TexParameterInteger(
                     TextureTarget.Texture2D,
                     TextureParameterName.TextureWrapT,
-                    (int)textureDescriptor.RepeatY.ToTextureWrapMode());
+                    (int)createData.TextureDescriptor.RepeatY.ToTextureWrapMode());
 
                 // set texture filtering
-                if (textureDescriptor.Filtered)
+                if (createData.TextureDescriptor.Filtered)
                 {
                     GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-                    GL.TexParameterInteger(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
+                    GL.TexParameterInteger(
+                        TextureTarget.Texture2D,
+                        TextureParameterName.TextureMinFilter,
+                        (int)TextureMinFilter.LinearMipmapLinear);
 
-                    var anisotropyLevel = MathF.Min(maxAnisotropy, textureDescriptor.AnisotropyLevel);
+                    var anisotropyLevel = MathF.Min(maxAnisotropy, createData.TextureDescriptor.AnisotropyLevel);
                     if (anisotropyLevel > 0)
                     {
                         // enable anisotropic filtering instead of mipmapping
@@ -112,31 +177,28 @@ namespace Quasar.OpenGL.Graphics.Factories
                     (int)TextureMagFilter.Linear);
 
                 // create texture wrapper object.
-                return new GLTexture(id, key, imageData.Size, textureDescriptor, tag, defaultResourceDescriptor);
+                createData.Texture =
+                    new GLTexture(id, createData.Id, textureSize, createData.TextureDescriptor, createData.Tag, defaultResourceDescriptor);
+
+                // send completed signal
+                lock (createData.ImageData)
+                {
+                    Monitor.PulseAll(createData.ImageData);
+                }
             }
-            catch
+            catch (Exception exception)
             {
-                // rollback
+                logger.Error(exception, $"Unable to load texture #{createData.Id}");
+
                 if (id > 0)
                 {
                     GL.DeleteTexture(id);
                 }
-
-                throw;
             }
             finally
             {
                 GL.BindTexture(TextureTarget.Texture2D, 0);
             }
-        }
-
-        /// <summary>
-        /// Executes the texture factory initialization.
-        /// </summary>
-        /// <param name="graphicsContext">The graphics context.</param>
-        public void Initialize(IGraphicsContext graphicsContext)
-        {
-            defaultResourceDescriptor = new GraphicsResourceDescriptor(graphicsContext.Device, GraphicsResourceUsage.Default);
         }
     }
 }

@@ -112,7 +112,6 @@ namespace Quasar.OpenGL.Graphics
             commandProcessor.Initialize();
 
             AddOpenGLServiceImplementation<IMatrixFactory, GLMatrixFactory>();
-            AddOpenGLServiceImplementation<ITextureImageDataLoader, GLTextureImageDataLoader>();
 
             var frameBufferFactory = AddOpenGLServiceImplementation<IFrameBufferFactory, GLFrameBufferFactory>();
             frameBufferFactory.Initialize(this);

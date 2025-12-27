@@ -17,7 +17,6 @@ using Quasar.Graphics.Internals.Factories;
 using Quasar.Utilities;
 
 using Space.Core.DependencyInjection;
-using Space.Core.Mathematics;
 
 namespace Quasar.Graphics.Internals
 {
@@ -36,7 +35,6 @@ namespace Quasar.Graphics.Internals
 
 
         private readonly IResourceProvider resourceProvider;
-        private readonly ITextureImageDataLoader textureImageDataLoader;
         private readonly ICubeMapTextureFactory cubeMapTextureFactory;
 
 
@@ -45,14 +43,11 @@ namespace Quasar.Graphics.Internals
         /// </summary>
         /// <param name="context">The Quasar context.</param>
         /// <param name="cubeMapTextureFactory">The cube map texture factory.</param>
-        /// <param name="textureImageDataLoader">The texture image data loader.</param>
         public CubeMapTextureRepository(
             IQuasarContext context,
-            ICubeMapTextureFactory cubeMapTextureFactory,
-            ITextureImageDataLoader textureImageDataLoader)
+            ICubeMapTextureFactory cubeMapTextureFactory)
         {
             this.cubeMapTextureFactory = cubeMapTextureFactory;
-            this.textureImageDataLoader = textureImageDataLoader;
 
             resourceProvider = context.ResourceProvider;
         }
@@ -66,29 +61,6 @@ namespace Quasar.Graphics.Internals
         /// <inheritdoc/>
         public ICubeMapTexture Create(
             string id,
-            IImageData imageData,
-            string tag = null)
-        {
-            ValidateIdentifier(id);
-            ArgumentNullException.ThrowIfNull(imageData, nameof(imageData));
-
-            try
-            {
-                RepositoryLock.EnterWriteLock();
-
-                EnsureIdentifierIsAvailable(id);
-
-                return CreateCubeMapTexture(id, imageData, tag);
-            }
-            finally
-            {
-                RepositoryLock.ExitWriteLock();
-            }
-        }
-
-        /// <inheritdoc/>
-        public ICubeMapTexture Create(
-            string id,
             string filePath,
             string tag = null)
         {
@@ -96,7 +68,6 @@ namespace Quasar.Graphics.Internals
             ArgumentException.ThrowIfNullOrEmpty(filePath, nameof(filePath));
 
             Stream stream = null;
-            IImageData imageData = null;
             try
             {
                 RepositoryLock.EnterWriteLock();
@@ -104,16 +75,14 @@ namespace Quasar.Graphics.Internals
                 EnsureIdentifierIsAvailable(id);
 
                 stream = File.Open(filePath, FileMode.Open);
-                imageData = textureImageDataLoader.Load(stream);
 
-                return CreateCubeMapTexture(id, imageData, tag);
+                return CreateCubeMapTexture(id, stream, tag);
             }
             finally
             {
                 RepositoryLock.ExitWriteLock();
 
                 stream?.Dispose();
-                imageData?.Dispose();
             }
         }
 
@@ -126,22 +95,17 @@ namespace Quasar.Graphics.Internals
             ValidateIdentifier(id);
             ArgumentNullException.ThrowIfNull(stream, nameof(stream));
 
-            IImageData imageData = null;
             try
             {
                 RepositoryLock.EnterWriteLock();
 
                 EnsureIdentifierIsAvailable(id);
 
-                imageData = textureImageDataLoader.Load(stream);
-
-                return CreateCubeMapTexture(id, imageData, tag);
+                return CreateCubeMapTexture(id, stream, tag);
             }
             finally
             {
                 RepositoryLock.ExitWriteLock();
-
-                imageData?.Dispose();
             }
         }
 
@@ -157,7 +121,6 @@ namespace Quasar.Graphics.Internals
             ArgumentException.ThrowIfNullOrEmpty(resourcePath, nameof(resourcePath));
 
             Stream stream = null;
-            IImageData imageData = null;
             try
             {
                 RepositoryLock.EnterWriteLock();
@@ -165,16 +128,14 @@ namespace Quasar.Graphics.Internals
                 EnsureIdentifierIsAvailable(id);
 
                 stream = resourceProvider.GetResourceStream(resourcePath);
-                imageData = textureImageDataLoader.Load(stream);
 
-                return CreateCubeMapTexture(id, imageData, tag);
+                return CreateCubeMapTexture(id, stream, tag);
             }
             finally
             {
                 RepositoryLock.ExitWriteLock();
 
                 stream?.Dispose();
-                imageData?.Dispose();
             }
         }
 
@@ -232,13 +193,11 @@ namespace Quasar.Graphics.Internals
                 // create texture
                 Stream stream = null;
                 CubeMapTextureBase texture = null;
-                IImageData imageData = null;
                 try
                 {
                     stream = resourceProvider.GetResourceStream(resourcePath);
-                    imageData = textureImageDataLoader.Load(stream);
 
-                    CreateCubeMapTexture(id, imageData, null);
+                    CreateCubeMapTexture(id, stream, null);
                 }
                 catch
                 {
@@ -247,27 +206,22 @@ namespace Quasar.Graphics.Internals
                 }
                 finally
                 {
-                    imageData?.Dispose();
                     stream?.Dispose();
                 }
             }
         }
 
-        private CubeMapTextureBase CreateCubeMapTexture(string id, IImageData imageData, string tag)
+        private CubeMapTextureBase CreateCubeMapTexture(string id, Stream stream, string tag)
         {
-            ArgumentOutOfRangeException.ThrowIfNotEqual(
-                true,
-                MathematicsHelper.IsPowerOf2(imageData.Size.Width),
-                nameof(imageData.Size.Width));
-            ArgumentOutOfRangeException.ThrowIfNotEqual(
-                imageData.Size.Width * 6,
-                imageData.Size.Height,
-                nameof(imageData.Size.Height));
-
             CubeMapTextureBase cubeMapTexture = null;
             try
             {
-                cubeMapTexture = cubeMapTextureFactory.Create(id, imageData, tag);
+                cubeMapTexture = cubeMapTextureFactory.Create(id, stream, tag);
+                if (cubeMapTexture == null)
+                {
+                    throw new GraphicsException($"Unable to load cube map texture: {id}");
+                }
+
                 AddItem(cubeMapTexture);
                 return cubeMapTexture;
             }
