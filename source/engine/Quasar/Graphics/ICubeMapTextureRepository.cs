@@ -29,20 +29,6 @@ namespace Quasar.Graphics
 
 
         /// <summary>
-        /// Creates a cube map texture instance from the image data.
-        /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <param name="imageData">The image data(The image should contain the cube map faces in vertical layout, in +X, -X, +Y, -Y, +Z, -Z order).</param>
-        /// <param name="tag">The tag value.</param>
-        /// <returns>
-        /// The loaded cube map texture instance.
-        /// </returns>
-        ICubeMapTexture Create(
-            string id,
-            IImageData imageData,
-            string tag = null);
-
-        /// <summary>
         /// Creates a 2D texture instance from the image file path.
         /// </summary>
         /// <param name="id">The identifier.</param>

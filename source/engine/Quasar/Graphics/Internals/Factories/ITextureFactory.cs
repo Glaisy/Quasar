@@ -9,6 +9,8 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System.IO;
+
 namespace Quasar.Graphics.Internals.Factories
 {
     /// <summary>
@@ -17,15 +19,15 @@ namespace Quasar.Graphics.Internals.Factories
     internal interface ITextureFactory
     {
         /// <summary>
-        /// Creates a texture by the specified identifier from the image data.
+        /// Creates a texture by the specified identifier from the image stream.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        /// <param name="imageData">The image data.</param>
+        /// <param name="stream">The image stream.</param>
         /// <param name="tag">The tag value.</param>
         /// <param name="textureDescriptor">The texture descriptor.</param>
         /// <returns>
         /// The created texture instance.
         /// </returns>
-        TextureBase Create(string id, IImageData imageData, string tag, in TextureDescriptor textureDescriptor);
+        TextureBase Create(string id, Stream stream, string tag, in TextureDescriptor textureDescriptor);
     }
 }

@@ -9,6 +9,8 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System.IO;
+
 namespace Quasar.Graphics.Internals.Factories
 {
     /// <summary>
@@ -17,14 +19,14 @@ namespace Quasar.Graphics.Internals.Factories
     internal interface ICubeMapTextureFactory
     {
         /// <summary>
-        /// Creates a cube map texture by the specified identifier from the image data.
+        /// Creates a cube map texture by the specified identifier from the image stream.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        /// <param name="imageData">The cube map texture image data.</param>
+        /// <param name="stream">The image stream.</param>
         /// <param name="tag">The tag value.</param>
         /// <returns>
         /// The created cube map texture instance.
         /// </returns>
-        CubeMapTextureBase Create(string id, IImageData imageData, string tag);
+        CubeMapTextureBase Create(string id, Stream stream, string tag);
     }
 }

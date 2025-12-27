@@ -143,12 +143,12 @@ namespace Quasar.Internals
             timeService.Initialize();
 
             // initialize pipelines
-            renderingPipeline = ServiceProvider.GetRequiredService<RenderingPipeline>();
-            renderingPipeline.Start();
             updatePipeline = ServiceProvider.GetRequiredService<UpdatePipeline>();
             updatePipeline.Start();
             physicsPipeline = ServiceProvider.GetRequiredService<PhysicsPipeline>();
             physicsPipeline.Start();
+            renderingPipeline = ServiceProvider.GetRequiredService<RenderingPipeline>();
+            renderingPipeline.Start();
 
             // execute custom bootstrapper process
             var bootstrapperFactory = applicationConfiguration?.BootstrapperFactory;
@@ -166,9 +166,9 @@ namespace Quasar.Internals
             try
             {
                 logger?.Info("Shutting down the application.");
+                renderingPipeline.Shutdown();
                 physicsPipeline.Shutdown();
                 updatePipeline.Shutdown();
-                renderingPipeline.Shutdown();
 
                 logger?.Info("Application shutdown is completed.");
                 loggerService?.Stop();

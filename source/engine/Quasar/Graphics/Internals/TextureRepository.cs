@@ -35,7 +35,6 @@ namespace Quasar.Graphics.Internals
 
 
         private readonly IResourceProvider resourceProvider;
-        private readonly ITextureImageDataLoader textureImageDataLoader;
         private readonly ITextureFactory textureFactory;
 
 
@@ -44,14 +43,11 @@ namespace Quasar.Graphics.Internals
         /// </summary>
         /// <param name="context">The Quasar context.</param>
         /// <param name="textureFactory">The texture factory.</param>
-        /// <param name="textureImageDataLoader">The texture image data loader.</param>
         public TextureRepository(
             IQuasarContext context,
-            ITextureFactory textureFactory,
-            ITextureImageDataLoader textureImageDataLoader)
+            ITextureFactory textureFactory)
         {
             this.textureFactory = textureFactory;
-            this.textureImageDataLoader = textureImageDataLoader;
 
             resourceProvider = context.ResourceProvider;
         }
@@ -69,30 +65,6 @@ namespace Quasar.Graphics.Internals
         /// <inheritdoc/>
         public ITexture Create(
             string id,
-            IImageData imageData,
-            string tag = null,
-            in TextureDescriptor textureDescriptor = default)
-        {
-            ValidateIdentifier(id);
-            ArgumentNullException.ThrowIfNull(imageData, nameof(imageData));
-
-            try
-            {
-                RepositoryLock.EnterWriteLock();
-
-                EnsureIdentifierIsAvailable(id);
-
-                return CreateTexture(id, imageData, tag, textureDescriptor);
-            }
-            finally
-            {
-                RepositoryLock.ExitWriteLock();
-            }
-        }
-
-        /// <inheritdoc/>
-        public ITexture Create(
-            string id,
             string filePath,
             string tag = null,
             in TextureDescriptor textureDescriptor = default)
@@ -101,7 +73,6 @@ namespace Quasar.Graphics.Internals
             ArgumentException.ThrowIfNullOrEmpty(filePath, nameof(filePath));
 
             Stream stream = null;
-            IImageData imageData = null;
             try
             {
                 RepositoryLock.EnterWriteLock();
@@ -109,13 +80,11 @@ namespace Quasar.Graphics.Internals
                 EnsureIdentifierIsAvailable(id);
 
                 stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                imageData = textureImageDataLoader.Load(stream);
 
-                return CreateTexture(id, imageData, tag, textureDescriptor);
+                return CreateTexture(id, stream, tag, textureDescriptor);
             }
             finally
             {
-                imageData?.Dispose();
                 stream?.Dispose();
 
                 RepositoryLock.ExitWriteLock();
@@ -132,20 +101,16 @@ namespace Quasar.Graphics.Internals
             ValidateIdentifier(id);
             ArgumentNullException.ThrowIfNull(stream, nameof(stream));
 
-            IImageData imageData = null;
             try
             {
                 RepositoryLock.EnterWriteLock();
 
                 EnsureIdentifierIsAvailable(id);
 
-                imageData = textureImageDataLoader.Load(stream);
-                return CreateTexture(id, imageData, tag, textureDescriptor);
+                return CreateTexture(id, stream, tag, textureDescriptor);
             }
             finally
             {
-                imageData?.Dispose();
-
                 RepositoryLock.ExitWriteLock();
             }
         }
@@ -162,7 +127,6 @@ namespace Quasar.Graphics.Internals
             ArgumentNullException.ThrowIfNull(resourceProvider, nameof(resourceProvider));
 
             Stream stream = null;
-            IImageData imageData = null;
             try
             {
                 RepositoryLock.EnterWriteLock();
@@ -170,13 +134,11 @@ namespace Quasar.Graphics.Internals
                 EnsureIdentifierIsAvailable(id);
 
                 stream = resourceProvider.GetResourceStream(resourcePath);
-                imageData = textureImageDataLoader.Load(stream);
 
-                return CreateTexture(id, imageData, tag, textureDescriptor);
+                return CreateTexture(id, stream, tag, textureDescriptor);
             }
             finally
             {
-                imageData?.Dispose();
                 stream?.Dispose();
 
                 RepositoryLock.ExitWriteLock();
@@ -244,27 +206,29 @@ namespace Quasar.Graphics.Internals
 
                 // create texture
                 Stream stream = null;
-                IImageData imageData = null;
                 try
                 {
                     stream = resourceProvider.GetResourceStream(resourcePath);
-                    imageData = textureImageDataLoader.Load(stream);
-                    CreateTexture(id, imageData, null, textureDescriptor);
+                    CreateTexture(id, stream, null, textureDescriptor);
                 }
                 finally
                 {
-                    imageData?.Dispose();
                     stream?.Dispose();
                 }
             }
         }
 
-        private TextureBase CreateTexture(string id, IImageData imageData, string tag, in TextureDescriptor textureDescriptor)
+        private TextureBase CreateTexture(string id, Stream stream, string tag, in TextureDescriptor textureDescriptor)
         {
             TextureBase texture = null;
             try
             {
-                texture = textureFactory.Create(id, imageData, tag, textureDescriptor);
+                texture = textureFactory.Create(id, stream, tag, textureDescriptor);
+                if (texture == null)
+                {
+                    throw new GraphicsException($"Unable to load texture: {id}");
+                }
+
                 AddItem(texture);
                 return texture;
             }

@@ -34,22 +34,6 @@ namespace Quasar.Graphics
 
 
         /// <summary>
-        /// Creates a 2D texture from the image data.
-        /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <param name="imageData">The image data.</param>
-        /// <param name="tag">The tag value.</param>
-        /// <param name="textureDescriptor">The texture descriptor.</param>
-        /// <returns>
-        /// The created texture instance.
-        /// </returns>
-        ITexture Create(
-            string id,
-            IImageData imageData,
-            string tag = null,
-            in TextureDescriptor textureDescriptor = default);
-
-        /// <summary>
         /// Creates a 2D texture instance from the image file path.
         /// </summary>
         /// <param name="id">The identifier.</param>

@@ -11,12 +11,12 @@
 
 using System.IO;
 
-namespace Quasar.Graphics.Internals
+namespace Quasar.Graphics
 {
     /// <summary>
     /// Represents a native image data loader component.
     /// </summary>
-    internal interface IImageDataLoader
+    public interface IImageDataLoader
     {
         /// <summary>
         /// Loads the image data from the specified stream.
