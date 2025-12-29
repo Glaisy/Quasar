@@ -15,7 +15,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Quasar.UI.VisualElements;
 
-using Space.Core.Globalization;
 using Space.Core.Threading;
 
 namespace Quasar.UI.Mvp
@@ -33,8 +32,6 @@ namespace Quasar.UI.Mvp
         internal static new void InitializeStaticServices(IServiceProvider serviceProvider)
         {
             Dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
-            Translator = serviceProvider.GetRequiredService<ITranslator>();
-            ValueFormatter = serviceProvider.GetRequiredService<IValueFormatter>();
         }
 
 
@@ -42,15 +39,5 @@ namespace Quasar.UI.Mvp
         /// Gets the dispatcher.
         /// </summary>
         protected static IDispatcher Dispatcher { get; private set; }
-
-        /// <summary>
-        /// Gets the translator.
-        /// </summary>
-        protected static ITranslator Translator { get; private set; }
-
-        /// <summary>
-        /// Gets the value formatter.
-        /// </summary>
-        protected static IValueFormatter ValueFormatter { get; private set; }
     }
 }

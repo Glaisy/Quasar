@@ -28,6 +28,7 @@ using Quasar.Utilities;
 
 using Space.Core;
 using Space.Core.Extensions;
+using Space.Core.Globalization;
 
 namespace Quasar.UI.VisualElements
 {
@@ -1003,6 +1004,8 @@ namespace Quasar.UI.VisualElements
             eventProcessor = serviceProvider.GetRequiredService<IVisualElementEventProcessor>();
             themeProvider = serviceProvider.GetRequiredService<IThemeProvider>();
             styleBuilder = serviceProvider.GetRequiredService<IStyleBuilder>();
+            translator = serviceProvider.GetRequiredService<ITranslator>();
+            valueFormatter = serviceProvider.GetRequiredService<IValueFormatter>();
 
             layoutManagers = serviceProvider.GetServices<ILayoutManager>()
                 .OrderBy(x => x.LayoutType)
@@ -1041,10 +1044,22 @@ namespace Quasar.UI.VisualElements
         /// </summary>
         protected virtual string TagSelector { get; } = TagSelectors.VisualElement;
 
+        private static ITranslator translator;
+        /// <summary>
+        /// Gets the translator.
+        /// </summary>
+        protected ITranslator Translator => translator;
+
         /// <summary>
         /// Gets the UI context.
         /// </summary>
         protected IUIContext UIContext => uiContext;
+
+        private static IValueFormatter valueFormatter;
+        /// <summary>
+        /// Gets the value formatter.
+        /// </summary>
+        protected IValueFormatter ValueFormatter => valueFormatter;
 
 
         /// <summary>
