@@ -23,7 +23,7 @@ namespace Quasar.Graphics.Internals.Importers
     /// Quasar texture asset importer implementation.
     /// </summary>
     /// <seealso cref="AssetImporterBase" />
-    [Export(typeof(IAssetImporter), AssetType.Texture)]
+    [Export(typeof(IAssetImporter), AssetConstants.Directories.Textures)]
     [Singleton]
     internal sealed class TextureAssetImporter : AssetImporterBase
     {
@@ -38,7 +38,7 @@ namespace Quasar.Graphics.Internals.Importers
         public TextureAssetImporter(
             ILoggerFactory loggerFactory,
             ITextureRepository textureRepository)
-            : base(loggerFactory, AssetType.Texture)
+            : base(loggerFactory, AssetConstants.Directories.Textures)
         {
             this.textureRepository = textureRepository;
         }

@@ -23,7 +23,7 @@ namespace Quasar.UI.Internals.Importers
     /// Quasar cursor asset importer implementation.
     /// </summary>
     /// <seealso cref="AssetImporterBase" />
-    [Export(typeof(IAssetImporter), AssetType.Cursor)]
+    [Export(typeof(IAssetImporter), AssetConstants.Directories.Cursors)]
     [Singleton]
     internal sealed class CursorAssetImporter : AssetImporterBase
     {
@@ -38,7 +38,7 @@ namespace Quasar.UI.Internals.Importers
         public CursorAssetImporter(
             ILoggerFactory loggerFactory,
             ICursorRepository cursorRepository)
-            : base(loggerFactory, AssetType.Cursor)
+            : base(loggerFactory, AssetConstants.Directories.Cursors)
         {
             this.cursorRepository = cursorRepository;
         }

@@ -19,9 +19,9 @@ namespace Quasar.Assets.Importers
     public interface IAssetImporter
     {
         /// <summary>
-        /// Gets the imported asset type.
+        /// Gets the directory name of the imported assets.
         /// </summary>
-        AssetType Type { get; }
+        string Directory { get; }
 
 
         /// <summary>

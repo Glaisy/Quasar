@@ -23,7 +23,7 @@ namespace Quasar.Graphics.Internals.Importers
     /// Quasar cube map texture asset importer implementation.
     /// </summary>
     /// <seealso cref="AssetImporterBase" />
-    [Export(typeof(IAssetImporter), AssetType.CubeMapTexture)]
+    [Export(typeof(IAssetImporter), AssetConstants.Directories.CubeMapTextures)]
     [Singleton]
     internal sealed class CubeMapTextureAssetImporter : AssetImporterBase
     {
@@ -38,7 +38,7 @@ namespace Quasar.Graphics.Internals.Importers
         public CubeMapTextureAssetImporter(
             ILoggerFactory loggerFactory,
             ICubeMapTextureRepository cubeMapTextureRepository)
-            : base(loggerFactory, AssetType.CubeMapTexture)
+            : base(loggerFactory, AssetConstants.Directories.CubeMapTextures)
         {
             this.cubeMapTextureRepository = cubeMapTextureRepository;
         }

@@ -24,7 +24,7 @@ namespace Quasar.UI.Internals.Importers
     /// Quasar UI template importer implementation.
     /// </summary>
     /// <seealso cref="AssetImporterBase" />
-    [Export(typeof(IAssetImporter), AssetType.UITemplate)]
+    [Export(typeof(IAssetImporter), AssetConstants.Directories.UITemplates)]
     internal sealed class UITemplateAssetImporter : AssetImporterBase
     {
         private readonly IUITemplateRepository templateRepository;
@@ -38,7 +38,7 @@ namespace Quasar.UI.Internals.Importers
         public UITemplateAssetImporter(
             ILoggerFactory loggerFactory,
             IUITemplateRepository templateRepository)
-            : base(loggerFactory, AssetType.UITemplate)
+            : base(loggerFactory, AssetConstants.Directories.UITemplates)
         {
             this.templateRepository = templateRepository;
         }

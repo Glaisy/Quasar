@@ -23,7 +23,7 @@ namespace Quasar.Graphics.Internals.Importers
     /// Quasar font asset importer implementation..
     /// </summary>
     /// <seealso cref="AssetImporterBase" />
-    [Export(typeof(IAssetImporter), AssetType.FontFamily)]
+    [Export(typeof(IAssetImporter), AssetConstants.Directories.FontFamilies)]
     internal sealed class FontFamilyAssetImporter : AssetImporterBase
     {
         private readonly IFontFamilyRepository fontFamilyRepository;
@@ -37,7 +37,7 @@ namespace Quasar.Graphics.Internals.Importers
         public FontFamilyAssetImporter(
             ILoggerFactory loggerFactory,
             IFontFamilyRepository fontFamilyRepository)
-            : base(loggerFactory, AssetType.FontFamily)
+            : base(loggerFactory, AssetConstants.Directories.FontFamilies)
         {
             this.fontFamilyRepository = fontFamilyRepository;
         }

@@ -24,7 +24,7 @@ namespace Quasar.Globalization.Internals.Importers
     /// <summary>
     /// The Quasar translation table asset importer implementation.
     /// </summary>
-    [Export(typeof(IAssetImporter), AssetType.Translation)]
+    [Export(typeof(IAssetImporter), AssetConstants.Directories.Translations)]
     [Singleton]
     internal sealed class TranslationAssetImporter : AssetImporterBase
     {
@@ -39,7 +39,7 @@ namespace Quasar.Globalization.Internals.Importers
         public TranslationAssetImporter(
             ILoggerFactory loggerFactory,
             IGlobalizationService globalizationService)
-            : base(loggerFactory, AssetType.Translation)
+            : base(loggerFactory, AssetConstants.Directories.Translations)
         {
             this.globalizationService = globalizationService;
         }

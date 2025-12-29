@@ -23,7 +23,7 @@ namespace Quasar.UI.Internals.Importers
     /// Quasar icon asset importer implementation.
     /// </summary>
     /// <seealso cref="AssetImporterBase" />
-    [Export(typeof(IAssetImporter), AssetType.Icon)]
+    [Export(typeof(IAssetImporter), AssetConstants.Directories.Icons)]
     [Singleton]
     internal sealed class IconAssetImporter : AssetImporterBase
     {
@@ -38,7 +38,7 @@ namespace Quasar.UI.Internals.Importers
         public IconAssetImporter(
             ILoggerFactory loggerFactory,
             IIconRepository iconRepository)
-            : base(loggerFactory, AssetType.Icon)
+            : base(loggerFactory, AssetConstants.Directories.Icons)
         {
             this.iconRepository = iconRepository;
         }

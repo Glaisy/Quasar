@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -35,21 +36,9 @@ namespace Quasar.Assets.Internals
     [Export]
     internal sealed class AssetPackage : DisposableBase, IAssetPackage
     {
-        private static readonly Dictionary<AssetType, string> assetDirectoryNames =
-            new Dictionary<AssetType, string>
-            {
-                { AssetType.CubeMapTexture, AssetConstants.Directories.CubeMapTextures },
-                { AssetType.Cursor, AssetConstants.Directories.Cursors },
-                { AssetType.FontFamily, AssetConstants.Directories.FontFamilies },
-                { AssetType.Icon, AssetConstants.Directories.Icons },
-                { AssetType.Texture, AssetConstants.Directories.Textures },
-                { AssetType.UITemplate, AssetConstants.Directories.UITemplates }
-            };
-
-
         private static readonly List<string> emptyCustomAssets = new List<string>();
         private static IQuasarContext context;
-        private static Dictionary<string, IAssetImporter> assetImportersByDirectoryName;
+        private static Dictionary<string, IAssetImporter> assetImportersByDirectory;
         private readonly ILogger logger;
         private readonly List<string> customAssets = emptyCustomAssets;
         private ZipArchive zipArchive;
@@ -148,19 +137,15 @@ namespace Quasar.Assets.Internals
         internal static void InitializeStaticServices(IServiceProvider serviceProvider)
         {
             context = serviceProvider.GetRequiredService<IQuasarContext>();
-
-            assetImportersByDirectoryName = new Dictionary<string, IAssetImporter>();
-            foreach (var assetImporter in serviceProvider.GetServices<IAssetImporter>())
-            {
-                var assetDirectoryName = assetDirectoryNames[assetImporter.Type];
-                assetImportersByDirectoryName.Add(assetDirectoryName, assetImporter);
-            }
+            assetImportersByDirectory = serviceProvider
+                .GetServices<IAssetImporter>()
+                .ToDictionary(x => x.Directory, x => x);
         }
 
 
         private static IAssetImporter GetAssetImporter(string assetDirectoryName)
         {
-            if (assetImportersByDirectoryName.TryGetValue(assetDirectoryName, out var assetImporter))
+            if (assetImportersByDirectory.TryGetValue(assetDirectoryName, out var assetImporter))
             {
                 return assetImporter;
             }
