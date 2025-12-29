@@ -9,6 +9,8 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System;
+
 namespace Quasar.UI.Mvp
 {
     /// <summary>
@@ -27,11 +29,11 @@ namespace Quasar.UI.Mvp
         /// Initializes a new instance of the <see cref="ViewBase{T}" /> class.
         /// </summary>
         /// <param name="presenter">The presenter.</param>
-        /// <param name="view">The view.</param>
-        protected ViewBase(IPresenter<TView> presenter, TView view)
+        protected ViewBase(IPresenter<TView> presenter)
         {
             this.presenter = presenter;
-            this.view = view;
+            view = this as TView
+                ?? throw new InvalidOperationException($"The {GetType().FullName} class must implement {typeof(TView).FullName} interface.");
         }
 
 
