@@ -14,13 +14,13 @@ using System.IO;
 
 using Space.Core.Diagnostics;
 
-namespace Quasar.Assets.Importers.Internals
+namespace Quasar.Assets.Importers
 {
     /// <summary>
     /// Abstract base class for Quasar asset importers.
     /// </summary>
     /// <seealso cref="IAssetImporter" />
-    internal abstract class AssetImporterBase : IAssetImporter
+    public abstract class AssetImporterBase : IAssetImporter
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AssetImporterBase" /> class.

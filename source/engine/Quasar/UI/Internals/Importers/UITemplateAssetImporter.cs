@@ -13,7 +13,6 @@ using System.IO;
 
 using Quasar.Assets;
 using Quasar.Assets.Importers;
-using Quasar.Assets.Importers.Internals;
 using Quasar.UI.Templates.Internals;
 
 using Space.Core.DependencyInjection;

@@ -47,6 +47,11 @@ namespace Quasar.Assets
         Model,
 
         /// <summary>
+        /// The translation table asset type.
+        /// </summary>
+        Translation,
+
+        /// <summary>
         /// The UI theme asset type.
         /// </summary>
         Theme,
