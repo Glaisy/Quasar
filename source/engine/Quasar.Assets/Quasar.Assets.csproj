@@ -11,4 +11,14 @@
     <Target Name="PackAssets" AfterTargets="PreBuildEvent" BeforeTargets="CoreCompile">
         <Exec Command="$(SolutionDir)Pack.cmd $(ProjectDir)Assets $(SolutionDir)Quasar\Resources\ Quasar assets" />
     </Target>
+    <ItemGroup>
+      <Content Include="Assets\CubeMapTextures\Fallback.png" />
+      <Content Include="Assets\Cursors\Quasar.png" />
+      <Content Include="Assets\FontFamilies\Conthrax.zip" />
+      <Content Include="Assets\Icons\Quasar.png" />
+      <Content Include="Assets\pack.json" />
+      <Content Include="Assets\Textures\Fallback.png" />
+      <Content Include="Assets\Textures\FallbackNormalMap.png" />
+      <Content Include="Assets\Themes\Quasar.pack" />
+    </ItemGroup>
 </Project>

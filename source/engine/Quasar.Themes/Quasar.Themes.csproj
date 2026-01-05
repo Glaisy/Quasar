@@ -11,4 +11,9 @@
     <Target Name="PackAssets" AfterTargets="PreBuildEvent" BeforeTargets="CoreCompile">
         <Exec Command="$(SolutionDir)Pack.cmd $(ProjectDir)Quasar $(SolutionDir)Quasar.Assets\Assets\Themes\ Quasar pack" />
     </Target>
+    <ItemGroup>
+      <Content Include="Quasar\BaseStyles.qss"/>
+      <Content Include="Quasar\Theme.tss"/>
+      <Content Include="Quasar\Variables.qss"/>
+    </ItemGroup>
 </Project>

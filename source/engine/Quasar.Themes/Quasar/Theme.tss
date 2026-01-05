@@ -1,7 +1,5 @@
 @import url("Variables.qss");
 @import url("BaseStyles.qss");
-@import url("Includes/../Includes/Test.qss");
-
 
 :theme {
 	--id: "Quasar";
