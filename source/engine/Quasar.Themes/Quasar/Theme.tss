@@ -1,0 +1,7 @@
+@import url("Variables.qss");
+@import url("BaseStyles.qss");
+
+:theme {
+	--id: "Quasar"
+	--name: "Quasar's default theme";
+}

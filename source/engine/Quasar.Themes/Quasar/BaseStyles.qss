@@ -1,0 +1,104 @@
+/* Button */
+
+button {
+    background: url("Button.png");
+    background-color: var(--Color);
+    background-slicing: 4px;
+    color: var(--Color);
+    padding: var(--Padding);
+    horizontal-alignment: center;
+    vertical-alignment: center;
+}
+
+button:disabled {
+    background-color: var(--Color-Disabled);
+    color: var(--Color-Disabled);
+}
+
+button:hover {
+    background: url("ButtonHover.png");
+    color: var(--Color-Highlighted);
+}
+
+button:active {
+    background: url("ButtonActive.png");
+    color: var(--Color-Inverted);
+}
+
+/* Linear Progress Bar */
+
+linear-progress-bar {
+    background: url("LinearProgressBar.png");
+    background-color: var(--Color-Inverted);
+    horizontal-alignment: stretched;
+    min-height: 8px;
+    width: 100%;
+}
+
+.linear-progress-bar-indicator {
+    background: url("LinearProgressBar.png");
+    background-color: var(--Color);
+    horizontal-alignment: stretched;
+    min-height: 8px;
+    width: 100%;
+}
+
+/* Horizontal Line */
+horizontal-line {
+    background: url("HorizontalLine.png");
+    background-color: var(--Color);
+    horizontal-alignment: stretched;
+    min-height: 8px;
+    width: 100%;
+}
+
+/* Label */
+label {
+    font-family: var(--Font-Family);
+    font-size: var(--Font-Size);
+    color: var(--Color);
+}
+
+/* Visual Element */
+visual-element {
+    //background: url("Border.png");
+    //background-color: Color.White;
+    //background-slicing: 1px;
+}
+
+/* View */
+
+.scene-view {
+    position: absolute;
+}
+
+/* Basic Styles */
+.spacer {
+    height: var(--Spacer);  
+}
+
+.spacer-big {
+    height: var(--Spacer-Big);  
+}
+
+.small {
+    font-size: var(--Font-Size-Small);
+}
+
+.big {
+    font-size: var(--Font-Size-Big);
+}
+
+.huge {
+    font-size: var(--Font-Size-Huge);
+}
+
+.highlighted {
+    font-style: bold;
+    color: var(--Color-Highlighted);
+}
+
+.hidden {
+    display: none;
+    visibility: hidden;
+}

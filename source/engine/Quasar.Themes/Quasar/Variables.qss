@@ -1,0 +1,19 @@
+:root {
+	--Font-Family: "Conthrax";
+
+	--Font-Size: 12px; 
+	--Font-Size-Small: 9px; 
+	--Font-Size-Big: 15px; 
+	--Font-Size-Huge: 18px; 
+
+	--Color: rgb(128, 224, 255);
+	--Color-Highlighted: rgb(255, 255, 255);
+	--Color-Disabled: rgb(176, 192, 208);
+	--Color-Inverted: rgb(0, 36, 64);
+
+	--Spacer: 8px;
+
+	--Padding: 12px 16px 12px 16px;
+
+	--Spacer-Big: 16px;
+}
