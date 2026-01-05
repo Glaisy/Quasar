@@ -8,11 +8,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		AssemblyInfo.shared.cs = AssemblyInfo.shared.cs
 		..\AssemblyInfo.Suppressions.shared.cs = ..\AssemblyInfo.Suppressions.shared.cs
 		..\LICENSE.txt = ..\LICENSE.txt
+		Pack.cmd = Pack.cmd
 		Quasar.sln.licenseheader = Quasar.sln.licenseheader
 		..\stylecop.json = ..\stylecop.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quasar", "Quasar\Quasar.csproj", "{C50CA4DE-28A1-4CA5-B166-C1B511660B32}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E369EBAA-8462-426D-89CE-3C64496D2A90} = {E369EBAA-8462-426D-89CE-3C64496D2A90}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{AF553DFE-086A-4EA9-B0AC-5C1A0E90686A}"
 EndProject
@@ -37,6 +41,15 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{2F8B5C30-BAA1-4756-8E05-C736EA5A50BA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quasar.FontGenerator", "..\tools\Quasar.FontGenerator\Quasar.FontGenerator.csproj", "{0749FA41-913F-40BC-8B53-285638994275}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{95555678-1647-46C4-BAE0-BD73EC96702E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quasar.Themes", "Quasar.Themes\Quasar.Themes.csproj", "{30F28B29-3C35-48AA-816D-56DD31CE8252}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quasar.Assets", "Quasar.Assets\Quasar.Assets.csproj", "{E369EBAA-8462-426D-89CE-3C64496D2A90}"
+	ProjectSection(ProjectDependencies) = postProject
+		{30F28B29-3C35-48AA-816D-56DD31CE8252} = {30F28B29-3C35-48AA-816D-56DD31CE8252}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,6 +97,14 @@ Global
 		{0749FA41-913F-40BC-8B53-285638994275}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0749FA41-913F-40BC-8B53-285638994275}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0749FA41-913F-40BC-8B53-285638994275}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30F28B29-3C35-48AA-816D-56DD31CE8252}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30F28B29-3C35-48AA-816D-56DD31CE8252}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30F28B29-3C35-48AA-816D-56DD31CE8252}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30F28B29-3C35-48AA-816D-56DD31CE8252}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E369EBAA-8462-426D-89CE-3C64496D2A90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E369EBAA-8462-426D-89CE-3C64496D2A90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E369EBAA-8462-426D-89CE-3C64496D2A90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E369EBAA-8462-426D-89CE-3C64496D2A90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,6 +116,8 @@ Global
 		{836DE2BE-E30B-7107-FD28-415BE1436C77} = {AF553DFE-086A-4EA9-B0AC-5C1A0E90686A}
 		{8784CB1D-92AC-8817-CF13-2B1616BA83AE} = {AF553DFE-086A-4EA9-B0AC-5C1A0E90686A}
 		{0749FA41-913F-40BC-8B53-285638994275} = {2F8B5C30-BAA1-4756-8E05-C736EA5A50BA}
+		{30F28B29-3C35-48AA-816D-56DD31CE8252} = {95555678-1647-46C4-BAE0-BD73EC96702E}
+		{E369EBAA-8462-426D-89CE-3C64496D2A90} = {95555678-1647-46C4-BAE0-BD73EC96702E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {247CF104-E746-4005-B8E0-BDD2BDA113D2}
