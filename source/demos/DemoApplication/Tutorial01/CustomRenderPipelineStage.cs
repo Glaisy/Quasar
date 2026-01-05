@@ -49,21 +49,21 @@ namespace DemoApplication.Tutorial01
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomRenderPipelineStage" /> class.
         /// </summary>
+        /// <param name="context">The context.</param>
         /// <param name="proceduralMeshGenerator">The procedural mesh generator.</param>
         /// <param name="timeProvider">The time provider.</param>
         /// <param name="renderingStatisticsProvider">The rendering statistics provider.</param>
-        /// <param name="loggerFactory">The logger factory.</param>
         internal CustomRenderPipelineStage(
+            IQuasarContext context,
             IProceduralMeshGenerator proceduralMeshGenerator,
             ITimeProvider timeProvider,
-            IProfilerDataProvider<IRenderingStatistics> renderingStatisticsProvider,
-            ILoggerFactory loggerFactory)
+            IProfilerDataProvider<IRenderingStatistics> renderingStatisticsProvider)
         {
             this.proceduralMeshGenerator = proceduralMeshGenerator;
             this.timeProvider = timeProvider;
             this.renderingStatisticsProvider = renderingStatisticsProvider;
 
-            logger = loggerFactory.Create<CustomRenderPipelineStage>();
+            logger = context.Logger;
         }
 
 

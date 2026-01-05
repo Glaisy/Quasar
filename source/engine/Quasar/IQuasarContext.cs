@@ -12,6 +12,7 @@
 using Quasar.Utilities;
 
 using Space.Core;
+using Space.Core.Diagnostics;
 
 namespace Quasar
 {
@@ -24,6 +25,11 @@ namespace Quasar
         /// Gets the environment information.
         /// </summary>
         IEnvironmentInformation EnvironmentInformation { get; }
+
+        /// <summary>
+        /// Gets the default Quasar engine logger.
+        /// </summary>
+        ILogger Logger { get; }
 
         /// <summary>
         /// Gets the resource provider for the built-in engine resources.

@@ -15,7 +15,6 @@ using Quasar.Assets;
 using Quasar.Assets.Importers;
 
 using Space.Core.DependencyInjection;
-using Space.Core.Diagnostics;
 
 namespace Quasar.UI.Internals.Importers
 {
@@ -33,12 +32,12 @@ namespace Quasar.UI.Internals.Importers
         /// <summary>
         /// Initializes a new instance of the <see cref="CursorAssetImporter" /> class.
         /// </summary>
-        /// <param name="loggerFactory">The logger factory.</param>
+        /// <param name="context">The context.</param>
         /// <param name="cursorRepository">The cursor repository.</param>
         public CursorAssetImporter(
-            ILoggerFactory loggerFactory,
+            IQuasarContext context,
             ICursorRepository cursorRepository)
-            : base(loggerFactory, AssetConstants.Directories.Cursors)
+            : base(context, AssetConstants.Directories.Cursors)
         {
             this.cursorRepository = cursorRepository;
         }

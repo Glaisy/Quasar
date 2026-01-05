@@ -36,14 +36,16 @@ namespace Quasar.Physics.Pipelines.Internals
         /// <summary>
         /// Initializes a new instance of the <see cref="PhysicsPipeline" /> class.
         /// </summary>
+        /// <param name="context">The context.</param>
         /// <param name="physicsContext">The physics context.</param>
         /// <param name="serviceProvider">The service provider.</param>
         /// <param name="timeService">The time service.</param>
         public PhysicsPipeline(
+            IQuasarContext context,
             IPhysicsContext physicsContext,
             IServiceProvider serviceProvider,
             TimeService timeService)
-            : base(serviceProvider)
+            : base(context, serviceProvider)
         {
             this.timeService = timeService;
 

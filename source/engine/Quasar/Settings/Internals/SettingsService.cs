@@ -57,19 +57,19 @@ namespace Quasar.Settings.Internals
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsService" /> class.
         /// </summary>
+        /// <param name="context">The context.</param>
         /// <param name="fileSystemHelper">The file system helper.</param>
         /// <param name="environmentInformation">The environment information.</param>
         /// <param name="serviceProvider">The service provider.</param>
-        /// <param name="loggerFactory">The logger factory.</param>
         public SettingsService(
+            IQuasarContext context,
             IFileSystemHelper fileSystemHelper,
             IEnvironmentInformation environmentInformation,
-            IServiceProvider serviceProvider,
-            ILoggerFactory loggerFactory)
+            IServiceProvider serviceProvider)
         {
             this.fileSystemHelper = fileSystemHelper;
 
-            logger = loggerFactory.Create<SettingsService>();
+            logger = context.Logger;
 
             var settingsServiceConfiguration = serviceProvider.GetService<SettingsServiceConfiguration>();
             settingsFilePath = GetSettingsFilePath(fileSystemHelper, environmentInformation, settingsServiceConfiguration);

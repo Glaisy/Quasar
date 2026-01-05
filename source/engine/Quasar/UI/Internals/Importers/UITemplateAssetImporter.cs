@@ -16,7 +16,6 @@ using Quasar.Assets.Importers;
 using Quasar.UI.Templates.Internals;
 
 using Space.Core.DependencyInjection;
-using Space.Core.Diagnostics;
 
 namespace Quasar.UI.Internals.Importers
 {
@@ -33,12 +32,12 @@ namespace Quasar.UI.Internals.Importers
         /// <summary>
         /// Initializes a new instance of the <see cref="UITemplateAssetImporter" /> class.
         /// </summary>
-        /// <param name="loggerFactory">The logger factory.</param>
+        /// <param name="context">The context.</param>
         /// <param name="templateRepository">The UI template repository.</param>
         public UITemplateAssetImporter(
-            ILoggerFactory loggerFactory,
+            IQuasarContext context,
             IUITemplateRepository templateRepository)
-            : base(loggerFactory, AssetConstants.Directories.UITemplates)
+            : base(context, AssetConstants.Directories.UITemplates)
         {
             this.templateRepository = templateRepository;
         }

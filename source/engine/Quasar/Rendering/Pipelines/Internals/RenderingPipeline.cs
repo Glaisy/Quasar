@@ -43,6 +43,7 @@ namespace Quasar.Rendering.Pipelines.Internals
         /// <summary>
         /// Initializes a new instance of the <see cref="RenderingPipeline" /> class.
         /// </summary>
+        /// <param name="context">The context.</param>
         /// <param name="applicationWindow">The application window.</param>
         /// <param name="renderingContext">The rendering context.</param>
         /// <param name="renderingProfiler">The rendering profiler.</param>
@@ -50,13 +51,14 @@ namespace Quasar.Rendering.Pipelines.Internals
         /// <param name="serviceProvider">The service provider.</param>
         /// <param name="graphicsContextFactory">The graphics context factory.</param>
         internal RenderingPipeline(
+            IQuasarContext context,
             IApplicationWindow applicationWindow,
             IRenderingContext renderingContext,
             IRenderingProfiler renderingProfiler,
             IServiceLoader serviceLoader,
             IServiceProvider serviceProvider,
             GraphicsContextFactory graphicsContextFactory)
-            : base(serviceProvider)
+            : base(context, serviceProvider)
         {
             this.applicationWindow = applicationWindow;
             this.renderingProfiler = renderingProfiler;

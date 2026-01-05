@@ -47,18 +47,18 @@ namespace Quasar.OpenGL.Graphics.Factories
         /// <summary>
         /// Initializes a new instance of the <see cref="GLTextureFactory" /> class.
         /// </summary>
+        /// <param name="context">The context.</param>
         /// <param name="dispatcher">The dispatcher.</param>
         /// <param name="imageDataLoader">The image data loader.</param>
-        /// <param name="loggerFactory">The logger factory.</param>
         public unsafe GLTextureFactory(
+            IQuasarContext context,
             IDispatcher dispatcher,
-            IImageDataLoader imageDataLoader,
-            ILoggerFactory loggerFactory)
+            IImageDataLoader imageDataLoader)
         {
             this.dispatcher = dispatcher;
             this.imageDataLoader = imageDataLoader;
 
-            logger = loggerFactory.Create<GLTextureFactory>();
+            logger = context.Logger;
 
             // get max level of anisotropic filtering
             fixed (float* ptrMaxAnisotropy = &maxAnisotropy)

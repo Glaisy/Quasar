@@ -60,16 +60,16 @@ namespace Quasar.OpenGL.Graphics.Factories
         /// <summary>
         /// Initializes a new instance of the <see cref="GLShaderFactory" /> class.
         /// </summary>
+        /// <param name="context">The context.</param>
         /// <param name="resourceProviderFactory">The resource provider factory.</param>
-        /// <param name="loggerFactory">The logger factory.</param>
         public GLShaderFactory(
-            IResourceProviderFactory resourceProviderFactory,
-            ILoggerFactory loggerFactory)
+            IQuasarContext context,
+            IResourceProviderFactory resourceProviderFactory)
         {
             builtInShaderResourceProvider = resourceProviderFactory
                 .Create(Assembly.GetExecutingAssembly(), BuiltInShaderResourcePath);
 
-            logger = loggerFactory.Create<GLShaderFactory>();
+            logger = context.Logger;
         }
 
 

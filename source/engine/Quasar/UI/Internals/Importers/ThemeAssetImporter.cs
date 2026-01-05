@@ -16,7 +16,6 @@ using Quasar.Assets.Importers;
 using Quasar.UI.VisualElements.Themes;
 
 using Space.Core.DependencyInjection;
-using Space.Core.Diagnostics;
 
 namespace Quasar.UI.Internals.Importers
 {
@@ -33,12 +32,12 @@ namespace Quasar.UI.Internals.Importers
         /// <summary>
         /// Initializes a new instance of the <see cref="ThemeAssetImporter" /> class.
         /// </summary>
-        /// <param name="loggerFactory">The logger factory.</param>
+        /// <param name="context">The context.</param>
         /// <param name="themeService">The theme service.</param>
         public ThemeAssetImporter(
-            ILoggerFactory loggerFactory,
+            IQuasarContext context,
             IThemeService themeService)
-            : base(loggerFactory, AssetConstants.Directories.Themes)
+            : base(context, AssetConstants.Directories.Themes)
         {
             this.themeService = themeService;
         }

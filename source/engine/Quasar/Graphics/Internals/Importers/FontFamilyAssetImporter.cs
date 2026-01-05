@@ -15,7 +15,6 @@ using Quasar.Assets;
 using Quasar.Assets.Importers;
 
 using Space.Core.DependencyInjection;
-using Space.Core.Diagnostics;
 
 namespace Quasar.Graphics.Internals.Importers
 {
@@ -32,12 +31,12 @@ namespace Quasar.Graphics.Internals.Importers
         /// <summary>
         /// Initializes a new instance of the <see cref="FontFamilyAssetImporter" /> class.
         /// </summary>
-        /// <param name="loggerFactory">The logger factory.</param>
+        /// <param name="context">The context.</param>
         /// <param name="fontFamilyRepository">The font family repository.</param>
         public FontFamilyAssetImporter(
-            ILoggerFactory loggerFactory,
+            IQuasarContext context,
             IFontFamilyRepository fontFamilyRepository)
-            : base(loggerFactory, AssetConstants.Directories.FontFamilies)
+            : base(context, AssetConstants.Directories.FontFamilies)
         {
             this.fontFamilyRepository = fontFamilyRepository;
         }

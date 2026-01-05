@@ -36,21 +36,21 @@ namespace Quasar.UI.VisualElements.Styles.Internals
         /// <summary>
         /// Initializes a new instance of the <see cref="StyleBuilder" /> class.
         /// </summary>
+        /// <param name="context">The context.</param>
         /// <param name="valueParser">The value parser.</param>
         /// <param name="textureRepository">The texture repository.</param>
         /// <param name="pathResolver">The path resolver.</param>
-        /// <param name="loggerFactory">The logger factory.</param>
         public StyleBuilder(
+            IQuasarContext context,
             IStyleSheetValueParser valueParser,
             ITextureRepository textureRepository,
-            IPathResolver pathResolver,
-            ILoggerFactory loggerFactory)
+            IPathResolver pathResolver)
         {
             this.valueParser = valueParser;
             this.textureRepository = textureRepository;
             this.pathResolver = pathResolver;
 
-            logger = loggerFactory.Create<StyleBorder>();
+            logger = context.Logger;
         }
 
 

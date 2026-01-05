@@ -45,12 +45,12 @@ namespace Quasar.Assets.Internals
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AssetPackage"/> class.
+        /// Initializes a new instance of the <see cref="AssetPackage" /> class.
         /// </summary>
-        /// <param name="loggerFactory">The logger factory.</param>
-        public AssetPackage(ILoggerFactory loggerFactory)
+        /// <param name="context">The context.</param>
+        public AssetPackage(IQuasarContext context)
         {
-            logger = loggerFactory.Create<AssetPackage>();
+            logger = context.Logger;
         }
 
         /// <inheritdoc/>

@@ -16,7 +16,6 @@ using Quasar.Assets;
 using Quasar.Assets.Importers;
 
 using Space.Core.DependencyInjection;
-using Space.Core.Diagnostics;
 using Space.Core.Globalization;
 
 namespace Quasar.Globalization.Internals.Importers
@@ -34,12 +33,12 @@ namespace Quasar.Globalization.Internals.Importers
         /// <summary>
         /// Initializes a new instance of the <see cref="TranslationAssetImporter" /> class.
         /// </summary>
-        /// <param name="loggerFactory">The logger factory.</param>
+        /// <param name="context">The context.</param>
         /// <param name="globalizationService">The globalization service.</param>
         public TranslationAssetImporter(
-            ILoggerFactory loggerFactory,
+            IQuasarContext context,
             IGlobalizationService globalizationService)
-            : base(loggerFactory, AssetConstants.Directories.Translations)
+            : base(context, AssetConstants.Directories.Translations)
         {
             this.globalizationService = globalizationService;
         }

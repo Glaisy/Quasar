@@ -15,7 +15,6 @@ using Quasar.Assets;
 using Quasar.Assets.Importers;
 
 using Space.Core.DependencyInjection;
-using Space.Core.Diagnostics;
 
 namespace Quasar.Graphics.Internals.Importers
 {
@@ -33,12 +32,12 @@ namespace Quasar.Graphics.Internals.Importers
         /// <summary>
         /// Initializes a new instance of the <see cref="TextureAssetImporter" /> class.
         /// </summary>
-        /// <param name="loggerFactory">The logger factory.</param>
+        /// <param name="context">The context.</param>
         /// <param name="textureRepository">The texture repository.</param>
         public TextureAssetImporter(
-            ILoggerFactory loggerFactory,
+            IQuasarContext context,
             ITextureRepository textureRepository)
-            : base(loggerFactory, AssetConstants.Directories.Textures)
+            : base(context, AssetConstants.Directories.Textures)
         {
             this.textureRepository = textureRepository;
         }

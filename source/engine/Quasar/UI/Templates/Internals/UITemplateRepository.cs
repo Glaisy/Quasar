@@ -36,7 +36,7 @@ namespace Quasar.UI.Templates.Internals
         private const string NamespacePrefix = "xmlns:";
 
 
-        private readonly IUIContext context;
+        private readonly IUIContext uiContext;
         private readonly ILogger logger;
         private readonly VisualElementFactory visualElementFactory;
         private readonly Dictionary<string, Type> resolvedVisualElementTypes = new Dictionary<string, Type>();
@@ -45,19 +45,19 @@ namespace Quasar.UI.Templates.Internals
         /// <summary>
         /// Initializes a new instance of the <see cref="UITemplateRepository" /> class.
         /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="uiContext">The UI context.</param>
         /// <param name="visualElementFactory">The visual element factory.</param>
-        /// <param name="context">The UI context.</param>
-        /// <param name="loggerFactory">The logger factory.</param>
         public UITemplateRepository(
-            VisualElementFactory visualElementFactory,
-            IUIContext context,
-            ILoggerFactory loggerFactory)
+            IQuasarContext context,
+            IUIContext uiContext,
+            VisualElementFactory visualElementFactory)
             : base(true)
         {
             this.visualElementFactory = visualElementFactory;
-            this.context = context;
+            this.uiContext = uiContext;
 
-            logger = loggerFactory.Create<UITemplateRepository>();
+            logger = context.Logger;
         }
 
 
@@ -66,7 +66,7 @@ namespace Quasar.UI.Templates.Internals
         {
             ArgumentNullException.ThrowIfNull(stream, nameof(stream));
             ArgumentException.ThrowIfNullOrEmpty(templateId, nameof(templateId));
-            context.Validate();
+            uiContext.Validate();
 
             try
             {

@@ -15,6 +15,7 @@ using Quasar.Utilities;
 
 using Space.Core;
 using Space.Core.DependencyInjection;
+using Space.Core.Diagnostics;
 
 namespace Quasar
 {
@@ -29,21 +30,28 @@ namespace Quasar
         private const string BaseResourcePath = $"./Resources";
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="QuasarContext"/> class.
+        /// Initializes a new instance of the <see cref="QuasarContext" /> class.
         /// </summary>
         /// <param name="environmentInformation">The environment information.</param>
         /// <param name="resourceProviderFactory">The resource provider factory.</param>
+        /// <param name="loggerFactory">The logger factory.</param>
         public QuasarContext(
             IEnvironmentInformation environmentInformation,
-            IResourceProviderFactory resourceProviderFactory)
+            IResourceProviderFactory resourceProviderFactory,
+            ILoggerFactory loggerFactory)
         {
             EnvironmentInformation = environmentInformation;
             ResourceProvider = resourceProviderFactory.Create(Assembly.GetExecutingAssembly(), BaseResourcePath);
+
+            Logger = loggerFactory.Create(nameof(Quasar));
         }
 
 
         /// <inheritdoc/>
         public IEnvironmentInformation EnvironmentInformation { get; }
+
+        /// <inheritdoc/>
+        public ILogger Logger { get; }
 
         /// <inheritdoc/>
         public IResourceProvider ResourceProvider { get; }

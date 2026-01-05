@@ -26,9 +26,12 @@ namespace Quasar.Pipelines.Internals
         /// <summary>
         /// Initializes a new instance of the <see cref="UpdatePipeline" /> class.
         /// </summary>
+        /// <param name="context">The context.</param>
         /// <param name="serviceProvider">The service provider.</param>
-        internal UpdatePipeline(IServiceProvider serviceProvider)
-            : base(serviceProvider)
+        internal UpdatePipeline(
+            IQuasarContext context,
+            IServiceProvider serviceProvider)
+            : base(context, serviceProvider)
         {
         }
 

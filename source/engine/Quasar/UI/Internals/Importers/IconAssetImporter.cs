@@ -15,7 +15,6 @@ using Quasar.Assets;
 using Quasar.Assets.Importers;
 
 using Space.Core.DependencyInjection;
-using Space.Core.Diagnostics;
 
 namespace Quasar.UI.Internals.Importers
 {
@@ -31,14 +30,14 @@ namespace Quasar.UI.Internals.Importers
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IconAssetImporter"/> class.
+        /// Initializes a new instance of the <see cref="IconAssetImporter" /> class.
         /// </summary>
-        /// <param name="loggerFactory">The logger factory.</param>
+        /// <param name="context">The context.</param>
         /// <param name="iconRepository">The icon repository.</param>
         public IconAssetImporter(
-            ILoggerFactory loggerFactory,
+            IQuasarContext context,
             IIconRepository iconRepository)
-            : base(loggerFactory, AssetConstants.Directories.Icons)
+            : base(context, AssetConstants.Directories.Icons)
         {
             this.iconRepository = iconRepository;
         }

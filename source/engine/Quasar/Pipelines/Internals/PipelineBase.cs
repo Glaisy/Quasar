@@ -38,8 +38,11 @@ namespace Quasar.Pipelines.Internals
         /// <summary>
         /// Initializes a new instance of the <see cref="PipelineBase{TStage,TContext}" /> class.
         /// </summary>
+        /// <param name="context">The context.</param>
         /// <param name="serviceProvider">The service provider.</param>
-        protected PipelineBase(IServiceProvider serviceProvider)
+        protected PipelineBase(
+            IQuasarContext context,
+            IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
 
@@ -47,8 +50,7 @@ namespace Quasar.Pipelines.Internals
 
             SettingsProvider = serviceProvider.GetRequiredService<ISettingsProvider>();
 
-            var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
-            Logger = loggerFactory.Create(Name);
+            Logger = context.Logger;
         }
 
 

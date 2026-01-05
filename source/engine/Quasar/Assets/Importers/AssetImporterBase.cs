@@ -25,14 +25,14 @@ namespace Quasar.Assets.Importers
         /// <summary>
         /// Initializes a new instance of the <see cref="AssetImporterBase" /> class.
         /// </summary>
-        /// <param name="loggerFactory">The logger factory.</param>
+        /// <param name="context">The context.</param>
         /// <param name="directory">The asset directory name.</param>
         protected AssetImporterBase(
-            ILoggerFactory loggerFactory,
+            IQuasarContext context,
             string directory)
         {
+            Logger = context.Logger;
             Directory = directory;
-            Logger = loggerFactory.Create(GetType());
         }
 
 
