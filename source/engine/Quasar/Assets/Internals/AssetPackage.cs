@@ -161,16 +161,26 @@ namespace Quasar.Assets.Internals
                 return;
             }
 
-            var directoryIndex = zipEntry.FullName.IndexOf(context.ResourceProvider.PathResolver.PathSeparator);
+            var fullId = zipEntry.FullName;
+            var directoryIndex = fullId.IndexOf(context.ResourceProvider.PathResolver.PathSeparator);
             if (directoryIndex <= 1)
             {
                 logger.Warning($"Unable to determine asset type for '{zipEntry.Name}'. Skipped.");
                 return;
             }
 
-            var directoryName = zipEntry.FullName.Substring(0, directoryIndex);
-            var assetId = zipEntry.FullName.Substring(directoryIndex + 1);
-            assetId = Path.GetFileNameWithoutExtension(assetId);
+            var extensionIndex = fullId.LastIndexOf(context.ResourceProvider.PathResolver.ExtensionSeparator);
+            if (extensionIndex < 0)
+            {
+                extensionIndex = fullId.Length;
+            }
+
+
+            var directoryName = fullId.Substring(0, directoryIndex);
+            directoryIndex++;
+
+            var assetIdLength = extensionIndex - directoryIndex;
+            var assetId = zipEntry.FullName.Substring(directoryIndex, assetIdLength);
 
             var assetImporter = GetAssetImporter(directoryName);
             if (assetImporter == null)

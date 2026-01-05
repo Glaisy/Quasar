@@ -15,33 +15,7 @@
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DefineConstants>$(DefineConstants);QUASAR_BOUNDS_CHECKS</DefineConstants>
     </PropertyGroup>
-
-    <ItemGroup>
-      <Compile Remove="Resources\Cubemaps\**" />
-      <Compile Remove="Resources\FontFamilies\**" />
-      <Compile Remove="Resources\Textures\**" />
-      <EmbeddedResource Remove="Resources\Cubemaps\**" />
-      <EmbeddedResource Remove="Resources\FontFamilies\**" />
-      <EmbeddedResource Remove="Resources\Textures\**" />
-      <None Remove="Resources\Cubemaps\**" />
-      <None Remove="Resources\FontFamilies\**" />
-      <None Remove="Resources\Textures\**" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Remove="Resources\Quasar.assets" />
-        <None Remove="Resources\Themes\Quasar\BaseStyles.qss" />
-        <None Remove="Resources\Themes\Quasar\Textures\Border.png" />
-        <None Remove="Resources\Themes\Quasar\Textures\Button.png" />
-        <None Remove="Resources\Themes\Quasar\Textures\ButtonActive.png" />
-        <None Remove="Resources\Themes\Quasar\Textures\ButtonHover.png" />
-        <None Remove="Resources\Themes\Quasar\Textures\HorizontalLine.png" />
-        <None Remove="Resources\Themes\Quasar\Textures\LinearProgressBar.png" />
-        <None Remove="Resources\Themes\Quasar\Textures\Panel.png" />
-        <None Remove="Resources\Themes\Quasar\Theme.tss" />
-        <None Remove="Resources\Themes\Quasar\Variables.qss" />
-    </ItemGroup>
-
+    
     <ItemGroup>
         <Compile Include="..\..\AssemblyInfo.Suppressions.shared.cs" Link="Properties\AssemblyInfo.Suppressions.shared.cs" />
         <Compile Include="..\..\AssemblyInfo.shared.cs" Link="Properties\AssemblyInfo.shared.cs" />
@@ -52,17 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Resources\Quasar.assets" />
-        <EmbeddedResource Include="Resources\Themes\Quasar\BaseStyles.qss" />
-        <EmbeddedResource Include="Resources\Themes\Quasar\Textures\Border.png" />
-        <EmbeddedResource Include="Resources\Themes\Quasar\Textures\Button.png" />
-        <EmbeddedResource Include="Resources\Themes\Quasar\Textures\ButtonActive.png" />
-        <EmbeddedResource Include="Resources\Themes\Quasar\Textures\ButtonHover.png" />
-        <EmbeddedResource Include="Resources\Themes\Quasar\Textures\HorizontalLine.png" />
-        <EmbeddedResource Include="Resources\Themes\Quasar\Textures\LinearProgressBar.png" />
-        <EmbeddedResource Include="Resources\Themes\Quasar\Textures\Panel.png" />
-        <EmbeddedResource Include="Resources\Themes\Quasar\Theme.tss" />
-        <EmbeddedResource Include="Resources\Themes\Quasar\Variables.qss" />
+        <EmbeddedResource Include="Resources\Quasar.assets"  />
     </ItemGroup>
 
     <ItemGroup>

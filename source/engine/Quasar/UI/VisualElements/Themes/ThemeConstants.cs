@@ -27,9 +27,14 @@ namespace Quasar.UI.VisualElements.Themes
         public const string DefaultId = nameof(Quasar);
 
         /// <summary>
+        /// The identifier variable.
+        /// </summary>
+        public const string IdVariable = "--id";
+
+        /// <summary>
         /// The (display) name variable.
         /// </summary>
-        public const string NameVariable = "--Name";
+        public const string NameVariable = "--name";
 
         /// <summary>
         /// The textures directory path relative to the theme's base directory.
@@ -40,5 +45,10 @@ namespace Quasar.UI.VisualElements.Themes
         /// The theme texture identifier format string. {0}: theme id, {1}: texture name.
         /// </summary>
         public const string TextureNameFormatString = "Themes/{0}/{1}";
+
+        /// <summary>
+        /// The root style sheet path in the theme pack.
+        /// </summary>
+        public const string ThemeRootStyleSheetPath = "Theme.tss";
     }
 }

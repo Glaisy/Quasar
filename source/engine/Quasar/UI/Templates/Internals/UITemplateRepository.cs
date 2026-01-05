@@ -52,6 +52,7 @@ namespace Quasar.UI.Templates.Internals
             VisualElementFactory visualElementFactory,
             IUIContext context,
             ILoggerFactory loggerFactory)
+            : base(true)
         {
             this.visualElementFactory = visualElementFactory;
             this.context = context;

@@ -10,6 +10,8 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +21,7 @@ using NUnit.Framework;
 using Quasar.UI.VisualElements.Styles;
 using Quasar.UI.VisualElements.Styles.Internals;
 using Quasar.UI.VisualElements.Styles.Internals.Parsers;
+using Quasar.UI.VisualElements.Themes;
 using Quasar.Utilities;
 
 using Space.Core.DependencyInjection;
@@ -87,8 +90,9 @@ namespace Quasar.Tests.UI.VisualElements.Styles.Parsers
             }
         };
 
+        private static readonly Dictionary<string, string> testStyleSheets;
 
-        private static readonly IResourceProvider resourceProvider;
+
         private static readonly IServiceProvider serviceProvider;
 
 
@@ -98,8 +102,24 @@ namespace Quasar.Tests.UI.VisualElements.Styles.Parsers
             var serviceLoader = serviceProvider.GetRequiredService<IServiceLoader>();
             serviceLoader.AddExportedServices(typeof(IStringOperationContext).Assembly);
             serviceLoader.AddExportedServices(typeof(DynamicServiceProvider).Assembly);
+
             var resourceProviderFactory = serviceProvider.GetRequiredService<IResourceProviderFactory>();
-            resourceProvider = resourceProviderFactory.Create(Assembly.GetExecutingAssembly(), "Quasar/Tests/Resources");
+            var resourceProvider = resourceProviderFactory.Create(Assembly.GetExecutingAssembly(), "Quasar/Tests/Resources/Styles");
+            testStyleSheets = new Dictionary<string, string>();
+            LoadStyleSheet(resourceProvider, ThemeConstants.ThemeRootStyleSheetPath, testStyleSheets);
+            LoadStyleSheet(resourceProvider, "Styles.qss", testStyleSheets);
+            LoadStyleSheet(resourceProvider, "Includes/Variables.qss", testStyleSheets);
+            LoadStyleSheet(resourceProvider, "Includes/ImportDir/Dummy.qss", testStyleSheets);
+            LoadStyleSheet(resourceProvider, "Includes/ImportDir/Dummy2.qss", testStyleSheets);
+        }
+
+        private static void LoadStyleSheet(IResourceProvider resourceProvider, string path, Dictionary<string, string> testStyleSheets)
+        {
+            using (var reader = new StreamReader(resourceProvider.GetResourceStream(path), leaveOpen: false))
+            {
+                var stylesheet = reader.ReadToEnd();
+                testStyleSheets.Add(path, stylesheet);
+            }
         }
 
         [Test]
@@ -109,9 +129,9 @@ namespace Quasar.Tests.UI.VisualElements.Styles.Parsers
             var sut = CreateSut();
 
             // act & assert
-            Assert.Throws<ArgumentNullException>(() => sut.Parse(null, resourceProvider));
-            Assert.Throws<ArgumentOutOfRangeException>(() => sut.Parse(String.Empty, resourceProvider));
-            Assert.Throws<ArgumentNullException>(() => sut.Parse("text", null));
+            Assert.Throws<ArgumentNullException>(() => sut.Parse(null, "something"));
+            Assert.Throws<ArgumentNullException>(() => sut.Parse(new Dictionary<string, string>(), null));
+            Assert.Throws<ArgumentOutOfRangeException>(() => sut.Parse(new Dictionary<string, string>(), String.Empty));
         }
 
         [Test]
@@ -122,7 +142,7 @@ namespace Quasar.Tests.UI.VisualElements.Styles.Parsers
             var sut = CreateSut();
 
             // act
-            var result = sut.Parse(path, resourceProvider);
+            var result = sut.Parse(testStyleSheets, path);
 
             // assert
             Assert.That(result, Is.Not.Null);
@@ -206,9 +226,9 @@ namespace Quasar.Tests.UI.VisualElements.Styles.Parsers
 
             return
             [
-                new object[] { "Styles/Includes/Variables.qss", variablesResult },
-                new object[] { "Styles/Styles.qss", stylesResult },
-                new object[] { "Styles/Theme.tss", combinedThemeResult }
+                new object[] { "Includes/Variables.qss", variablesResult },
+                new object[] { "Styles.qss", stylesResult },
+                new object[] { ThemeConstants.ThemeRootStyleSheetPath, combinedThemeResult }
             ];
         }
     }

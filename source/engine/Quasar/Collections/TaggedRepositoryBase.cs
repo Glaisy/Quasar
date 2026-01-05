@@ -27,6 +27,16 @@ namespace Quasar.Collections
         where TItemImpl : TItem
         where TItem : ITagProvider, IIdentifierProvider<TId>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TaggedRepositoryBase{TId, TItem, TItemImpl}"/> class.
+        /// </summary>
+        /// <param name="allowRecursiveLock">if set to <c>true</c> [allow recursive lock].</param>
+        protected TaggedRepositoryBase(bool allowRecursiveLock = false)
+            : base(allowRecursiveLock)
+        {
+        }
+
+
         /// <inheritdoc/>
         public void DeleteByTag(string tag)
         {

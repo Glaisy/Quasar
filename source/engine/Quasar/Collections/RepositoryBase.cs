@@ -31,6 +31,19 @@ namespace Quasar.Collections
         private readonly Dictionary<TId, TItemImpl> items = new Dictionary<TId, TItemImpl>();
 
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RepositoryBase{TId, TItem, TItemImpl}"/> class.
+        /// </summary>
+        /// <param name="allowRecursiveLock">if set to <c>true</c> [allow recursive lock].</param>
+        protected RepositoryBase(bool allowRecursiveLock = false)
+        {
+            RepositoryLock = new ReaderWriterLockSlim(
+                allowRecursiveLock ?
+                    LockRecursionPolicy.SupportsRecursion :
+                    LockRecursionPolicy.NoRecursion);
+        }
+
+
         /// <inheritdoc/>
         public int Count => items.Count;
 
@@ -130,7 +143,7 @@ namespace Quasar.Collections
         /// <summary>
         /// The repository's synchronization lock.
         /// </summary>
-        protected readonly ReaderWriterLockSlim RepositoryLock = new ReaderWriterLockSlim();
+        protected readonly ReaderWriterLockSlim RepositoryLock;
 
 
         /// <summary>

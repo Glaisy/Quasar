@@ -9,8 +9,9 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 using Quasar.UI.VisualElements.Styles.Internals.Parsers;
-using Quasar.Utilities;
 
 namespace Quasar.UI.VisualElements.Styles.Internals
 {
@@ -20,14 +21,14 @@ namespace Quasar.UI.VisualElements.Styles.Internals
     internal interface IStyleSheetParser
     {
         /// <summary>
-        /// Parses a style sheet by the specified style sheet resource path and resource provider.
+        /// Parses a style sheet by the specified style sheet table and root identifier.
         /// </summary>
-        /// <param name="path">The resource path.</param>
-        /// <param name="resourceProvider">The resource provider.</param>
+        /// <param name="styleSheets">The style sheets.</param>
+        /// <param name="rootStyleSheetId">The root style sheet identifier.</param>
         /// <returns>
         /// The dictionary of non-parsed attribute sets by selectors.
         /// </returns>
-        StyleTable Parse(string path, IResourceProvider resourceProvider);
+        StyleTable Parse(IReadOnlyDictionary<string, string> styleSheets, string rootStyleSheetId);
 
         /// <summary>
         /// Parses the inline style string to style properties.

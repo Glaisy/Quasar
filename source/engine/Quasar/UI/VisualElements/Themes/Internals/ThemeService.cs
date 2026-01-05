@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 
@@ -60,6 +61,38 @@ namespace Quasar.UI.VisualElements.Themes.Internals
 
 
         /// <inheritdoc/>
+        public ITheme Create(IResourceProvider resourceProvider, string path)
+        {
+            ArgumentNullException.ThrowIfNull(resourceProvider, nameof(resourceProvider));
+            ArgumentException.ThrowIfNullOrEmpty(path, nameof(path));
+
+            Stream stream = null;
+            try
+            {
+                stream = resourceProvider.GetResourceStream(path);
+                if (stream == null)
+                {
+                    throw new UIException($"Theme stream not found for: {path}");
+                }
+
+                return CreateThemeInternal(stream, true);
+            }
+            finally
+            {
+                themeLock.ExitWriteLock();
+                stream?.Dispose();
+            }
+        }
+
+        /// <inheritdoc/>
+        public ITheme Create(Stream stream, bool leaveOpen = false)
+        {
+            ArgumentNullException.ThrowIfNull(stream, nameof(stream));
+
+            return CreateThemeInternal(stream, leaveOpen);
+        }
+
+        /// <inheritdoc/>
         public ITheme Get(string id)
         {
             ArgumentException.ThrowIfNullOrEmpty(id, nameof(id));
@@ -93,40 +126,6 @@ namespace Quasar.UI.VisualElements.Themes.Internals
         }
 
         /// <inheritdoc/>
-        public ITheme Load(string id, string path, IResourceProvider resourceProvider, string name = null)
-        {
-            ArgumentException.ThrowIfNullOrEmpty(id, nameof(id));
-            ArgumentException.ThrowIfNullOrEmpty(path, nameof(path));
-            ArgumentNullException.ThrowIfNull(resourceProvider, nameof(resourceProvider));
-
-            try
-            {
-                themeLock.EnterWriteLock();
-
-                return LoadInternal(id, name, path, resourceProvider);
-            }
-            finally
-            {
-                themeLock.ExitWriteLock();
-            }
-        }
-
-        /// <inheritdoc/>
-        public void LoadBuiltInThemes()
-        {
-            try
-            {
-                themeLock.EnterWriteLock();
-
-                CurrentTheme = LoadInternal(ThemeConstants.DefaultId, null, DefaultThemePath, resourceProvider);
-            }
-            finally
-            {
-                themeLock.ExitWriteLock();
-            }
-        }
-
-        /// <inheritdoc/>
         public void Set(string id)
         {
             ArgumentException.ThrowIfNullOrEmpty(id, nameof(id));
@@ -148,19 +147,42 @@ namespace Quasar.UI.VisualElements.Themes.Internals
             }
         }
 
-
-        private Theme LoadInternal(string id, string name, string path, IResourceProvider resourceProvider)
+        /// <inheritdoc/>
+        public void ValidateBuiltInAssets()
         {
-            // try to load theme from the resource path
-            var theme = themeFactory.Create(id, name, path, resourceProvider, themes);
-            if (theme == null)
+            try
             {
-                return null;
-            }
+                themeLock.EnterWriteLock();
 
-            // add to themes
-            themes.Add(theme.Id, theme);
-            return theme;
+                if (!themes.TryGetValue(ThemeConstants.DefaultId, out var defaultTheme))
+                {
+                    throw new InvalidOperationException($"Unable to resolve the default UI theme: {ThemeConstants.DefaultId}");
+                }
+
+                CurrentTheme = defaultTheme;
+            }
+            finally
+            {
+                themeLock.ExitWriteLock();
+            }
+        }
+
+
+        private Theme CreateThemeInternal(Stream stream, bool leaveOpen)
+        {
+            try
+            {
+                var theme = themeFactory.Create(stream, themes, true);
+                themes.Add(theme.Id, theme);
+                return theme;
+            }
+            finally
+            {
+                if (!leaveOpen)
+                {
+                    stream.Dispose();
+                }
+            }
         }
     }
 }

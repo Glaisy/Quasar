@@ -84,8 +84,8 @@ namespace Quasar.UI.Pipelines
             ViewBase.InitializeStaticServices(ServiceProvider);
             uiElementRenderer.Initalize();
 
-            themeService.LoadBuiltInThemes();
             cursorRepository.ValidateBuiltInAssets();
+            themeService.ValidateBuiltInAssets();
         }
     }
 }

@@ -11,16 +11,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 
 using Quasar.Graphics;
 using Quasar.UI.VisualElements.Styles;
 using Quasar.UI.VisualElements.Styles.Internals;
 using Quasar.UI.VisualElements.Styles.Internals.Parsers;
-using Quasar.Utilities;
 
 using Space.Core;
 using Space.Core.DependencyInjection;
-using Space.Core.Diagnostics;
 
 namespace Quasar.UI.VisualElements.Themes.Internals
 {
@@ -38,9 +38,7 @@ namespace Quasar.UI.VisualElements.Themes.Internals
         private readonly IStyleFactory styleFactory;
         private readonly IStyleBuilder styleBuilder;
         private readonly IStyleSheetParser styleSheetParser;
-        private readonly IStyleSheetValueParser valueParser;
         private readonly ITextureRepository textureRepository;
-        private readonly ILogger logger;
 
 
         /// <summary>
@@ -49,68 +47,52 @@ namespace Quasar.UI.VisualElements.Themes.Internals
         /// <param name="styleFactory">The style factory.</param>
         /// <param name="styleBuilder">The style builder.</param>
         /// <param name="styleSheetParser">The style sheet parser.</param>
-        /// <param name="valueParser">The style sheet value parser.</param>
         /// <param name="textureRepository">The texture repository.</param>
-        /// <param name="loggerFactory">The logger factory.</param>
         public ThemeFactory(
             IStyleFactory styleFactory,
             IStyleBuilder styleBuilder,
             IStyleSheetParser styleSheetParser,
-            IStyleSheetValueParser valueParser,
-            ITextureRepository textureRepository,
-            ILoggerFactory loggerFactory)
+            ITextureRepository textureRepository)
         {
             this.styleFactory = styleFactory;
             this.styleBuilder = styleBuilder;
             this.styleSheetParser = styleSheetParser;
-            this.valueParser = valueParser;
             this.textureRepository = textureRepository;
-
-            logger = loggerFactory.Create<ThemeFactory>();
         }
 
 
         /// <summary>
-        /// Creates a new UI theme object instance by the specified path and resource provider.
-        /// Automatic name is set when name is not provided.
+        /// Creates a new UI theme object instance from the specified zip stream.
         /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <param name="name">The name [optional].</param>
-        /// <param name="themeResourcePath">The theme resource path.</param>
-        /// <param name="resourceProvider">The resource provider.</param>
+        /// <param name="stream">The stream.</param>
         /// <param name="themes">The themes.</param>
+        /// <param name="leaveOpen">if set to <c>true</c> [leave open].</param>
         /// <returns>
         /// The theme object.
         /// </returns>
-        /// Automatic name is set when name is not provided.
         public Theme Create(
-            string id,
-            string name,
-            string themeResourcePath,
-            IResourceProvider resourceProvider,
-            IReadOnlyDictionary<string, Theme> themes)
+            Stream stream,
+            IReadOnlyDictionary<string, Theme> themes,
+            bool leaveOpen)
         {
-            Assertion.ThrowIfNullOrEmpty(id, nameof(id));
-            Assertion.ThrowIfNullOrEmpty(themeResourcePath, nameof(themeResourcePath));
-            Assertion.ThrowIfNull(resourceProvider, nameof(resourceProvider));
+            Assertion.ThrowIfNull(stream, nameof(stream));
+            Assertion.ThrowIfNull(themes, nameof(themes));
 
             Theme theme = null;
+            ZipArchive zipArchive = null;
             try
             {
-                // parse style sheet(s)
-                var styleSheetParserResult = styleSheetParser.Parse(themeResourcePath, resourceProvider);
+                zipArchive = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen);
 
-                // load theme textures
-                LoadTextures(id, themeResourcePath, resourceProvider);
+                // collect and parse styles
+                var stylesheets = CollectStylesSheets(zipArchive);
+                var styleTable = styleSheetParser.Parse(stylesheets, ThemeConstants.ThemeRootStyleSheetPath);
 
-                // initialize theme
-                if (String.IsNullOrEmpty(name))
-                {
-                    name = CalculateThemeName(styleSheetParserResult, id);
-                }
+                // extract basic theme properties
+                ExtractThemeProperties(themes, styleTable, out var id, out var name, out var baseTheme);
 
-                // get base theme
-                var baseTheme = GetBaseTheme(styleSheetParserResult, themes);
+                // load theme associated textures
+                LoadTextures(id, zipArchive);
 
                 // initialize theme
                 if (baseTheme == null)
@@ -123,82 +105,100 @@ namespace Quasar.UI.VisualElements.Themes.Internals
                     theme = new Theme(id, name, baseTheme, styleFactory);
                 }
 
-                // parse styles
-                foreach (var resultPair in styleSheetParserResult)
+                // initialize theme styles
+                foreach (var styleEntries in styleTable)
                 {
-                    // get or create new style
-                    var selector = resultPair.Key;
+                    var selector = styleEntries.Key;
                     if (!theme.TryGetStyle(selector, out var style))
                     {
                         style = styleFactory.Create(selector, theme.RootStyle);
                         theme.AddStyle(style);
                     }
 
-                    // update the style
-                    styleBuilder.Update(style, resultPair.Value, theme);
-                }
-            }
-            catch (Exception exception)
-            {
-                logger.Error(exception, $"Unable to complete theme '{themeResourcePath}'.");
-            }
-
-            return theme;
-        }
-
-        private Theme GetBaseTheme(StyleTable styleSheetParserResult, IReadOnlyDictionary<string, Theme> themes)
-        {
-            // try to get :theme var(--Base-Theme) variable
-            if (!styleSheetParserResult.TryGetValue(StyleConstants.ThemeStyleName, out var themeProperties) ||
-                !themeProperties.TryGetValue(ThemeConstants.BaseThemeVariable, out var baseThemeId) ||
-                String.IsNullOrEmpty(baseThemeId))
-            {
-                // no base theme.
-                return null;
-            }
-
-            // try to get the base theme
-            themes.TryGetValue(baseThemeId, out var baseTheme);
-            return baseTheme;
-        }
-
-        private static string CalculateThemeName(StyleTable styleSheetParserResult, string id)
-        {
-            // try to get :theme var(--Name) variable
-            if (!styleSheetParserResult.TryGetValue(StyleConstants.ThemeStyleName, out var themeProperties) ||
-                !themeProperties.TryGetValue(ThemeConstants.NameVariable, out var value) ||
-                String.IsNullOrEmpty(value))
-            {
-                // fallback to the identifier.
-                return id;
-            }
-
-            return value;
-        }
-
-        private void LoadTextures(string themeId, string themeResourcePath, IResourceProvider resourceProvider)
-        {
-            var baseResourcePath = resourceProvider.GetDirectoryPath(themeResourcePath);
-            var textureDirectoryPath = String.Concat(baseResourcePath, resourceProvider.PathResolver.PathSeparator, ThemeConstants.TexturesDirectoryPath);
-            var texturePaths = resourceProvider.EnumerateResources(textureDirectoryPath, true);
-            foreach (var texturePath in texturePaths)
-            {
-                // calculate texture name
-                var textureName = resourceProvider.GetResourceName(texturePath);
-                var relativePathIndex = texturePath.IndexOf(textureDirectoryPath) + textureDirectoryPath.Length + 1;
-                var textureRelativePath = texturePath.Substring(relativePathIndex, texturePath.Length - textureName.Length - relativePathIndex);
-                if (!String.IsNullOrEmpty(textureRelativePath) &&
-                    resourceProvider.PathResolver.PathSeparator != StyleConstants.UrlSeparator)
-                {
-                    textureRelativePath = textureRelativePath.Replace(resourceProvider.PathResolver.PathSeparator, StyleConstants.UrlSeparator);
+                    styleBuilder.Update(style, styleEntries.Value, theme);
                 }
 
-                textureName = String.Format(ThemeConstants.TextureNameFormatString, themeId, textureRelativePath + textureName);
+                return theme;
+            }
+            finally
+            {
+                zipArchive?.Dispose();
+            }
+        }
 
-                // load texture
-                using (var stream = resourceProvider.GetResourceStream(texturePath))
+
+        private static Dictionary<string, string> CollectStylesSheets(ZipArchive zipArchive)
+        {
+            // parse style sheets
+            var stylesheets = new Dictionary<string, string>();
+            foreach (var zipEntry in zipArchive.Entries)
+            {
+                if (zipEntry.FullName.StartsWith(ThemeConstants.TexturesDirectoryPath) ||
+                    zipEntry.Length == 0)
                 {
-                    textureRepository.Create(textureName, stream, themeId, textureDescriptor);
+                    continue;
+                }
+
+                using (var reader = new StreamReader(zipEntry.Open(), leaveOpen: false))
+                {
+                    var styleSheet = reader.ReadToEnd();
+                    stylesheets.Add(zipEntry.FullName, styleSheet);
+                }
+            }
+
+            return stylesheets;
+        }
+
+        private void ExtractThemeProperties(
+            IReadOnlyDictionary<string, Theme> themes,
+            StyleTable styleTable,
+            out string id,
+            out string name,
+            out Theme baseTheme)
+        {
+            if (!styleTable.TryGetValue(StyleConstants.ThemeStyleName, out var themeStyle))
+            {
+                throw new UIException($"Theme root style not found. ({ThemeConstants.ThemeRootStyleSheetPath})");
+            }
+
+            if (!themeStyle.TryGetValue(ThemeConstants.IdVariable, out id) ||
+                String.IsNullOrEmpty(id))
+            {
+                throw new UIException($"Theme identifier ({ThemeConstants.IdVariable}) is not found in root style ({ThemeConstants.ThemeRootStyleSheetPath}).");
+            }
+
+            if (!themeStyle.TryGetValue(ThemeConstants.NameVariable, out name) ||
+                String.IsNullOrEmpty(name))
+            {
+                name = id;
+            }
+
+            themeStyle.TryGetValue(ThemeConstants.BaseThemeVariable, out var baseThemeId);
+            if (String.IsNullOrEmpty(baseThemeId))
+            {
+                baseTheme = null;
+                return;
+            }
+
+            themes.TryGetValue(baseThemeId, out baseTheme);
+        }
+
+        private void LoadTextures(string themeId, ZipArchive zipArchive)
+        {
+            foreach (var zipEntry in zipArchive.Entries)
+            {
+                if (!zipEntry.FullName.StartsWith(ThemeConstants.TexturesDirectoryPath) ||
+                    zipEntry.Length == 0)
+                {
+                    continue;
+                }
+
+                var extensionIndex = zipEntry.FullName.LastIndexOf('.');
+                var textureName = zipEntry.FullName.Substring(0, extensionIndex);
+                var textureId = String.Format(ThemeConstants.TextureNameFormatString, themeId, textureName);
+                using (var stream = zipEntry.Open())
+                {
+                    textureRepository.Create(textureId, stream, null, textureDescriptor);
                 }
             }
         }

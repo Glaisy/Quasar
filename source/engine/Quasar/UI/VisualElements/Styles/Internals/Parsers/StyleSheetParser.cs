@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 using Quasar.Utilities;
 
@@ -70,18 +69,18 @@ namespace Quasar.UI.VisualElements.Styles.Internals.Parsers
 
 
         /// <inheritdoc/>
-        public StyleTable Parse(string path, IResourceProvider resourceProvider)
+        public StyleTable Parse(IReadOnlyDictionary<string, string> styleSheets, string rootStyleSheetId)
         {
-            Assertion.ThrowIfNullOrEmpty(path, nameof(path));
-            Assertion.ThrowIfNull(resourceProvider, nameof(resourceProvider));
+            Assertion.ThrowIfNull(styleSheets, nameof(styleSheets));
+            Assertion.ThrowIfNullOrEmpty(rootStyleSheetId, nameof(rootStyleSheetId));
 
-            var rootResourcePath = resourceProvider.GetDirectoryPath(path);
-            var context = new Context(resourceProvider, rootResourcePath)
+            var context = new ParserContext(styleSheets)
             {
-                ImportBaseUrl = null
+                StyleSheetUrl = rootStyleSheetId,
+                ImportBaseUrl = pathResolver.GetParentDirectoryPath(rootStyleSheetId)
             };
 
-            ParseInternal(path, path, ref context);
+            ParseInternal(rootStyleSheetId, ref context);
 
             return context.Styles;
         }
@@ -94,7 +93,7 @@ namespace Quasar.UI.VisualElements.Styles.Internals.Parsers
             List<string> splitBuffer = null;
             try
             {
-                var context = new Context
+                var context = new ParserContext
                 {
                     StyleSheetUrl = templateId
                 };
@@ -117,7 +116,17 @@ namespace Quasar.UI.VisualElements.Styles.Internals.Parsers
         }
 
 
-        private (string Name, string Value) ParseProperty(ReadOnlySpan<char> token, in Context context)
+        private void ParseInternal(string styleSheetId, ref ParserContext context)
+        {
+            if (!context.StyleSheets.TryGetValue(styleSheetId, out var styleSheet))
+            {
+                throw new UIException($"Style sheet '{styleSheetId}' not found.");
+            }
+
+            ParseStyleSheet(styleSheet, ref context);
+        }
+
+        private ParsedProperty ParseProperty(ReadOnlySpan<char> token, in ParserContext context)
         {
             var separatorIndex = token.IndexOf(KeyValueSeparator);
             if (separatorIndex <= 0)
@@ -133,76 +142,55 @@ namespace Quasar.UI.VisualElements.Styles.Internals.Parsers
 
             var value = token.Slice(separatorIndex + 1).Trim();
             var trimmedValue = TrimQuotes(value, context);
-            return (new string(name), new string(trimmedValue));
+            return new ParsedProperty(new string(name), new string(trimmedValue));
         }
 
-        private void ParseInternal(string styleSheetUrl, string resourcePath, ref Context context)
-        {
-            Stream stream = null;
-            StreamReader reader = null;
-            try
-            {
-                stream = context.ResourceProvider.GetResourceStream(resourcePath);
-                if (stream == null)
-                {
-                    throw new StyleParserException($"Unresolved style sheet: '{styleSheetUrl}'.", context.StyleSheetUrl, context.LineIndex);
-                }
-
-                reader = new StreamReader(stream, encoding: Encoding.UTF8, leaveOpen: true);
-
-                context.StyleSheetUrl = styleSheetUrl;
-                ParseInternal(reader, ref context);
-            }
-            finally
-            {
-                reader?.Dispose();
-                stream?.Dispose();
-            }
-        }
-
-        private void ParseInternal(StreamReader reader, ref Context context)
+        private void ParseStyleSheet(string styleSheet, ref ParserContext context)
         {
             string line;
             context.Styles ??= new StyleTable();
             context.ParsedToken = ParsedToken.Default;
             context.StyleProperties = null;
             context.LineIndex = 0;
-            while ((line = reader.ReadLine()) != null)
+            using (var reader = new StringReader(styleSheet))
             {
-                context.LineIndex++;
-                var lineSpan = line.AsSpan().Trim();
-
-                // skip empty lines and single line comments
-                if (lineSpan.Length == 0 ||
-                    lineSpan.StartsWith(SingleLineCommentToken))
+                while ((line = reader.ReadLine()) != null)
                 {
-                    continue;
-                }
+                    context.LineIndex++;
+                    var lineSpan = line.AsSpan().Trim();
 
-                // import?
-                if (lineSpan.StartsWith(ImportStartToken))
-                {
-                    ParseLineAsImport(lineSpan, ref context);
-                    continue;
-                }
+                    // skip empty lines and single line comments
+                    if (lineSpan.Length == 0 ||
+                        lineSpan.StartsWith(SingleLineCommentToken))
+                    {
+                        continue;
+                    }
 
-                if (context.ParsedToken == ParsedToken.Default)
-                {
-                    ParseLine(lineSpan, ref context);
-                    continue;
-                }
+                    // import?
+                    if (lineSpan.StartsWith(ImportStartToken))
+                    {
+                        ParseLineAsImport(lineSpan, ref context);
+                        continue;
+                    }
 
-                if (context.ParsedToken.HasFlag(ParsedToken.Comment))
-                {
-                    ParseLineAsComment(lineSpan, ref context);
-                    continue;
-                }
+                    if (context.ParsedToken == ParsedToken.Default)
+                    {
+                        ParseLine(lineSpan, ref context);
+                        continue;
+                    }
 
-                ParseLineAsStyle(lineSpan, ref context);
+                    if (context.ParsedToken.HasFlag(ParsedToken.Comment))
+                    {
+                        ParseLineAsComment(lineSpan, ref context);
+                        continue;
+                    }
+
+                    ParseLineAsStyle(lineSpan, ref context);
+                }
             }
         }
 
-        private void ParseLine(in ReadOnlySpan<char> line, ref Context context)
+        private void ParseLine(in ReadOnlySpan<char> line, ref ParserContext context)
         {
             // new comment?
             if (line.StartsWith(CommentStartToken))
@@ -247,7 +235,7 @@ namespace Quasar.UI.VisualElements.Styles.Internals.Parsers
             throw new StyleParserException("Unexpected token", context.StyleSheetUrl, context.LineIndex);
         }
 
-        private void ParseLineAsComment(in ReadOnlySpan<char> line, ref Context context)
+        private void ParseLineAsComment(in ReadOnlySpan<char> line, ref ParserContext context)
         {
             // has comment ended?
             var commentEndTokenIndex = line.IndexOf(CommentEndToken);
@@ -263,7 +251,7 @@ namespace Quasar.UI.VisualElements.Styles.Internals.Parsers
             ParseRemainingLine(line, commentEndTokenIndex + CommentEndToken.Length, ref context);
         }
 
-        private void ParseLineAsImport(in ReadOnlySpan<char> line, ref Context context)
+        private void ParseLineAsImport(in ReadOnlySpan<char> line, ref ParserContext context)
         {
             // parse import url
             var importEndTokenIndex = line.IndexOf(ImportEndToken);
@@ -274,30 +262,41 @@ namespace Quasar.UI.VisualElements.Styles.Internals.Parsers
 
             var importUrlToken = new string(line.Slice(ImportStartToken.Length, importEndTokenIndex - ImportStartToken.Length));
             var importUrl = valueParser.ParseUrl(importUrlToken, null);
-
-            var resolvedImportUrl = ResolveImportUrl(importUrl, context);
-
-            var importBaseUrl = pathResolver.GetParentDirectoryPath(resolvedImportUrl);
-            var importResourcePath = String.Concat(
-                context.RootResourcePath,
-                context.ResourceProvider.PathResolver.PathSeparator,
-                resolvedImportUrl);
+            var resolvedStyleSheetUrl = ResolveStyleShettUrl(importUrl, context);
+            var importBaseUrl = pathResolver.GetParentDirectoryPath(resolvedStyleSheetUrl);
 
             // create new context
-            var importContext = new Context(context)
+            var importContext = new ParserContext(context)
             {
                 ImportBaseUrl = importBaseUrl,
-                Styles = context.Styles
+                Styles = context.Styles,
+                StyleSheetUrl = resolvedStyleSheetUrl
             };
 
             // import the resource
-            ParseInternal(resolvedImportUrl, importResourcePath, ref importContext);
+            ParseInternal(resolvedStyleSheetUrl, ref importContext);
 
             // parse remaining characters
             ParseRemainingLine(line, importEndTokenIndex + ImportEndToken.Length, ref context);
         }
 
-        private void ParseLineAsStyle(in ReadOnlySpan<char> line, ref Context context)
+        private string ResolveStyleShettUrl(string importUrl, in ParserContext context)
+        {
+            var url = pathResolver.Resolve(importUrl, context.ImportBaseUrl);
+            if (url.StartsWith(StyleConstants.RootUrlPrefix))
+            {
+                return url.Substring(1);
+            }
+
+            if (importUrl.StartsWith(pathResolver.RelativePathToken))
+            {
+                return url;
+            }
+
+            return pathResolver.Combine(context.ImportBaseUrl, url);
+        }
+
+        private void ParseLineAsStyle(in ReadOnlySpan<char> line, ref ParserContext context)
         {
             // class end token?
             if (line.StartsWith(StyleEndToken))
@@ -352,7 +351,7 @@ namespace Quasar.UI.VisualElements.Styles.Internals.Parsers
             ParseRemainingLine(line, propertyEndIndex + 1, ref context);
         }
 
-        private void ParseRemainingLine(in ReadOnlySpan<char> line, int startIndex, ref Context context)
+        private void ParseRemainingLine(in ReadOnlySpan<char> line, int startIndex, ref ParserContext context)
         {
             var remainingLine = line.Slice(startIndex).TrimStart();
             if (remainingLine.Length == 0)
@@ -375,28 +374,7 @@ namespace Quasar.UI.VisualElements.Styles.Internals.Parsers
             ParseLine(remainingLine, ref context);
         }
 
-        private string ResolveImportUrl(in string importUrl, in Context context)
-        {
-            if (importUrl[0] == StyleConstants.RootUrlPrefix)
-            {
-                return importUrl.Substring(1);
-            }
-
-            var url = importUrl;
-            if (importUrl.StartsWith(pathResolver.RelativePathToken))
-            {
-                url = importUrl.Substring(pathResolver.RelativePathToken.Length);
-            }
-
-            if (String.IsNullOrEmpty(context.ImportBaseUrl))
-            {
-                return url;
-            }
-
-            return String.Join(pathResolver.PathSeparator, context.ImportBaseUrl, url);
-        }
-
-        private static ReadOnlySpan<char> TrimQuotes(ReadOnlySpan<char> value, in Context context)
+        private static ReadOnlySpan<char> TrimQuotes(ReadOnlySpan<char> value, in ParserContext context)
         {
             var first = value[0];
             var last = value[value.Length - 1];

@@ -9,6 +9,6 @@
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     </PropertyGroup>
     <Target Name="PackAssets" AfterTargets="PreBuildEvent" BeforeTargets="CoreCompile">
-        <Exec Command="$(SolutionDir)Pack.cmd $(ProjectDir)Quasar $(SolutionDir)Quasar.Assets\Assets\Themes\ Quasar.pack" />
+        <Exec Command="$(SolutionDir)Pack.cmd $(ProjectDir)Quasar $(SolutionDir)Quasar.Assets\Assets\Themes\ Quasar pack" />
     </Target>
 </Project>

@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.IO;
 
 using Quasar.Utilities;
 
@@ -21,6 +22,26 @@ namespace Quasar.UI.VisualElements.Themes
     /// <seealso cref="IThemeProvider" />
     public interface IThemeService : IThemeProvider
     {
+        /// <summary>
+        /// Creates a theme from the path by the resource provider.
+        /// </summary>
+        /// <param name="resourceProvider">The resource provider.</param>
+        /// <param name="path">The path.</param>
+        /// <returns>
+        /// The loaded theme instance.
+        /// </returns>
+        ITheme Create(IResourceProvider resourceProvider, string path);
+
+        /// <summary>
+        /// Creates a theme from the stream.
+        /// </summary>
+        /// <param name="stream">The theme stream.</param>
+        /// <param name="leaveOpen">The stream is kept open if set to true; otherwise the stream is disposed after loading.</param>
+        /// <returns>
+        /// The loaded theme instance.
+        /// </returns>
+        ITheme Create(Stream stream, bool leaveOpen = false);
+
         /// <summary>
         /// Gets the theme by the specified identifier.
         /// </summary>
@@ -34,19 +55,6 @@ namespace Quasar.UI.VisualElements.Themes
         IReadOnlyList<ITheme> List();
 
         /// <summary>
-        /// Loads a theme from the path by the resource provider.
-        /// Automatic name is set when name is not provided.
-        /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <param name="path">The path.</param>
-        /// <param name="resourceProvider">The resource provider.</param>
-        /// <param name="name">The theme name.</param>
-        /// <returns>
-        /// The loaded theme instance.
-        /// </returns>
-        ITheme Load(string id, string path, IResourceProvider resourceProvider, string name = null);
-
-        /// <summary>
         /// Sets the theme by the specified identifier.
         /// </summary>
         /// <param name="id">The identifier.</param>
@@ -54,8 +62,8 @@ namespace Quasar.UI.VisualElements.Themes
 
 
         /// <summary>
-        /// Loads the built-in themes.
+        /// Validates the built-in assets.
         /// </summary>
-        internal void LoadBuiltInThemes();
+        internal void ValidateBuiltInAssets();
     }
 }

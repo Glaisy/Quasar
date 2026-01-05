@@ -10,8 +10,7 @@
 //-----------------------------------------------------------------------
 
 using System;
-
-using Quasar.Utilities;
+using System.Collections.Generic;
 
 namespace Quasar.UI.VisualElements.Styles.Internals.Parsers
 {
@@ -28,22 +27,33 @@ namespace Quasar.UI.VisualElements.Styles.Internals.Parsers
             Style = 2
         }
 
-        private struct Context
+        private readonly struct ParsedProperty
         {
-            public Context(IResourceProvider resourceProvider, string rootResourcePath)
+            public ParsedProperty(string name, string value)
             {
-                ResourceProvider = resourceProvider;
-                RootResourcePath = rootResourcePath;
+                Name = name;
+                Value = value;
             }
 
-            public Context(Context source)
+
+            public readonly string Name;
+
+            public readonly string Value;
+        }
+
+        private struct ParserContext
+        {
+            public ParserContext(IReadOnlyDictionary<string, string> styleSheets)
             {
-                ResourceProvider = source.ResourceProvider;
-                RootResourcePath = source.RootResourcePath;
+                StyleSheets = styleSheets;
             }
 
-            public readonly IResourceProvider ResourceProvider;
-            public readonly string RootResourcePath;
+            public ParserContext(ParserContext source)
+            {
+                StyleSheets = source.StyleSheets;
+            }
+
+            public readonly IReadOnlyDictionary<string, string> StyleSheets;
 
             public string ImportBaseUrl;
 
