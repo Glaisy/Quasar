@@ -36,26 +36,29 @@ namespace Quasar.Internals
     {
         private readonly ICriticalErrorHandler criticalErrorHandler;
         private readonly ApplicationConfiguration applicationConfiguration;
+        private readonly ILogger logger;
         private ILoggerService loggerService;
         private ISettingsService settingsService;
         private TimeService timeService;
         private UpdatePipeline updatePipeline;
         private PhysicsPipeline physicsPipeline;
         private RenderingPipeline renderingPipeline;
-        private ILogger logger;
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QuasarApplication" /> class.
         /// </summary>
+        /// <param name="context">The context.</param>
         /// <param name="serviceProvider">The service provider.</param>
         /// <param name="criticalErrorHandler">The critical error handler.</param>
         public QuasarApplication(
+            IQuasarContext context,
             IServiceProvider serviceProvider,
             ICriticalErrorHandler criticalErrorHandler)
         {
             this.criticalErrorHandler = criticalErrorHandler;
             ServiceProvider = serviceProvider;
+            logger = context.Logger;
 
             applicationConfiguration = serviceProvider.GetService<ApplicationConfiguration>();
             ApplicationWindow = CreateApplicationWindow();
@@ -133,7 +136,6 @@ namespace Quasar.Internals
             // initialize internal services
             loggerService = ServiceProvider.GetRequiredService<ILoggerService>();
             loggerService.Start();
-            logger = loggerService.Factory.Create<QuasarApplication>();
             logger.Info("Initializing the application.");
 
             settingsService = ServiceProvider.GetRequiredService<ISettingsService>();
