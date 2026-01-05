@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
 using Quasar.Assets.Importers;
+using Quasar.Utilities;
 
 using Space.Core;
 using Space.Core.DependencyInjection;
@@ -39,19 +40,11 @@ namespace Quasar.Assets.Internals
         private static readonly List<string> emptyCustomAssets = new List<string>();
         private static IQuasarContext context;
         private static Dictionary<string, IAssetImporter> assetImportersByDirectory;
-        private readonly ILogger logger;
+        private static ILogger logger;
+        private static IIdentifierExtractor identifierExtractor;
         private readonly List<string> customAssets = emptyCustomAssets;
         private ZipArchive zipArchive;
 
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AssetPackage" /> class.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        public AssetPackage(IQuasarContext context)
-        {
-            logger = context.Logger;
-        }
 
         /// <inheritdoc/>
         protected override void Dispose(bool disposing)
@@ -137,6 +130,9 @@ namespace Quasar.Assets.Internals
         internal static void InitializeStaticServices(IServiceProvider serviceProvider)
         {
             context = serviceProvider.GetRequiredService<IQuasarContext>();
+            identifierExtractor = serviceProvider.GetRequiredService<IIdentifierExtractor>();
+
+            logger = context.Logger;
             assetImportersByDirectory = serviceProvider
                 .GetServices<IAssetImporter>()
                 .ToDictionary(x => x.Directory, x => x);
@@ -169,18 +165,8 @@ namespace Quasar.Assets.Internals
                 return;
             }
 
-            var extensionIndex = fullId.LastIndexOf(context.ResourceProvider.PathResolver.ExtensionSeparator);
-            if (extensionIndex < 0)
-            {
-                extensionIndex = fullId.Length;
-            }
-
-
             var directoryName = fullId.Substring(0, directoryIndex);
-            directoryIndex++;
-
-            var assetIdLength = extensionIndex - directoryIndex;
-            var assetId = zipEntry.FullName.Substring(directoryIndex, assetIdLength);
+            var assetId = identifierExtractor.GetIdentifier(fullId, directoryIndex + 1);
 
             var assetImporter = GetAssetImporter(directoryName);
             if (assetImporter == null)

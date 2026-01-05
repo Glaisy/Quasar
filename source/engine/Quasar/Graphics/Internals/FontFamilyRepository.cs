@@ -32,6 +32,7 @@ namespace Quasar.Graphics.Internals
     [Singleton]
     internal sealed class FontFamilyRepository : RepositoryBase<string, IFontFamily, FontFamily>, IFontFamilyRepository
     {
+        private readonly IIdentifierExtractor identifierExtractor;
         private readonly ITextureRepository textureRepository;
         private readonly TextureDescriptor textureDescriptor =
             new TextureDescriptor(0, TextureRepeatMode.Clamped, TextureRepeatMode.Clamped);
@@ -40,9 +41,13 @@ namespace Quasar.Graphics.Internals
         /// <summary>
         /// Initializes a new instance of the <see cref="FontFamilyRepository" /> class.
         /// </summary>
+        /// <param name="identifierExtractor">The identifier extractor.</param>
         /// <param name="textureRepository">The texture repository.</param>
-        public FontFamilyRepository(ITextureRepository textureRepository)
+        public FontFamilyRepository(
+            IIdentifierExtractor identifierExtractor,
+            ITextureRepository textureRepository)
         {
+            this.identifierExtractor = identifierExtractor;
             this.textureRepository = textureRepository;
         }
 
@@ -161,7 +166,8 @@ namespace Quasar.Graphics.Internals
                     using (var zipStream = zipEntry.Open())
                     {
                         // font family texture
-                        var fontStyle = (FontStyle)Int32.Parse(Path.GetFileNameWithoutExtension(zipEntry.Name));
+                        var fontStyleId = identifierExtractor.GetIdentifier(zipEntry.Name);
+                        var fontStyle = (FontStyle)Int32.Parse(fontStyleId);
                         var textureName = String.Format(
                             FontFamilyConstants.TextureNamePatternP2,
                             fontFamily.Id,

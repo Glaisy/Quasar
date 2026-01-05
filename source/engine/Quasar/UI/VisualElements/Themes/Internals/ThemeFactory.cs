@@ -18,6 +18,7 @@ using Quasar.Graphics;
 using Quasar.UI.VisualElements.Styles;
 using Quasar.UI.VisualElements.Styles.Internals;
 using Quasar.UI.VisualElements.Styles.Internals.Parsers;
+using Quasar.Utilities;
 
 using Space.Core;
 using Space.Core.DependencyInjection;
@@ -35,6 +36,7 @@ namespace Quasar.UI.VisualElements.Themes.Internals
             new TextureDescriptor(0, TextureRepeatMode.Clamped, TextureRepeatMode.Clamped);
 
 
+        private readonly IIdentifierExtractor identifierExtractor;
         private readonly IStyleFactory styleFactory;
         private readonly IStyleBuilder styleBuilder;
         private readonly IStyleSheetParser styleSheetParser;
@@ -44,16 +46,19 @@ namespace Quasar.UI.VisualElements.Themes.Internals
         /// <summary>
         /// Initializes a new instance of the <see cref="ThemeFactory" /> class.
         /// </summary>
+        /// <param name="identifierExtractor">The identifier extractor.</param>
         /// <param name="styleFactory">The style factory.</param>
         /// <param name="styleBuilder">The style builder.</param>
         /// <param name="styleSheetParser">The style sheet parser.</param>
         /// <param name="textureRepository">The texture repository.</param>
         public ThemeFactory(
+            IIdentifierExtractor identifierExtractor,
             IStyleFactory styleFactory,
             IStyleBuilder styleBuilder,
             IStyleSheetParser styleSheetParser,
             ITextureRepository textureRepository)
         {
+            this.identifierExtractor = identifierExtractor;
             this.styleFactory = styleFactory;
             this.styleBuilder = styleBuilder;
             this.styleSheetParser = styleSheetParser;
@@ -193,9 +198,7 @@ namespace Quasar.UI.VisualElements.Themes.Internals
                     continue;
                 }
 
-                var extensionIndex = zipEntry.FullName.LastIndexOf('.');
-                var textureName = zipEntry.FullName.Substring(0, extensionIndex);
-                var textureId = String.Format(ThemeConstants.TextureNameFormatString, themeId, textureName);
+                var textureId = identifierExtractor.GetIdentifier(zipEntry.FullName, ThemeConstants.TexturesDirectoryPath.Length + 1);
                 using (var stream = zipEntry.Open())
                 {
                     textureRepository.Create(textureId, stream, null, textureDescriptor);
