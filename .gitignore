@@ -16,4 +16,4 @@
 [Bb]uilds/
 **/*.xml
 /source/engine/Quasar/Resources/*.assets
-/source/engine/Quasar.Assets/Assets/Themes/*
+/source/engine/Quasar.Assets/Assets/UIThemes/*
