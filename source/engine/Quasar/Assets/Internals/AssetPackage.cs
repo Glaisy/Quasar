@@ -95,7 +95,7 @@ namespace Quasar.Assets.Internals
         /// <inheritdoc/>
         public void ImportAssets()
         {
-            foreach (var zipEntry in zipArchive.Entries)
+            foreach (var zipEntry in zipArchive.Entries.OrderBy(x => x.FullName))
             {
                 ImportAssetFromEntry(zipEntry);
             }
