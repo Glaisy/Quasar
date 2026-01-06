@@ -30,26 +30,16 @@ namespace Quasar.Graphics.Internals
     internal sealed class CubeMapTextureRepository :
         TaggedRepositoryBase<string, ICubeMapTexture, CubeMapTextureBase>, ICubeMapTextureRepository
     {
-        private const string BuiltInCubemapIdPrefix = "Cubemaps/";
-        private const string BuiltInCubemapTextureSearchPath = "./" + BuiltInCubemapIdPrefix;
-
-
-        private readonly IResourceProvider resourceProvider;
         private readonly ICubeMapTextureFactory cubeMapTextureFactory;
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CubeMapTextureRepository" /> class.
         /// </summary>
-        /// <param name="context">The Quasar context.</param>
         /// <param name="cubeMapTextureFactory">The cube map texture factory.</param>
-        public CubeMapTextureRepository(
-            IQuasarContext context,
-            ICubeMapTextureFactory cubeMapTextureFactory)
+        public CubeMapTextureRepository(ICubeMapTextureFactory cubeMapTextureFactory)
         {
             this.cubeMapTextureFactory = cubeMapTextureFactory;
-
-            resourceProvider = context.ResourceProvider;
         }
 
 

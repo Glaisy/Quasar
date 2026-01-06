@@ -198,7 +198,11 @@ namespace Quasar.UI.VisualElements.Themes.Internals
                     continue;
                 }
 
-                var textureId = identifierExtractor.GetIdentifier(zipEntry.FullName, ThemeConstants.TexturesDirectoryPath.Length + 1);
+                var assetId = identifierExtractor.GetIdentifier(
+                    zipEntry.FullName,
+                    ThemeConstants.TexturesDirectoryPath.Length + 1,
+                    true);
+                var textureId = String.Format(ThemeConstants.TextureNameFormatString, themeId, assetId);
                 using (var stream = zipEntry.Open())
                 {
                     textureRepository.Create(textureId, stream, null, textureDescriptor);

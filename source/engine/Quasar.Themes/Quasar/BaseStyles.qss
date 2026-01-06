@@ -1,7 +1,7 @@
 /* Button */
 
 button {
-    background: url("Button.png");
+    background: url("Button");
     background-color: var(--Color);
     background-slicing: 4px;
     color: var(--Color);
@@ -16,19 +16,19 @@ button:disabled {
 }
 
 button:hover {
-    background: url("ButtonHover.png");
+    background: url("ButtonHover");
     color: var(--Color-Highlighted);
 }
 
 button:active {
-    background: url("ButtonActive.png");
+    background: url("ButtonActive");
     color: var(--Color-Inverted);
 }
 
 /* Linear Progress Bar */
 
 linear-progress-bar {
-    background: url("LinearProgressBar.png");
+    background: url("LinearProgressBar");
     background-color: var(--Color-Inverted);
     horizontal-alignment: stretched;
     min-height: 8px;
@@ -36,7 +36,7 @@ linear-progress-bar {
 }
 
 .linear-progress-bar-indicator {
-    background: url("LinearProgressBar.png");
+    background: url("LinearProgressBar");
     background-color: var(--Color);
     horizontal-alignment: stretched;
     min-height: 8px;
@@ -45,7 +45,7 @@ linear-progress-bar {
 
 /* Horizontal Line */
 horizontal-line {
-    background: url("HorizontalLine.png");
+    background: url("HorizontalLine");
     background-color: var(--Color);
     horizontal-alignment: stretched;
     min-height: 8px;
@@ -57,13 +57,6 @@ label {
     font-family: var(--Font-Family);
     font-size: var(--Font-Size);
     color: var(--Color);
-}
-
-/* Visual Element */
-visual-element {
-    //background: url("Border.png");
-    //background-color: Color.White;
-    //background-slicing: 1px;
 }
 
 /* View */

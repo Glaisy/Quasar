@@ -37,11 +37,13 @@ namespace Quasar.Utilities.Internals
 
 
         /// <inheritdoc/>
-        public string GetIdentifier(string composedIdentifier, int startIndex = 0)
+        public string GetIdentifier(string composedIdentifier, int startIndex, bool truncateExtension)
         {
             ArgumentException.ThrowIfNullOrEmpty(composedIdentifier, nameof(composedIdentifier));
 
-            var extensionIndex = composedIdentifier.LastIndexOf(pathResolver.ExtensionSeparator);
+            var extensionIndex = truncateExtension ?
+                composedIdentifier.LastIndexOf(pathResolver.ExtensionSeparator) :
+                -1;
             if (extensionIndex <= 0)
             {
                 return startIndex == 0 ? composedIdentifier : composedIdentifier.Substring(startIndex);

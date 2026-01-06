@@ -11,6 +11,8 @@
 
 using System.IO;
 
+using Quasar.Utilities;
+
 namespace Quasar.Assets.Importers
 {
     /// <summary>
@@ -23,6 +25,16 @@ namespace Quasar.Assets.Importers
         /// </summary>
         string Directory { get; }
 
+
+        /// <summary>
+        /// Determines and returns the asset's identifier by the specified asset name.
+        /// </summary>
+        /// <param name="identifierExtractor">The identifier extractor.</param>
+        /// <param name="assetName">The asset name.</param>
+        /// <returns>
+        /// The asset identifier.
+        /// </returns>
+        string GetIdentifier(IIdentifierExtractor identifierExtractor, string assetName);
 
         /// <summary>
         /// Executes the importing process of an asset from the specified stream.

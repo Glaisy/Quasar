@@ -157,16 +157,15 @@ namespace Quasar.Assets.Internals
                 return;
             }
 
-            var fullId = zipEntry.FullName;
-            var directoryIndex = fullId.IndexOf(context.ResourceProvider.PathResolver.PathSeparator);
+            var fullName = zipEntry.FullName;
+            var directoryIndex = fullName.IndexOf(context.ResourceProvider.PathResolver.PathSeparator);
             if (directoryIndex <= 1)
             {
                 logger.Warning($"Unable to determine asset type for '{zipEntry.Name}'. Skipped.");
                 return;
             }
 
-            var directoryName = fullId.Substring(0, directoryIndex);
-            var assetId = identifierExtractor.GetIdentifier(fullId, directoryIndex + 1);
+            var directoryName = fullName.Substring(0, directoryIndex);
 
             var assetImporter = GetAssetImporter(directoryName);
             if (assetImporter == null)
@@ -175,6 +174,7 @@ namespace Quasar.Assets.Internals
                 return;
             }
 
+            var assetId = assetImporter.GetIdentifier(identifierExtractor, fullName);
             using (var stream = zipEntry.Open())
             {
                 assetImporter.Import(assetId, Tag, stream);

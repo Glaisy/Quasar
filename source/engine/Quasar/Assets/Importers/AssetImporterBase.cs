@@ -12,6 +12,8 @@
 using System;
 using System.IO;
 
+using Quasar.Utilities;
+
 using Space.Core.Diagnostics;
 
 namespace Quasar.Assets.Importers
@@ -39,6 +41,12 @@ namespace Quasar.Assets.Importers
         /// <inheritdoc/>
         public string Directory { get; }
 
+
+        /// <inheritdoc/>
+        public virtual string GetIdentifier(IIdentifierExtractor identifierExtractor, string assetName)
+        {
+            return identifierExtractor.GetIdentifier(assetName, Directory.Length + 1, true);
+        }
 
         /// <inheritdoc/>
         public void Import(string id, string tag, Stream stream)

@@ -18,10 +18,11 @@ namespace Quasar.Utilities
     {
         /// <summary>
         /// Gets the identifier from the specified composed identifier.
-        /// Removes the extension suffix and the characters before the start index.
+        /// Removes the characters before the start index and the extension if truncate flag is set.
         /// </summary>
         /// <param name="composedIdentifier">The composed identifier.</param>
         /// <param name="startIndex">The start index.</param>
-        string GetIdentifier(string composedIdentifier, int startIndex = 0);
+        /// <param name="truncateExtension">The truncate extension flag.</param>
+        string GetIdentifier(string composedIdentifier, int startIndex, bool truncateExtension);
     }
 }

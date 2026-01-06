@@ -30,26 +30,16 @@ namespace Quasar.Graphics.Internals
     internal sealed class TextureRepository
         : TaggedRepositoryBase<string, ITexture, TextureBase>, ITextureRepository
     {
-        private const string BuiltInTextureIdPrefix = "Textures/";
-        private const string BuiltInTextureSearchPath = "./" + BuiltInTextureIdPrefix;
-
-
-        private readonly IResourceProvider resourceProvider;
         private readonly ITextureFactory textureFactory;
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TextureRepository" /> class.
         /// </summary>
-        /// <param name="context">The Quasar context.</param>
         /// <param name="textureFactory">The texture factory.</param>
-        public TextureRepository(
-            IQuasarContext context,
-            ITextureFactory textureFactory)
+        public TextureRepository(ITextureFactory textureFactory)
         {
             this.textureFactory = textureFactory;
-
-            resourceProvider = context.ResourceProvider;
         }
 
 

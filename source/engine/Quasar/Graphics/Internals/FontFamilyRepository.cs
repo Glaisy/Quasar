@@ -166,7 +166,7 @@ namespace Quasar.Graphics.Internals
                     using (var zipStream = zipEntry.Open())
                     {
                         // font family texture
-                        var fontStyleId = identifierExtractor.GetIdentifier(zipEntry.Name);
+                        var fontStyleId = identifierExtractor.GetIdentifier(zipEntry.Name, 0, true);
                         var fontStyle = (FontStyle)Int32.Parse(fontStyleId);
                         var textureName = String.Format(
                             FontFamilyConstants.TextureNamePatternP2,
