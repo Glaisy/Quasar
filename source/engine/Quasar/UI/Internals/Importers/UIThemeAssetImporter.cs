@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="ThemeAssetImporter.cs" company="Space Development">
+// <copyright file="UIThemeAssetImporter.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -23,21 +23,21 @@ namespace Quasar.UI.Internals.Importers
     /// Quasar UI theme asset importer implementation.
     /// </summary>
     /// <seealso cref="AssetImporterBase" />
-    [Export(typeof(IAssetImporter), AssetConstants.Directories.Themes)]
-    internal sealed class ThemeAssetImporter : AssetImporterBase
+    [Export(typeof(IAssetImporter), AssetConstants.Directories.UIThemes)]
+    internal sealed class UIThemeAssetImporter : AssetImporterBase
     {
         private readonly IThemeService themeService;
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ThemeAssetImporter" /> class.
+        /// Initializes a new instance of the <see cref="UIThemeAssetImporter" /> class.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="themeService">The theme service.</param>
-        public ThemeAssetImporter(
+        public UIThemeAssetImporter(
             IQuasarContext context,
             IThemeService themeService)
-            : base(context, AssetConstants.Directories.Themes)
+            : base(context, AssetConstants.Directories.UIThemes)
         {
             this.themeService = themeService;
         }

@@ -66,7 +66,7 @@ namespace Quasar.Assets
             /// <summary>
             /// The UI themes directory.
             /// </summary>
-            public const string Themes = nameof(Themes);
+            public const string UIThemes = nameof(UIThemes);
 
             /// <summary>
             /// The UI templates directory.

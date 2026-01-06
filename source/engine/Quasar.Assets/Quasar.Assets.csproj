@@ -19,6 +19,5 @@
       <Content Include="Assets\pack.json" />
       <Content Include="Assets\Textures\Fallback.png" />
       <Content Include="Assets\Textures\FallbackNormalMap.png" />
-      <Content Include="Assets\Themes\Quasar.pack" />
     </ItemGroup>
 </Project>
