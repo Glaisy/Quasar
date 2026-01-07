@@ -121,9 +121,11 @@ namespace Quasar.UI.VisualElements.Layouts.Internals
                     out var bottom,
                     out var height);
 
-                // update bounding box and relative position of the visual element
-                var boundingBox = new Rectangle(left, bottom, width, height);
-                LayoutHelper.SetRelativePosition(childElement, boundingBox);
+                // update the size and the relative position of the visual element
+                LayoutHelper.SetRelativePositionAndSize(
+                    childElement,
+                    new Vector2(left, bottom),
+                    new Vector2(width, height));
 
                 // next element
                 left += width + spacing;

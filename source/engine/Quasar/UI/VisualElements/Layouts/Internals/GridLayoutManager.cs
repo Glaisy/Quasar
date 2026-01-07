@@ -108,10 +108,11 @@ namespace Quasar.UI.VisualElements.Layouts.Internals
                     out var bottom,
                     out var height);
 
-                var boundingBox = new Rectangle(cellLeft + left, cellBottom + bottom, width, height);
-
-                // apply bounds
-                LayoutHelper.SetRelativePosition(childElement, boundingBox);
+                // update the size and the relative position of the visual element
+                LayoutHelper.SetRelativePositionAndSize(
+                    childElement,
+                    new Vector2(cellLeft + left, cellBottom + bottom),
+                    new Vector2(width, height));
             }
         }
 

@@ -170,12 +170,19 @@ namespace Quasar.UI.VisualElements.Layouts.Internals
         }
 
         /// <summary>
-        /// Sets the relative position of the visual element.
+        /// Sets the relative position and size of the visual element.
         /// </summary>
         /// <param name="visualElement">The visual element.</param>
-        /// <param name="boundingBox">The bounding box.</param>
-        public static void SetRelativePosition(VisualElement visualElement, in Rectangle boundingBox)
+        /// <param name="position">The position.</param>
+        /// <param name="size">The size.</param>
+        public static void SetRelativePositionAndSize(VisualElement visualElement, in Vector2 position, in Vector2 size)
         {
+            var boundingBox = new Rectangle(
+                MathF.Round(position.X),
+                MathF.Round(position.Y),
+                MathF.Round(size.X),
+                MathF.Round(size.Y));
+
             var paddingBox = CalculatePaddingBox(visualElement.Style, boundingBox.Size);
             var contentBox = CalculateContentBox(visualElement.Style, paddingBox.Size);
             visualElement.SetBounds(boundingBox, paddingBox, contentBox);
@@ -246,7 +253,7 @@ namespace Quasar.UI.VisualElements.Layouts.Internals
                 return value.Value;
             }
 
-            return 0.01f * value.Value * referenceValue;
+            return MathF.Round(0.01f * value.Value * referenceValue);
         }
     }
 }
