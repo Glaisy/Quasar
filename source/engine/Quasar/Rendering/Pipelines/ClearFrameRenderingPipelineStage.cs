@@ -72,6 +72,7 @@ namespace Quasar.Rendering.Pipelines
                 switch (camera.ClearType)
                 {
                     case CameraClearType.Skybox:
+                        camera.FrameBuffer.ClearDepthBuffer();
                         skyboxRenderer.Render(Context, camera);
                         break;
 
