@@ -292,7 +292,7 @@ namespace Quasar.Windows.UI
             base.OnMouseEnter(e);
 
             var clientPosition = PointToClient(MousePosition);
-            var pointerPosition = new Vector2(clientPosition.X, clientPosition.Y);
+            var pointerPosition = new Vector2(clientPosition.X, ClientSize.Height - clientPosition.Y);
             inputEventProcessor.ProcessPointerEnter(pointerPosition);
         }
 
@@ -309,7 +309,7 @@ namespace Quasar.Windows.UI
         {
             base.OnMouseMove(e);
 
-            var pointerPosition = new Vector2(e.Location.X, e.Location.Y);
+            var pointerPosition = new Vector2(e.Location.X, ClientSize.Height - e.Location.Y);
             inputEventProcessor.ProcessPointerMove(pointerPosition);
         }
 

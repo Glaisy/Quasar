@@ -57,7 +57,7 @@ namespace Quasar.UI.VisualElements
         private Vector2 textPosition;
         private PseudoClass pseudoClass;
         private Style mergedStyle;
-        private int mergedInvalidationFlags;
+        private static int mergedInvalidationFlags;
 
 
         /// <summary>
