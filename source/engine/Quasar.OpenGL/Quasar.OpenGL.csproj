@@ -13,12 +13,19 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Resources\Shaders\Environment\Skybox.frag" />
+      <None Remove="Resources\Shaders\Environment\Skybox.vert" />
+    </ItemGroup>
+
+    <ItemGroup>
         <Compile Include="..\..\AssemblyInfo.Suppressions.shared.cs" Link="Properties\AssemblyInfo.Suppressions.shared.cs" />
         <Compile Include="..\..\AssemblyInfo.shared.cs" Link="Properties\AssemblyInfo.shared.cs" />
         <AdditionalFiles Include="..\..\stylecop.json" Link="Properties\stylecop.json" />
     </ItemGroup>
 
     <ItemGroup>
+        <EmbeddedResource Include="Resources\Shaders\Environment\Skybox.frag" />
+        <EmbeddedResource Include="Resources\Shaders\Environment\Skybox.vert" />
         <EmbeddedResource Include="Resources\Shaders\Includes\Matrices\MVP.inc" />
         <EmbeddedResource Include="Resources\Shaders\Includes\Matrices\Projection.inc" />
         <EmbeddedResource Include="Resources\Shaders\UI\UIElement.frag" />

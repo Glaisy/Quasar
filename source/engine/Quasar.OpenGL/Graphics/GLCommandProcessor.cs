@@ -25,8 +25,55 @@ namespace Quasar.OpenGL.Graphics
     internal sealed class GLCommandProcessor : IGraphicsCommandProcessor
     {
         private int lastMeshHandle;
+
+
         private bool isBackfaceCullingEnabled;
+        /// <inheritdoc/>
+        public bool IsBackfaceCullingEnabled
+        {
+            get => isBackfaceCullingEnabled;
+            set
+            {
+                if (isBackfaceCullingEnabled == value)
+                {
+                    return;
+                }
+
+                SetBackfaceCullingEnabled(value);
+            }
+        }
+
+        private DepthTestMode depthTestMode = DepthTestMode.Less;
+        /// <inheritdoc/>
+        public DepthTestMode DepthTestMode
+        {
+            get => depthTestMode;
+            set
+            {
+                if (depthTestMode == value)
+                {
+                    return;
+                }
+
+                SetDepthTestMode(value);
+            }
+        }
+
         private bool isDepthTestingEnabled;
+        /// <inheritdoc/>
+        public bool IsDepthTestingEnabled
+        {
+            get => isDepthTestingEnabled;
+            set
+            {
+                if (isDepthTestingEnabled == value)
+                {
+                    return;
+                }
+
+                SetDepthTestingEnabled(value);
+            }
+        }
 
 
         /// <inheritdoc/>
@@ -80,56 +127,9 @@ namespace Quasar.OpenGL.Graphics
             GL.BindVertexArray(0);
             lastMeshHandle = 0;
 
-            SetBackfaceCulling(true);
-            SetDepthTesting(true);
+            SetBackfaceCullingEnabled(true);
+            SetDepthTestingEnabled(true);
             SetDepthTestMode(DepthTestMode.Less);
-        }
-
-        /// <inheritdoc/>
-        public bool SetBackfaceCulling(bool enabled)
-        {
-            var previousValue = isBackfaceCullingEnabled;
-            if (isBackfaceCullingEnabled != enabled)
-            {
-                isBackfaceCullingEnabled = enabled;
-                if (isBackfaceCullingEnabled)
-                {
-                    GL.Enable(Capability.CullFace);
-                }
-                else
-                {
-                    GL.Disable(Capability.CullFace);
-                }
-            }
-
-            return previousValue;
-        }
-
-        /// <inheritdoc/>
-        public bool SetDepthTesting(bool enabled)
-        {
-            var previousValue = isDepthTestingEnabled;
-            if (isDepthTestingEnabled != enabled)
-            {
-                isDepthTestingEnabled = enabled;
-                if (isDepthTestingEnabled)
-                {
-                    GL.Enable(Capability.DepthTest);
-                }
-                else
-                {
-                    GL.Disable(Capability.DepthTest);
-                }
-            }
-
-            return previousValue;
-        }
-
-        /// <inheritdoc/>
-        public void SetDepthTestMode(DepthTestMode depthTestMode)
-        {
-            var depthFunction = depthTestMode.ToDepthFunction();
-            GL.DepthFunc(depthFunction);
         }
 
         /// <inheritdoc/>
@@ -165,6 +165,43 @@ namespace Quasar.OpenGL.Graphics
             // face culling
             GL.CullFace(CullFaceMode.Back);
             GL.FrontFace(FrontFaceDirection.Clockwise);
+        }
+
+
+        private void SetBackfaceCullingEnabled(bool isBackfaceCullingEnabled)
+        {
+            this.isBackfaceCullingEnabled = isBackfaceCullingEnabled;
+
+            if (isBackfaceCullingEnabled)
+            {
+                GL.Enable(Capability.CullFace);
+            }
+            else
+            {
+                GL.Disable(Capability.CullFace);
+            }
+        }
+
+        private void SetDepthTestingEnabled(bool isDepthTestingEnabled)
+        {
+            this.isDepthTestingEnabled = isDepthTestingEnabled;
+
+            if (isDepthTestingEnabled)
+            {
+                GL.Enable(Capability.DepthTest);
+            }
+            else
+            {
+                GL.Disable(Capability.DepthTest);
+            }
+        }
+
+        private void SetDepthTestMode(DepthTestMode depthTestMode)
+        {
+            this.depthTestMode = depthTestMode;
+
+            var depthFunction = depthTestMode.ToDepthFunction();
+            GL.DepthFunc(depthFunction);
         }
     }
 }

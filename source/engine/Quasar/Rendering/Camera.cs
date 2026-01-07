@@ -282,6 +282,14 @@ namespace Quasar.Rendering
             }
         }
 
+        /// <summary>
+        /// Gets the skybox.
+        /// </summary>
+        public SkyBox SkyBox { get; } = new SkyBox();
+
+        /// <inheritdoc/>
+        ISkyBox ICamera.SkyBox => SkyBox;
+
         private float zFar = 1000.0f;
         /// <summary>
         /// Gets or sets the far z-plane (0...+Inf).

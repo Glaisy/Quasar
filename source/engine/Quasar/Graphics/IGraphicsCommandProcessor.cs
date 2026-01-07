@@ -17,6 +17,22 @@ namespace Quasar.Graphics
     public interface IGraphicsCommandProcessor
     {
         /// <summary>
+        /// Gets or sets the depth test mode.
+        /// </summary>
+        DepthTestMode DepthTestMode { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the backface culling is enabled or not.
+        /// </summary>
+        bool IsBackfaceCullingEnabled { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the depth testing is enabled or not.
+        /// </summary>
+        bool IsDepthTestingEnabled { get; set; }
+
+
+        /// <summary>
         /// Checks if there is any graphics errors.
         /// </summary>
         void CheckErrors();
@@ -37,26 +53,6 @@ namespace Quasar.Graphics
         /// Resets the state of the processsor.
         /// </summary>
         void Reset();
-
-        /// <summary>
-        /// Enables/disables the backface culling.
-        /// </summary>
-        /// <param name="enabled">The enabled flag.</param>
-        /// <returns>The previous state of backface culling.</returns>
-        bool SetBackfaceCulling(bool enabled);
-
-        /// <summary>
-        /// Enables/disables the depth testing.
-        /// </summary>
-        /// <param name="enabled">The enabled flag.</param>
-        /// <returns>The previous state of depth testing.</returns>
-        bool SetDepthTesting(bool enabled);
-
-        /// <summary>
-        /// Sets the depth test mode.
-        /// </summary>
-        /// <param name="depthTestMode">The depth test mode.</param>
-        void SetDepthTestMode(DepthTestMode depthTestMode);
 
         /// <summary>
         /// Sets the viewport.

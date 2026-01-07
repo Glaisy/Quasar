@@ -24,7 +24,7 @@ namespace Quasar.UI.Internals.Renderers
     [Singleton]
     internal sealed class UIElementRenderer
     {
-        private const string ShaderName = "UI/UIElement";
+        private const string ShaderId = "UI/UIElement";
 
 
         private readonly IShaderRepository shaderRepository;
@@ -56,7 +56,7 @@ namespace Quasar.UI.Internals.Renderers
         /// </summary>
         public void Initalize()
         {
-            shader = shaderRepository.GetShader(ShaderName);
+            shader = shaderRepository.GetShader(ShaderId);
             positionIndex = shader["Position"].Index;
             colorIndex = shader["Color"].Index;
             textureIndex = shader["Texture"].Index;
@@ -70,7 +70,8 @@ namespace Quasar.UI.Internals.Renderers
         /// <param name="uiElements">The UI elements.</param>
         public void Render(IGraphicsCommandProcessor commandProcessor, ValueTypeCollection<UIElement> uiElements)
         {
-            var wasDepthTestingEnabled = commandProcessor.SetDepthTesting(false);
+            var wasDepthTestingEnabled = commandProcessor.IsDepthTestingEnabled;
+            commandProcessor.IsDepthTestingEnabled = false;
 
             shader.Activate();
             shader.SetMatrix(projectionMatrixIndex, projectionMatrix);
@@ -94,7 +95,7 @@ namespace Quasar.UI.Internals.Renderers
 
             shader.Deactivate();
 
-            commandProcessor.SetDepthTesting(wasDepthTestingEnabled);
+            commandProcessor.IsDepthTestingEnabled = wasDepthTestingEnabled;
         }
 
         /// <summary>

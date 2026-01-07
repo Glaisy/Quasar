@@ -146,13 +146,13 @@ namespace Quasar.Rendering.Internals.Renderers
             var materialTimestamp = Int32.MinValue;
             if (renderBatch.DoubleSidedModels.Count > 0)
             {
-                context.CommandProcessor.SetBackfaceCulling(false);
+                context.CommandProcessor.IsBackfaceCullingEnabled = false;
                 RenderModels(context, renderingView, renderBatch.DoubleSidedModels, ref materialTimestamp);
             }
 
             if (renderBatch.Models.Count > 0)
             {
-                context.CommandProcessor.SetBackfaceCulling(true);
+                context.CommandProcessor.IsBackfaceCullingEnabled = true;
                 RenderModels(context, renderingView, renderBatch.Models, ref materialTimestamp);
             }
         }

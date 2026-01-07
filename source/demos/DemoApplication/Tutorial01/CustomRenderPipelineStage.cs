@@ -34,6 +34,7 @@ namespace DemoApplication.Tutorial01
     [ExecuteBefore(typeof(RenderBatchRenderPipelineStage))]
     internal sealed class CustomRenderPipelineStage : RenderingPipelineStageBase
     {
+        private readonly ICubeMapTextureRepository cubeMapTextureRepository;
         private readonly IProceduralMeshGenerator proceduralMeshGenerator;
         private readonly ITimeProvider timeProvider;
         private readonly IProfilerDataProvider<IRenderingStatistics> renderingStatisticsProvider;
@@ -50,15 +51,18 @@ namespace DemoApplication.Tutorial01
         /// Initializes a new instance of the <see cref="CustomRenderPipelineStage" /> class.
         /// </summary>
         /// <param name="context">The context.</param>
+        /// <param name="cubeMapTextureRepository">The cube map texture repository.</param>
         /// <param name="proceduralMeshGenerator">The procedural mesh generator.</param>
         /// <param name="timeProvider">The time provider.</param>
         /// <param name="renderingStatisticsProvider">The rendering statistics provider.</param>
         internal CustomRenderPipelineStage(
             IQuasarContext context,
+            ICubeMapTextureRepository cubeMapTextureRepository,
             IProceduralMeshGenerator proceduralMeshGenerator,
             ITimeProvider timeProvider,
             IProfilerDataProvider<IRenderingStatistics> renderingStatisticsProvider)
         {
+            this.cubeMapTextureRepository = cubeMapTextureRepository;
             this.proceduralMeshGenerator = proceduralMeshGenerator;
             this.timeProvider = timeProvider;
             this.renderingStatisticsProvider = renderingStatisticsProvider;
@@ -70,6 +74,19 @@ namespace DemoApplication.Tutorial01
         /// <inheritdoc/>
         protected override void OnExecute()
         {
+            if (camera == null)
+            {
+                camera = new Camera
+                {
+                    Name = "Main Camera",
+                };
+                camera.Transform.LocalPosition = new Vector3(0, 1f, 2f);
+                camera.Transform.LocalRotation = Quaternion.LookRotation(camera.Transform.LocalPosition, Vector3.Zero, Vector3.PositiveY, true);
+
+                camera.SkyBox.CubeMapTexture = cubeMapTextureRepository.Get("Skybox");
+                camera.ClearType = CameraClearType.Skybox;
+            }
+
             angle += 0.03f;
             renderModel.Transform.LocalRotation = Quaternion.AngleAxis(angle, Vector3.PositiveY);
 
@@ -90,13 +107,6 @@ namespace DemoApplication.Tutorial01
         /// <inheritdoc/>
         protected override void OnStart()
         {
-            camera = new Camera
-            {
-                Name = "Main Camera",
-            };
-            camera.Transform.LocalPosition = new Vector3(0, 1f, 2f);
-            camera.Transform.LocalRotation = Quaternion.LookRotation(camera.Transform.LocalPosition, Vector3.Zero, Vector3.PositiveY, true);
-
             material = new Material("Wireframe");
             material.SetColor("LineColor", Color.Blue);
             material.SetColor("FillColor", Color.White);

@@ -55,6 +55,8 @@ namespace Quasar.Rendering.Pipelines
         /// </summary>
         protected override void OnExecute()
         {
+            var wasBackfaceCullingEnabled = Context.CommandProcessor.IsBackfaceCullingEnabled;
+
             var cameraEnumerator = cameraService.GetEnumerator();
             while (cameraEnumerator.MoveNext())
             {
@@ -80,6 +82,8 @@ namespace Quasar.Rendering.Pipelines
                     }
                 }
             }
+
+            Context.CommandProcessor.IsBackfaceCullingEnabled = wasBackfaceCullingEnabled;
         }
     }
 }

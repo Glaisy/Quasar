@@ -66,6 +66,11 @@ namespace Quasar.Rendering
         ITransform Transform { get; }
 
         /// <summary>
+        /// Gets the skybox.
+        /// </summary>
+        ISkyBox SkyBox { get; }
+
+        /// <summary>
         /// Gets the far z-plane (0...+Inf).
         /// </summary>
         float ZFar { get; }
