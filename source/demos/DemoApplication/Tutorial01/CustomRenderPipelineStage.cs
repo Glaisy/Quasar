@@ -84,11 +84,6 @@ namespace DemoApplication.Tutorial01
                 Debug.Info(logMessage);
 
                 lastSecond = second;
-                ////renderModel.SetMesh(second % 11 == 0 ? null : mesh, true);
-                ////renderModel.IsEnabled = second % 7 == 0;
-                ////renderModel.Layer = (Layer)(second % 3);
-                ////renderModel.Material = second % 5 == 0 ? material : null;
-                ////renderModel.DoubleSided = second % 3 == 0;
             }
         }
 

@@ -12,12 +12,10 @@
 using System;
 using System.IO;
 using System.Reflection;
-
 using Quasar;
 using Quasar.Assets;
 using Quasar.UI;
 using Quasar.Utilities;
-
 using Space.Core.DependencyInjection;
 
 namespace DemoApplication
@@ -75,7 +73,7 @@ namespace DemoApplication
             applicationWindow.Cursor = cursorRepository.DefaultCursor;
 
             uiService.RegisterTemplatedVisualElements(Assembly.GetExecutingAssembly());
-            uiService.Load("TestView");
+            uiService.Load("Views/TutorialSelectorView");
         }
     }
 }
