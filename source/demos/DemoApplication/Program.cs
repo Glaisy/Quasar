@@ -48,7 +48,7 @@ namespace DemoApplication
             builder.ConfigureApplication(configuration =>
             {
                 configuration.ApplicationWindowType = ApplicationWindowType.Resizable;
-                configuration.ScreenRatio = 0.15f;
+                configuration.ScreenRatio = 0.75f;
                 configuration.BootstrapperFactory = serviceProvider => serviceProvider.GetRequiredService<Bootstrapper>();
             });
 
