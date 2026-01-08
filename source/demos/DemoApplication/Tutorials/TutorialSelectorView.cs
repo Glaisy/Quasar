@@ -11,6 +11,8 @@
 
 using System;
 
+using DemoApplication.Tutorials.Objects;
+
 using Microsoft.Extensions.DependencyInjection;
 
 using Quasar.UI;
@@ -26,7 +28,7 @@ namespace DemoApplication.Tutorials
     /// </summary>
     [UITemplate("Views/TutorialSelectorView")]
     [Export]
-    internal sealed class TutorialSelectorView : VisualElement
+    internal sealed class TutorialSelectorView : TemplatedVisualElementBase
     {
         private readonly IApplicationWindow applicationWindow;
         private readonly IUIService uiService;
@@ -52,12 +54,12 @@ namespace DemoApplication.Tutorials
 
 
         /// <inheritdoc/>
-        protected override void OnLoad()
+        protected override void OnTemplateLoaded()
         {
             TutorialViewBase.InitializeStaticServices(serviceProvider, OnBack);
 
             var objectsButton = Q<Button>("objectsButton");
-            ////objectsButton.Click = button => LoadTutorialView<ObjectsView>();
+            objectsButton.Click = button => LoadTutorialView<ObjectsModelsAndSkyboxTutorialView>();
             var exitButton = Q<Button>("exitButton");
             exitButton.Click = button => applicationWindow.Close();
         }

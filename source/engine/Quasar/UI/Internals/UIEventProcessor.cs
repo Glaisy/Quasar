@@ -9,7 +9,6 @@
 // <author>Balazs Meszaros</author>
 //-----------------------------------------------------------------------
 
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 using Quasar.Inputs;
@@ -39,7 +38,6 @@ namespace Quasar.UI.Internals
 
 
         private readonly ITimeProvider timeProvider;
-        private readonly List<VisualElement> loadList = new List<VisualElement>();
         private readonly Canvas canvas = new Canvas();
         private VisualElement rootVisualElement;
         private VisualElement focusedVisualElement;
@@ -83,8 +81,6 @@ namespace Quasar.UI.Internals
         /// <inheritdoc/>
         void IUIEventProcessor.ProcessUpdateEvent()
         {
-            ProcessLoadList();
-
             if (rootVisualElement == null)
             {
                 return;
@@ -289,17 +285,6 @@ namespace Quasar.UI.Internals
 
         #region IVisualElementEventProcessor
         /// <inheritdoc/>
-        void IVisualElementEventProcessor.AddToLoadList(VisualElement visualElement)
-        {
-            Assertion.ThrowIfNull(visualElement, nameof(visualElement));
-
-            lock (loadList)
-            {
-                loadList.Add(visualElement);
-            }
-        }
-
-        /// <inheritdoc/>
         void IVisualElementEventProcessor.ProcessFocusChanged(VisualElement visualElement)
         {
             Assertion.ThrowIfNull(visualElement, nameof(visualElement));
@@ -320,17 +305,6 @@ namespace Quasar.UI.Internals
         {
             rootVisualElement = visualElement;
             ClearAllStates();
-        }
-
-        /// <inheritdoc/>
-        void IVisualElementEventProcessor.RemoveFromLoadList(VisualElement visualElement)
-        {
-            Assertion.ThrowIfNull(visualElement, nameof(visualElement));
-
-            lock (loadList)
-            {
-                loadList.Remove(visualElement);
-            }
         }
         #endregion
 
@@ -436,26 +410,6 @@ namespace Quasar.UI.Internals
                 true,
                 $"{nameof(pointerButtonDownVisualElement)} should have been null.");
             return false;
-        }
-
-        private void ProcessLoadList()
-        {
-            VisualElement visualElement = null;
-            while (true)
-            {
-                lock (loadList)
-                {
-                    if (loadList.Count == 0)
-                    {
-                        break;
-                    }
-
-                    visualElement = loadList[^1];
-                    loadList.RemoveAt(loadList.Count - 1);
-                }
-
-                visualElement.ProcessLoadEvent();
-            }
         }
 
         private void PropagateInputFocus(VisualElement visualElement)

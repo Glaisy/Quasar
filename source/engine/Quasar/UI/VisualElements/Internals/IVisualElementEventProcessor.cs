@@ -17,12 +17,6 @@ namespace Quasar.UI.VisualElements.Internals
     internal interface IVisualElementEventProcessor
     {
         /// <summary>
-        /// Adds the visual element to the load list.
-        /// </summary>
-        /// <param name="visualElement">The visual element.</param>
-        void AddToLoadList(VisualElement visualElement);
-
-        /// <summary>
         /// Processes the focus changed event.
         /// </summary>
         /// <param name="visualElement">The visual element.</param>
@@ -33,11 +27,5 @@ namespace Quasar.UI.VisualElements.Internals
         /// </summary>
         /// <param name="visualElement">The visual element.</param>
         void ProcessRootVisualElementChanged(VisualElement visualElement);
-
-        /// <summary>
-        /// Removes the visual element from the load list.
-        /// </summary>
-        /// <param name="visualElement">The visual element.</param>
-        void RemoveFromLoadList(VisualElement visualElement);
     }
 }

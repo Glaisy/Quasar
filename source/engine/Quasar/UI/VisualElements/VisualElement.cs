@@ -53,11 +53,13 @@ namespace Quasar.UI.VisualElements
         private static IStyleBuilder styleBuilder;
         private static VisualElementContext context;
         private static Font defaultFont;
-        private ILayoutManager layoutManager;
-        private Vector2 textPosition;
-        private PseudoClass pseudoClass;
-        private Style mergedStyle;
         private static int mergedInvalidationFlags;
+
+        private ILayoutManager layoutManager;
+        private bool isDisposed;
+        private Style mergedStyle;
+        private PseudoClass pseudoClass;
+        private Vector2 textPosition;
 
 
         /// <summary>
@@ -80,8 +82,6 @@ namespace Quasar.UI.VisualElements
             Container = this;
             layoutManager = layoutManagers[(int)LayoutType.VerticalStack];
             Invalidate(InvalidationFlags.All);
-
-            eventProcessor.AddToLoadList(this);
         }
 
         /// <summary>
@@ -105,10 +105,12 @@ namespace Quasar.UI.VisualElements
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
-            eventProcessor.RemoveFromLoadList(this);
+            if (isDisposed)
+            {
+                throw new ObjectDisposedException(Name);
+            }
 
-            // invoke unload event handler
-            OnUnload();
+            ClearInvalidationFlags(InvalidationFlags.All);
 
             // dispose children
             foreach (var child in children)
@@ -150,6 +152,8 @@ namespace Quasar.UI.VisualElements
 
             columns = null;
             rows = null;
+
+            isDisposed = true;
         }
 
 

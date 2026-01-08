@@ -19,7 +19,7 @@ namespace DemoApplication.Tutorials
     /// </summary>
     /// <seealso cref="VisualElement" />
     [UITemplate("TitorialTitlePanel")]
-    internal sealed class TutorialTitlePanel : VisualElement
+    internal sealed class TutorialTitlePanel : TemplatedVisualElementBase
     {
         /// <summary>
         /// Gets the back button.
@@ -33,7 +33,7 @@ namespace DemoApplication.Tutorials
 
 
         /// <inheritdoc/>
-        protected override void OnLoad()
+        protected override void OnTemplateLoaded()
         {
             BackButton = Q<Button>("backButton");
             TitleLabel = Q<Label>("titleLabel");

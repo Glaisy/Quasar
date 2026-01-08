@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------
-// <copyright file="VisualElementFactory.cs" company="Space Development">
+// <copyright file="TemplatedVisualElementFactory.cs" company="Space Development">
 //      Copyright (c) Space Development. All rights reserved.
 // </copyright>
 // <summary>
@@ -27,11 +27,11 @@ using Space.Core.Extensions;
 namespace Quasar.UI.Templates.Internals
 {
     /// <summary>
-    /// Visual element factory implementation.
+    /// Factory component to create templated visual elements.
     /// </summary>
     [Export]
     [Singleton]
-    internal sealed class VisualElementFactory
+    internal sealed class TemplatedVisualElementFactory
     {
         private readonly IStyleFactory styleFactory;
         private readonly IStyleSheetParser styleSheetParser;
@@ -41,14 +41,14 @@ namespace Quasar.UI.Templates.Internals
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VisualElementFactory" /> class.
+        /// Initializes a new instance of the <see cref="TemplatedVisualElementFactory" /> class.
         /// </summary>
         /// <param name="styleFactory">The style factory.</param>
         /// <param name="styleSheetParser">The style sheet parser.</param>
         /// <param name="themeProvider">The theme provider.</param>
         /// <param name="stringOperationContext">The string operation context.</param>
         /// <param name="serviceProvider">The service provider.</param>
-        public VisualElementFactory(
+        public TemplatedVisualElementFactory(
             IStyleFactory styleFactory,
             IStyleSheetParser styleSheetParser,
             IThemeProvider themeProvider,
@@ -73,11 +73,11 @@ namespace Quasar.UI.Templates.Internals
         /// <returns>
         /// The created visual element (and child hierarchy).
         /// </returns>
-        public VisualElement Create(in UITemplate template, IUITemplateRepository templateRepository, ITypeResolver typeResolver)
+        public TemplatedVisualElementBase Create(in UITemplate template, IUITemplateRepository templateRepository, ITypeResolver typeResolver)
         {
             Assertion.ThrowIfNull(templateRepository, nameof(templateRepository));
 
-            return CreateVisualElement(template.RootNode, template, templateRepository, typeResolver);
+            return (TemplatedVisualElementBase)CreateVisualElement(template.RootNode, template, templateRepository, typeResolver);
         }
 
 
@@ -114,7 +114,12 @@ namespace Quasar.UI.Templates.Internals
             if (node != uiTemplate.RootNode &&
                 (templateAttribute = visualElementType.GetCustomAttribute<UITemplateAttribute>()) != null)
             {
-                // yes, load from the template
+                // the node is a nested template
+                if (!typeof(TemplatedVisualElementBase).IsAssignableFrom(visualElementType))
+                {
+                    throw new UITemplateException($"'{visualElementType.FullName}' type must be a descendant of '{typeof(TemplatedVisualElementBase).FullName}' in '{uiTemplate.Id}' template.");
+                }
+
                 var nestedUITemplate = templateRepository.Get(templateAttribute.TemplateId);
                 visualElement = CreateVisualElement(nestedUITemplate.RootNode, nestedUITemplate, templateRepository, typeResolver);
             }
@@ -157,6 +162,12 @@ namespace Quasar.UI.Templates.Internals
 
                 var childVisualElement = CreateVisualElement(childNode, uiTemplate, templateRepository, typeResolver);
                 visualElement.Add(childVisualElement);
+            }
+
+            // invoke template loaded event
+            if (visualElement is TemplatedVisualElementBase templatedVisualElement)
+            {
+                templatedVisualElement.ProcessTemplateLoadedEvent();
             }
 
             return visualElement;

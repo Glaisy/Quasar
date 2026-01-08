@@ -34,19 +34,17 @@ namespace Quasar.UI.Mvp
             this.presenter = presenter;
             view = this as TView
                 ?? throw new InvalidOperationException($"The {GetType().FullName} class must implement {typeof(TView).FullName} interface.");
-        }
 
-
-        /// <inheritdoc/>
-        protected override void OnLoad()
-        {
             presenter.Bind(view);
         }
 
+
         /// <inheritdoc/>
-        protected override void OnUnload()
+        protected override void Dispose(bool disposing)
         {
-            presenter.Dispose();
+            presenter?.Dispose();
+
+            base.Dispose(disposing);
         }
     }
 }

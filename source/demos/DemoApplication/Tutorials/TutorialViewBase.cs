@@ -36,6 +36,8 @@ namespace DemoApplication.Tutorials
         protected TutorialViewBase()
         {
             TitlePanel = (TutorialTitlePanel)uiService.Load("TutorialTitlePanel");
+            TitlePanel.TitleLabel.Text = Title;
+            TitlePanel.BackButton.Click = button => onBack(this);
             Add(TitlePanel);
             AddToClassList("scene-view");
         }
@@ -71,13 +73,6 @@ namespace DemoApplication.Tutorials
         protected void GoBack()
         {
             onBack(this);
-        }
-
-        /// <inheritdoc/>
-        protected override void OnLoad()
-        {
-            TitlePanel.TitleLabel.Text = Title;
-            TitlePanel.BackButton.Click = button => onBack(this);
         }
     }
 }

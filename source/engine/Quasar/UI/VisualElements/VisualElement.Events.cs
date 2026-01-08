@@ -91,15 +91,6 @@ namespace Quasar.UI.VisualElements
         }
 
         /// <summary>
-        /// Executes the load event processing.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void ProcessLoadEvent()
-        {
-            OnLoad();
-        }
-
-        /// <summary>
         /// Executes the lost focus event processing.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -336,13 +327,6 @@ namespace Quasar.UI.VisualElements
         }
 
         /// <summary>
-        /// Load event handler. Invoked before the first update event of the visual element.
-        /// </summary>
-        protected virtual void OnLoad()
-        {
-        }
-
-        /// <summary>
         /// Lost focus event handler.
         /// </summary>
         protected virtual void OnLostFocus()
@@ -426,13 +410,6 @@ namespace Quasar.UI.VisualElements
             {
                 canvas.DrawText(text, font, textPosition, Color);
             }
-        }
-
-        /// <summary>
-        /// Unload event handler. Invoked before visual element is to be disposed.
-        /// </summary>
-        protected virtual void OnUnload()
-        {
         }
 
         /// <summary>

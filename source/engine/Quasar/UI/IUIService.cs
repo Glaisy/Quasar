@@ -33,12 +33,12 @@ namespace Quasar.UI
         /// <returns>
         /// The loaded visual elements.
         /// </returns>
-        VisualElement Load(string templatePath);
+        TemplatedVisualElementBase Load(string templatePath);
 
         /// <summary>
-        /// Registers the templated visual element types from the specified assembly.
+        /// Registers the visual element types for UI templates from the specified assembly.
         /// </summary>
         /// <param name="assembly">The assembly.</param>
-        void RegisterTemplatedVisualElements(Assembly assembly);
+        void RegisterVisualElementsForTemplates(Assembly assembly);
     }
 }

@@ -71,30 +71,26 @@ namespace Quasar.UI.Internals
 
 
         /// <inheritdoc/>
-        public VisualElement Load(string templatePath)
+        public TemplatedVisualElementBase Load(string templatePath)
         {
             ArgumentException.ThrowIfNullOrEmpty(templatePath, nameof(templatePath));
             context.Validate();
 
-            var visualElement = templateRepository.Instantiate(templatePath);
-            SetRootVisualElement(visualElement);
-
-            return visualElement;
+            return templateRepository.Instantiate(templatePath);
         }
 
         /// <inheritdoc/>
-        public void RegisterTemplatedVisualElements(Assembly assembly)
+        public void RegisterVisualElementsForTemplates(Assembly assembly)
         {
             ArgumentNullException.ThrowIfNull(assembly, nameof(assembly));
             context.Validate();
 
-            templateRepository.RegisterTemplatedVisualElements(assembly);
+            templateRepository.RegisterVisualElementsForTemplates(assembly);
         }
 
 
         private void SetRootVisualElement(VisualElement visualElement)
         {
-            rootVisualElement?.Dispose();
             rootVisualElement = visualElement;
             visualElementEventProcessor.ProcessRootVisualElementChanged(visualElement);
         }

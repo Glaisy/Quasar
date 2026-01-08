@@ -32,15 +32,15 @@ namespace Quasar.UI.Templates.Internals
         void Create(Stream stream, string templateId, bool leaveOpen = false);
 
         /// <summary>
-        /// Creates a visual element instance from the specified template identifier.
+        /// Creates a templated visual element instance from the specified template identifier.
         /// </summary>
         /// <param name="templateId">The template identifier.</param>
-        VisualElement Instantiate(string templateId);
+        TemplatedVisualElementBase Instantiate(string templateId);
 
         /// <summary>
-        /// Registers the templated visual element types from the specified assembly.
+        /// Registers the visual element types for UI templates from the specified assembly.
         /// </summary>
         /// <param name="assembly">The assembly.</param>
-        void RegisterTemplatedVisualElements(Assembly assembly);
+        void RegisterVisualElementsForTemplates(Assembly assembly);
     }
 }

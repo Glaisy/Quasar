@@ -38,7 +38,7 @@ namespace Quasar.UI.Templates.Internals
 
         private readonly IUIContext uiContext;
         private readonly ILogger logger;
-        private readonly VisualElementFactory visualElementFactory;
+        private readonly TemplatedVisualElementFactory templatedVisualElementFactory;
         private readonly Dictionary<string, Type> resolvedVisualElementTypes = new Dictionary<string, Type>();
 
 
@@ -47,14 +47,14 @@ namespace Quasar.UI.Templates.Internals
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="uiContext">The UI context.</param>
-        /// <param name="visualElementFactory">The visual element factory.</param>
+        /// <param name="templatedVisualElementFactory">The templated visual element factory.</param>
         public UITemplateRepository(
             IQuasarContext context,
             IUIContext uiContext,
-            VisualElementFactory visualElementFactory)
+            TemplatedVisualElementFactory templatedVisualElementFactory)
             : base(true)
         {
-            this.visualElementFactory = visualElementFactory;
+            this.templatedVisualElementFactory = templatedVisualElementFactory;
             this.uiContext = uiContext;
 
             logger = context.Logger;
@@ -94,7 +94,7 @@ namespace Quasar.UI.Templates.Internals
         }
 
         /// <inheritdoc/>
-        public VisualElement Instantiate(string templateId)
+        public TemplatedVisualElementBase Instantiate(string templateId)
         {
             try
             {
@@ -106,7 +106,7 @@ namespace Quasar.UI.Templates.Internals
                     throw new UIException($"Unable to load the UI template by the id: '{templateId}'.");
                 }
 
-                return visualElementFactory.Create(uiTemplate, this, this);
+                return templatedVisualElementFactory.Create(uiTemplate, this, this);
             }
             finally
             {
@@ -115,7 +115,7 @@ namespace Quasar.UI.Templates.Internals
         }
 
         /// <inheritdoc/>
-        public void RegisterTemplatedVisualElements(Assembly assembly)
+        public void RegisterVisualElementsForTemplates(Assembly assembly)
         {
             ArgumentNullException.ThrowIfNull(assembly, nameof(assembly));
 
