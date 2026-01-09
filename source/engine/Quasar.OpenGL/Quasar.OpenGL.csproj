@@ -13,6 +13,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Resources\Shaders\Diffuse.frag" />
+      <None Remove="Resources\Shaders\Diffuse.vert" />
       <None Remove="Resources\Shaders\Environment\Skybox.frag" />
       <None Remove="Resources\Shaders\Environment\Skybox.vert" />
       <None Remove="Resources\Shaders\Includes\Arguments\AmbientLight.inc" />
@@ -28,6 +30,8 @@
     <ItemGroup>
         <Compile Include="..\..\AssemblyInfo.Suppressions.shared.cs" Link="Properties\AssemblyInfo.Suppressions.shared.cs" />
         <Compile Include="..\..\AssemblyInfo.shared.cs" Link="Properties\AssemblyInfo.shared.cs" />
+        <EmbeddedResource Include="Resources\Shaders\Diffuse.frag" />
+        <EmbeddedResource Include="Resources\Shaders\Diffuse.vert" />
         <EmbeddedResource Include="Resources\Shaders\Includes\Utilities\NormalMapping.inc" />
         <AdditionalFiles Include="..\..\stylecop.json" Link="Properties\stylecop.json" />
     </ItemGroup>

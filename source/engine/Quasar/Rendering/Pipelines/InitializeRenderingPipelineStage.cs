@@ -81,6 +81,7 @@ namespace Quasar.Rendering.Pipelines
             MeshGeneratorBase.InitializeStaticServices(ServiceProvider);
             Material.InitializeStaticServices(ServiceProvider);
             Camera.InitializeStaticServices(ServiceProvider);
+            LightSource.InitializeStaticServices(ServiceProvider);
             RenderModel.InitializeStaticServices(ServiceProvider);
 
             LoadBuiltInAssets();

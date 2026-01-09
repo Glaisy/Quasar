@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------
 
 using System;
-
+using Quasar.Rendering.Internals.Services;
 using Space.Core.DependencyInjection;
 
 namespace Quasar.Rendering.Processors.Internals
@@ -23,17 +23,17 @@ namespace Quasar.Rendering.Processors.Internals
     [Singleton]
     internal class LightSourceCommandProcessor : RenderCommandProcessorBase<LightSourceCommand>
     {
-        ////private readonly LightSourceService lightSourceService;
+        private readonly LightSourceService lightSourceService;
 
 
-        /////// <summary>
-        /////// Initializes a new instance of the <see cref="LightSourceCommandProcessor" /> class.
-        /////// </summary>
-        /////// <param name="lightSourceService">The light source service.</param>
-        ////public LightSourceCommandProcessor(LightSourceService lightSourceService)
-        ////{
-        ////    this.lightSourceService = lightSourceService;
-        ////}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LightSourceCommandProcessor" /> class.
+        /// </summary>
+        /// <param name="lightSourceService">The light source service.</param>
+        public LightSourceCommandProcessor(LightSourceService lightSourceService)
+        {
+            this.lightSourceService = lightSourceService;
+        }
 
         /// <inheritdoc/>
         protected override void OnExecuteCommand(in LightSourceCommand command)
@@ -42,16 +42,16 @@ namespace Quasar.Rendering.Processors.Internals
             {
                 case LightSourceCommandType.Create:
                 case LightSourceCommandType.EnabledChanged:
-                    ////if (command.Enabled)
-                    ////{
-                    ////    lightSourceService.Add(command.LightSource);
-                    ////    shadowMapService.Attach(command.LightSource);
-                    ////}
-                    ////else
-                    ////{
-                    ////    lightSourceService.Remove(command.LightSource);
-                    ////    shadowMapService.Detach(command.LightSource);
-                    ////}
+                    if (command.IsEnabled)
+                    {
+                        lightSourceService.Add(command.LightSource);
+                        //// shadowMapService.Attach(command.LightSource);
+                    }
+                    else
+                    {
+                        lightSourceService.Remove(command.LightSource);
+                        //// shadowMapService.Detach(command.LightSource);
+                    }
 
                     break;
 

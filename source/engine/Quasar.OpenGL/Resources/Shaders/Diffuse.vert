@@ -1,9 +1,9 @@
 #version 400 core
 
 layout (location = 0) in vec3 VertexPosition;
-layout (location = 1) in vec2 VertexUV;
-layout (location = 2) in vec3 VertexNormal;
-layout (location = 3) in vec3 VertexTangent;
+layout (location = 1) in vec3 VertexNormal;
+layout (location = 2) in vec3 VertexTangent;
+layout (location = 3) in vec2 VertexUV;
 
 #include <Arguments/MainLight.inc>
 

@@ -30,7 +30,7 @@ namespace Quasar.Rendering
     /// <seealso cref="INameProvider" />
     /// <seealso cref="IEquatable{RenderObject}" />
     /// <seealso cref="IDisposable" />
-    public sealed partial class RenderModel : InvalidatableBase,
+    public partial class RenderModel : InvalidatableBase,
         IIdentifierProvider<int>,
         INameProvider,
         IEquatable<RenderModel>,

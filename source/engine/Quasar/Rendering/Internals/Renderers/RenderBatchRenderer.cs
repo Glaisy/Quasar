@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using Quasar.Graphics;
 using Quasar.Graphics.Internals;
 using Quasar.Pipelines;
-
+using Quasar.Rendering.Internals.Services;
 using Space.Core.DependencyInjection;
 
 namespace Quasar.Rendering.Internals.Renderers
@@ -27,6 +27,7 @@ namespace Quasar.Rendering.Internals.Renderers
     internal sealed class RenderBatchRenderer
     {
         private readonly ITimeProvider timeProvider;
+        private readonly LightSourceService lightSourceService;
         private ShaderBase shader;
 
 
@@ -34,9 +35,13 @@ namespace Quasar.Rendering.Internals.Renderers
         /// Initializes a new instance of the <see cref="RenderBatchRenderer" /> class.
         /// </summary>
         /// <param name="timeProvider">The time provider.</param>
-        public RenderBatchRenderer(ITimeProvider timeProvider)
+        /// <param name="lightSourceService">The light source service.</param>
+        public RenderBatchRenderer(
+            ITimeProvider timeProvider,
+            LightSourceService lightSourceService)
         {
             this.timeProvider = timeProvider;
+            this.lightSourceService = lightSourceService;
         }
 
 
@@ -60,6 +65,7 @@ namespace Quasar.Rendering.Internals.Renderers
                     case ShaderConstants.DeltaTime:
                         shader.SetFloat(shaderProperty.Index, timeProvider.DeltaTime);
                         break;
+
                     case ShaderConstants.Time:
                         shader.SetFloat(shaderProperty.Index, timeProvider.Time);
                         break;
@@ -74,56 +80,63 @@ namespace Quasar.Rendering.Internals.Renderers
                     case ShaderConstants.ProjectionMatrix:
                         shader.SetMatrix(shaderProperty.Index, camera.ProjectionMatrix);
                         break;
+
                     case ShaderConstants.ViewMatrix:
                         shader.SetMatrix(shaderProperty.Index, camera.ViewMatrix);
                         break;
+
                     case ShaderConstants.ViewProjectionMatrix:
                         shader.SetMatrix(shaderProperty.Index, camera.ViewProjectionMatrix);
                         break;
+
                     case ShaderConstants.CameraPositionWorldSpace:
                         shader.SetVector3(shaderProperty.Index, camera.Transform.Position);
                         break;
                 }
             }
 
-            ////if (renderView.LightSourceProvider.Count > 0)
-            ////{
-            ////    // TODO: support more light sources
-            ////    var lightSource = renderView.LightSourceProvider.MainLigntSource;
-            ////    var shadowMap = renderView.ShadowMap;
-            ////    foreach (var shaderProperty in shader.LightProperties)
-            ////    {
-            ////        switch (shaderProperty.Name)
-            ////        {
-            ////            case ShaderConstants.LightColor:
-            ////                shader.SetColor(shaderProperty.Index, lightSource.EffectiveColor);
-            ////                break;
-            ////            case ShaderConstants.LightSourceType:
-            ////                shader.SetInteger(shaderProperty.Index, (int)lightSource.Type);
-            ////                break;
-            ////            case ShaderConstants.LightDirectionWorldSpace:
-            ////                shader.SetVector3(shaderProperty.Index, lightSource.Transform.NegativeZ);
-            ////                break;
-            ////            case ShaderConstants.LightPositionWorldSpace:
-            ////                shader.SetVector3(shaderProperty.Index, lightSource.Transform.Position);
-            ////                break;
-            ////            case ShaderConstants.ShadowBias:
-            ////                shader.SetFloat(shaderProperty.Index, shadowMap.Settings.Bias);
-            ////                break;
-            ////            case ShaderConstants.ShadowMap:
-            ////                shader.SetTexture(shaderProperty.Index, shadowMap.FrameBuffer.DepthTexture);
-            ////                break;
-            ////            case ShaderConstants.ShadowStrength:
-            ////                shader.SetFloat(shaderProperty.Index, shadowMap.Settings.Strength);
-            ////                break;
-            ////            case ShaderConstants.ShadowTexelSize:
-            ////                var texelSize = shadowMap.Settings.SoftEdges ?
-            ////                    1.0f / shadowMap.Settings.Resolution : 0.0f;
-            ////                shader.SetVector2(shaderProperty.Index, new Vector2(texelSize));
-            ////                break;
-            ////        }
-            ////    }
-            ////}
+            if (lightSourceService.Count > 0)
+            {
+                // TODO: support more light sources
+                var lightSource = lightSourceService[0];
+                ////var shadowMap = renderView.ShadowMap;
+                foreach (var shaderProperty in shader.LightProperties)
+                {
+                    switch (shaderProperty.Name)
+                    {
+                        case ShaderConstants.LightColor:
+                            shader.SetColor(shaderProperty.Index, lightSource.EffectiveColor);
+                            break;
+
+                        case ShaderConstants.LightSourceType:
+                            shader.SetInteger(shaderProperty.Index, (int)lightSource.Type);
+                            break;
+
+                        case ShaderConstants.LightDirectionWorldSpace:
+                            shader.SetVector3(shaderProperty.Index, lightSource.Transform.NegativeZ);
+                            break;
+
+                        case ShaderConstants.LightPositionWorldSpace:
+                            shader.SetVector3(shaderProperty.Index, lightSource.Transform.Position);
+                            break;
+
+                            ////case ShaderConstants.ShadowBias:
+                            ////    shader.SetFloat(shaderProperty.Index, shadowMap.Settings.Bias);
+                            ////    break;
+                            ////case ShaderConstants.ShadowMap:
+                            ////    shader.SetTexture(shaderProperty.Index, shadowMap.FrameBuffer.DepthTexture);
+                            ////    break;
+                            ////case ShaderConstants.ShadowStrength:
+                            ////    shader.SetFloat(shaderProperty.Index, shadowMap.Settings.Strength);
+                            ////    break;
+                            ////case ShaderConstants.ShadowTexelSize:
+                            ////    var texelSize = shadowMap.Settings.SoftEdges ?
+                            ////        1.0f / shadowMap.Settings.Resolution : 0.0f;
+                            ////    shader.SetVector2(shaderProperty.Index, new Vector2(texelSize));
+                            ////    break;
+                    }
+                }
+            }
         }
 
         /// <summary>
