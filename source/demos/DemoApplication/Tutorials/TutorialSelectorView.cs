@@ -14,7 +14,7 @@ using System;
 using DemoApplication.Tutorials.Objects;
 
 using Microsoft.Extensions.DependencyInjection;
-
+using Quasar.Inputs;
 using Quasar.UI;
 using Quasar.UI.Templates;
 using Quasar.UI.VisualElements;
@@ -52,6 +52,14 @@ namespace DemoApplication.Tutorials
         }
 
 
+        /// <inheritdoc/>
+        protected override void OnKeyPress(in KeyEventArgs args)
+        {
+            if (args.Key == KeyCode.Esc)
+            {
+                applicationWindow.Close();
+            }
+        }
 
         /// <inheritdoc/>
         protected override void OnTemplateLoaded()

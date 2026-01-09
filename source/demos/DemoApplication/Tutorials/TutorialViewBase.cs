@@ -12,7 +12,7 @@
 using System;
 
 using Microsoft.Extensions.DependencyInjection;
-
+using Quasar.Inputs;
 using Quasar.UI;
 using Quasar.UI.Mvp;
 using Quasar.UI.VisualElements;
@@ -66,6 +66,15 @@ namespace DemoApplication.Tutorials
         /// </summary>
         protected TutorialTitlePanel TitlePanel { get; }
 
+
+        /// <inheritdoc/>
+        protected override void OnKeyPress(in KeyEventArgs args)
+        {
+            if (args.Key == KeyCode.Esc)
+            {
+                GoBack();
+            }
+        }
 
         /// <summary>
         /// Goes back to the tutorial selector.
