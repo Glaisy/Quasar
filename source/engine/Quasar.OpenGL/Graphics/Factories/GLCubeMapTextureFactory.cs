@@ -111,7 +111,8 @@ namespace Quasar.OpenGL.Graphics.Factories
             createData.Texture = null;
             try
             {
-                texture = new GLCubeMapTexture(createData.Id, Size.Empty, createData.Tag, defaultResourceDescriptor);
+                var size = new Size(createData.ImageData.Size.Width, createData.ImageData.Size.Height / 6);
+                texture = new GLCubeMapTexture(createData.Id, size, createData.Tag, defaultResourceDescriptor);
                 texture.Activate();
 
                 // set texture parameters
